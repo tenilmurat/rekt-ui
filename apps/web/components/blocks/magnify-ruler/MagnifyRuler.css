@@ -2,8 +2,9 @@
   Magnify ruler. Every colour is a variable with a fallback, so it works as
   is; point the --rk-ruler-* variables at your own tokens to theme it.
   Light theme; a dark theme can be added by redefining the same variables.
-  Each tick's --rk-ruler-g (0–1, how close the pointer is) is written,
-  already eased, by the component.
+  The component writes two values to each tick, already eased:
+  --rk-ruler-g (0–1, how close the pointer is) and --rk-ruler-a (0–1, how
+  orange it is, as the colour travels to a newly chosen section).
 */
 .rk-ruler {
   --rk-ruler-bg: #f3f4f5;
@@ -14,6 +15,7 @@
   --rk-ruler-edge: rgb(20 18 16 / 0.06);
   --rk-ruler-strength: 28px;
   --rk-ruler-pitch: 7px;
+  --rk-ruler-major: 24px;
 
   display: inline-flex;
   padding: 18px 92px 18px 28px;
@@ -24,8 +26,13 @@
   font-family: inherit;
 }
 
+/*
+  As wide as the longest a tick can grow, so the frame keeps its size while
+  ticks swell under the pointer; names overflow into the right padding.
+*/
 .rk-ruler__ticks {
   display: flex;
+  width: calc(var(--rk-ruler-major) + var(--rk-ruler-strength));
   flex-direction: column;
   margin: 0;
   padding: 0;
@@ -35,6 +42,7 @@
 
 .rk-ruler__tick {
   --rk-ruler-g: 0;
+  --rk-ruler-a: 0;
   --rk-ruler-base: 14px;
 
   position: relative;
@@ -44,26 +52,25 @@
 }
 
 .rk-ruler__tick--major {
-  --rk-ruler-base: 24px;
+  --rk-ruler-base: var(--rk-ruler-major);
 }
 
-/* The tick: longer and darker the closer the pointer is. */
+/* The tick: longer and darker the closer the pointer is, and orange as the colour passes. */
 .rk-ruler__line {
   display: block;
+  flex: none;
   width: calc(var(--rk-ruler-base) + var(--rk-ruler-strength) * var(--rk-ruler-g));
   height: 1px;
-  background: color-mix(in srgb, var(--rk-ruler-tick-strong) calc(var(--rk-ruler-g) * 100%), var(--rk-ruler-tick));
+  background: color-mix(
+    in srgb,
+    var(--rk-ruler-accent) calc(var(--rk-ruler-a) * 100%),
+    color-mix(in srgb, var(--rk-ruler-tick-strong) calc(var(--rk-ruler-g) * 100%), var(--rk-ruler-tick))
+  );
 }
 
 .rk-ruler__tick--major .rk-ruler__line {
   height: 1.5px;
-  background: var(--rk-ruler-tick-strong);
-  transition: background-color 360ms ease;
-}
-
-/* The chosen section: orange, the same length as the others. */
-.rk-ruler__tick--major[data-active="true"] .rk-ruler__line {
-  background: var(--rk-ruler-accent);
+  background: color-mix(in srgb, var(--rk-ruler-accent) calc(var(--rk-ruler-a) * 100%), var(--rk-ruler-tick-strong));
 }
 
 /* Section ticks are buttons the full row tall, so they're easy to hit and reachable by keyboard. */
@@ -86,31 +93,22 @@
   border-radius: 2px;
 }
 
-/* Names fade in near the pointer; the current section's stays visible. */
+/* Names fade in near the pointer; the chosen section's stays visible, in orange. */
 .rk-ruler__label {
   position: absolute;
   left: calc(var(--rk-ruler-base) + var(--rk-ruler-strength) * var(--rk-ruler-g) + 10px);
+  color: color-mix(in srgb, var(--rk-ruler-accent) calc(var(--rk-ruler-a) * 100%), var(--rk-ruler-ink));
   font-size: 12px;
   white-space: nowrap;
-  opacity: var(--rk-ruler-g);
-  transform: translateX(calc((1 - var(--rk-ruler-g)) * -4px));
-  transition: color 360ms ease;
+  opacity: max(var(--rk-ruler-g), calc(var(--rk-ruler-a) * 0.85));
+  transform: translateX(calc((1 - max(var(--rk-ruler-g), var(--rk-ruler-a))) * -4px));
   pointer-events: none;
 }
 
 .rk-ruler__tick--major[data-active="true"] .rk-ruler__label {
-  opacity: max(var(--rk-ruler-g), 0.85);
-  color: var(--rk-ruler-accent);
   font-weight: 500;
 }
 
 .rk-ruler__label[data-visible="false"] {
   display: none;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .rk-ruler__tick--major .rk-ruler__line,
-  .rk-ruler__label {
-    transition: none;
-  }
 }
