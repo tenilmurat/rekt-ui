@@ -10,7 +10,10 @@
   --rk-tilt-holo-bg: #0b0b0d;
   --rk-tilt-holo-ink: #f5f5f7;
   --rk-tilt-holo-muted: #8e8e96;
-  --rk-tilt-holo-line: rgb(255 255 255 / 0.07);
+  --rk-tilt-holo-dot: rgb(255 255 255 / 0.13);
+  --rk-tilt-logo-fill: rgb(236 236 242 / 0.92);
+  /* Dot grid pitch; the foil and the glitter line up with it. */
+  --rk-tilt-pitch: 7px;
   /* The foil's spectrum. Its position follows the pointer, so the colours slide as the card moves. */
   --rk-tilt-foil: linear-gradient(
     115deg,
@@ -23,9 +26,7 @@
     #ff3d9a 84%,
     #ffa53d 100%
   );
-  --rk-tilt-back-bg: #141210;
-  --rk-tilt-back-ink: #f5f3f0;
-  --rk-tilt-back-muted: #a8a29b;
+  --rk-tilt-back-bg: #0b0b0d;
   --rk-tilt-flip-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
 
   perspective: 900px;
@@ -109,10 +110,7 @@
 .rk-tilt__top,
 .rk-tilt__name,
 .rk-tilt__label,
-.rk-tilt__title,
-.rk-tilt__back-title,
-.rk-tilt__back-text,
-.rk-tilt__hint {
+.rk-tilt__title {
   position: relative;
   z-index: 1;
 }
@@ -173,110 +171,117 @@
   text-shadow: none;
 }
 
-/* Two sets of fine rings from opposite corners: their overlap makes the wavy, moiré lines. */
-.rk-tilt__lines,
-.rk-tilt__foil {
+.rk-tilt__dots,
+.rk-tilt__foil,
+.rk-tilt__glitter {
   position: absolute;
   inset: 0;
   pointer-events: none;
 }
 
-.rk-tilt__lines {
-  background:
-    repeating-radial-gradient(circle at 8% 112%, var(--rk-tilt-holo-line) 0 1px, transparent 1px 6px),
-    repeating-radial-gradient(circle at 104% -14%, var(--rk-tilt-holo-line) 0 1px, transparent 1px 8px);
+/* A fine dot grid across the face. */
+.rk-tilt__dots {
+  background: radial-gradient(circle, var(--rk-tilt-holo-dot) 0.9px, transparent 1.3px) 0 0 /
+    var(--rk-tilt-pitch) var(--rk-tilt-pitch);
 }
 
 /*
-  The foil: the spectrum, seen only through the lines and only around the
-  pointer. Two masks are intersected — the ring pattern and a soft spot at the
-  pointer — so the colour appears in the grooves where the light hits.
+  The foil: the spectrum, seen only through the dots and only around the
+  pointer. The two masks are intersected — a soft spot at the pointer and the
+  dot grid — so the dots near the light turn to colour.
 */
 .rk-tilt__foil {
   background: var(--rk-tilt-foil);
   background-size: 170% 170%;
   background-position: var(--rk-tilt-gx) var(--rk-tilt-gy);
-  -webkit-mask-image:
-    radial-gradient(circle at var(--rk-tilt-gx) var(--rk-tilt-gy), #000 0%, rgb(0 0 0 / 0.45) 30%, transparent 62%),
-    repeating-radial-gradient(circle at 8% 112%, #000 0 1.4px, transparent 1.4px 6px);
-  mask-image:
-    radial-gradient(circle at var(--rk-tilt-gx) var(--rk-tilt-gy), #000 0%, rgb(0 0 0 / 0.45) 30%, transparent 62%),
-    repeating-radial-gradient(circle at 8% 112%, #000 0 1.4px, transparent 1.4px 6px);
+  -webkit-mask:
+    radial-gradient(circle at var(--rk-tilt-gx) var(--rk-tilt-gy), #000 0%, rgb(0 0 0 / 0.5) 30%, transparent 62%) 0 0 / 100% 100%,
+    radial-gradient(circle, #000 1.25px, transparent 1.7px) 0 0 / var(--rk-tilt-pitch) var(--rk-tilt-pitch);
+  mask:
+    radial-gradient(circle at var(--rk-tilt-gx) var(--rk-tilt-gy), #000 0%, rgb(0 0 0 / 0.5) 30%, transparent 62%) 0 0 / 100% 100%,
+    radial-gradient(circle, #000 1.25px, transparent 1.7px) 0 0 / var(--rk-tilt-pitch) var(--rk-tilt-pitch);
   -webkit-mask-composite: source-in;
   mask-composite: intersect;
   opacity: calc(0.18 + var(--rk-tilt-glow) * 0.82);
 }
 
-/* The emblem: a Sierpinski triangle drawn in hairlines, with its own foil. */
-.rk-tilt__emblem {
-  position: absolute;
-  top: 26%;
-  left: 27%;
-  width: 46%;
-  aspect-ratio: 100 / 87;
+/*
+  Glitter: a sparse scatter of bigger, brighter dots that pop in and out as
+  the pointer moves. Three coarser grids (3, 5 and 7 dots apart, offset so they
+  sit on the fine grid's dots) are added together, then cut to a tighter spot
+  at the pointer. Its spectrum runs the other way to the foil's.
+*/
+.rk-tilt__glitter {
+  background: var(--rk-tilt-foil);
+  background-size: 140% 140%;
+  background-position: calc(100% - var(--rk-tilt-gx)) calc(100% - var(--rk-tilt-gy));
+  filter: brightness(1.35) saturate(1.3);
+  -webkit-mask:
+    radial-gradient(circle at var(--rk-tilt-gx) var(--rk-tilt-gy), #000 0%, transparent 42%) 0 0 / 100% 100%,
+    radial-gradient(circle, #000 1.6px, transparent 2.1px) calc(var(--rk-tilt-pitch) * 1) calc(var(--rk-tilt-pitch) * 2) /
+      calc(var(--rk-tilt-pitch) * 3) calc(var(--rk-tilt-pitch) * 3),
+    radial-gradient(circle, #000 1.6px, transparent 2.1px) calc(var(--rk-tilt-pitch) * 3) 0 /
+      calc(var(--rk-tilt-pitch) * 5) calc(var(--rk-tilt-pitch) * 5),
+    radial-gradient(circle, #000 1.6px, transparent 2.1px) calc(var(--rk-tilt-pitch) * 2) calc(var(--rk-tilt-pitch) * 4) /
+      calc(var(--rk-tilt-pitch) * 7) calc(var(--rk-tilt-pitch) * 7);
+  mask:
+    radial-gradient(circle at var(--rk-tilt-gx) var(--rk-tilt-gy), #000 0%, transparent 42%) 0 0 / 100% 100%,
+    radial-gradient(circle, #000 1.6px, transparent 2.1px) calc(var(--rk-tilt-pitch) * 1) calc(var(--rk-tilt-pitch) * 2) /
+      calc(var(--rk-tilt-pitch) * 3) calc(var(--rk-tilt-pitch) * 3),
+    radial-gradient(circle, #000 1.6px, transparent 2.1px) calc(var(--rk-tilt-pitch) * 3) 0 /
+      calc(var(--rk-tilt-pitch) * 5) calc(var(--rk-tilt-pitch) * 5),
+    radial-gradient(circle, #000 1.6px, transparent 2.1px) calc(var(--rk-tilt-pitch) * 2) calc(var(--rk-tilt-pitch) * 4) /
+      calc(var(--rk-tilt-pitch) * 7) calc(var(--rk-tilt-pitch) * 7);
+  -webkit-mask-composite: source-in, source-over, source-over;
+  mask-composite: intersect, add, add;
+  opacity: var(--rk-tilt-glow);
+}
+
+/* The Rekt mark, with its own foil cut to its shape. */
+.rk-tilt__logo {
+  display: block;
+  width: 38%;
+  aspect-ratio: 23 / 20;
   pointer-events: none;
 }
 
-.rk-tilt__triangle {
+.rk-tilt__logo svg {
   display: block;
   width: 100%;
   height: 100%;
-  overflow: visible;
+  fill: var(--rk-tilt-logo-fill);
 }
 
-.rk-tilt__triangle polygon {
-  fill: rgb(255 255 255 / 0.03);
-  stroke: rgb(255 255 255 / 0.6);
-  stroke-width: 0.6;
-  stroke-linejoin: round;
-}
-
-/*
-  The emblem's foil is cut to the hairlines by a mask of the same triangle
-  (the component passes it in as --rk-tilt-tri), so only the lines turn to
-  colour. It runs the spectrum the other way, so it shifts against the card.
-*/
-.rk-tilt__emblem-foil {
+/* The component passes the mark in as --rk-tilt-logo, so only its shape turns to colour. */
+.rk-tilt__logo-foil {
   position: absolute;
   inset: 0;
   background: var(--rk-tilt-foil);
   background-size: 300% 300%;
   background-position: calc(100% - var(--rk-tilt-gx)) var(--rk-tilt-gy);
-  -webkit-mask: var(--rk-tilt-tri) center / 100% 100% no-repeat;
-  mask: var(--rk-tilt-tri) center / 100% 100% no-repeat;
-  opacity: calc(0.3 + var(--rk-tilt-glow) * 0.7);
+  -webkit-mask: var(--rk-tilt-logo) center / 100% 100% no-repeat;
+  mask: var(--rk-tilt-logo) center / 100% 100% no-repeat;
+  opacity: calc(0.15 + var(--rk-tilt-glow) * 0.75);
 }
 
+.rk-tilt__logo--front {
+  position: absolute;
+  top: 46%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.rk-tilt__logo--back {
+  position: relative;
+  width: 42%;
+}
+
+/* The back: the dark face and the logo, nothing else. */
 .rk-tilt__back {
-  gap: 10px;
+  align-items: center;
+  justify-content: center;
   background: var(--rk-tilt-back-bg);
-  color: var(--rk-tilt-back-ink);
   transform: rotateY(180deg);
-}
-
-.rk-tilt__back .rk-tilt__label {
-  color: var(--rk-tilt-back-muted);
-  opacity: 1;
-}
-
-.rk-tilt__back-title {
-  margin-top: auto;
-  font-size: 20px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-}
-
-.rk-tilt__back-text {
-  font-size: 13px;
-  line-height: 1.5;
-  color: var(--rk-tilt-back-muted);
-}
-
-.rk-tilt__hint {
-  margin-top: 8px;
-  font-size: 11px;
-  color: var(--rk-tilt-back-muted);
-  opacity: 0.7;
 }
 
 /* Darkens the side that leans away from the light. */
