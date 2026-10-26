@@ -13,10 +13,16 @@ export type TiltCardProps = {
   corner?: number;
   /** A soft light that follows the pointer across the surface. */
   glare?: boolean;
-  /** The small line at the top of the front. */
+  /** "holo" is a dark card with an iridescent foil that follows the pointer; "color" is soft colour fields. */
+  finish?: "holo" | "color";
+  /** The small line at the top left of the front. */
   label?: string;
+  /** The small mark at the top right of the front. */
+  index?: string;
   /** The name on the front. */
   title?: string;
+  /** The line under the name. */
+  caption?: string;
   /** The heading on the back. */
   backTitle?: string;
   /** The text on the back. */
@@ -25,6 +31,36 @@ export type TiltCardProps = {
 
 type Pose = { rx: number; ry: number; gx: number; gy: number; glow: number };
 const REST: Pose = { rx: 0, ry: 0, gx: 50, gy: 50, glow: 0 };
+
+/** A Sierpinski triangle as a list of SVG polygons, three levels deep. */
+function sierpinski(depth: number): string[] {
+  const out: string[] = [];
+  type P = [number, number];
+  const mid = (a: P, b: P): P => [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+  const split = (a: P, b: P, c: P, level: number) => {
+    if (level === 0) {
+      out.push([a, b, c].map((p) => p.map((n) => n.toFixed(2)).join(",")).join(" "));
+      return;
+    }
+    const ab = mid(a, b);
+    const bc = mid(b, c);
+    const ca = mid(c, a);
+    split(a, ab, ca, level - 1);
+    split(ab, b, bc, level - 1);
+    split(ca, bc, c, level - 1);
+  };
+  split([50, 2], [2, 85], [98, 85], depth);
+  return out;
+}
+
+const TRIANGLES = sierpinski(3);
+
+/** The same triangle as an image, used to cut the emblem's foil to its hairlines. */
+const TRIANGLE_MASK = `url("data:image/svg+xml,${encodeURIComponent(
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 87">${TRIANGLES.map(
+    (p) => `<polygon points="${p}" fill="none" stroke="#000" stroke-width="1.1" stroke-linejoin="round"/>`,
+  ).join("")}</svg>`,
+)}")`;
 
 /**
  * A card that tilts in 3D under the pointer, with a glare and a shade that
@@ -37,8 +73,11 @@ export function TiltCard({
   shade = 50,
   corner = 24,
   glare = true,
-  label = "Rekt UI · No. 001",
-  title = "Tilt card",
+  finish = "holo",
+  label = "Rekt UI",
+  index = "No. 001",
+  title = "Holographic",
+  caption = "Tilt card edition",
   backTitle = "The other side",
   backText = "Press the card again to turn it back. It tilts on this side too.",
 }: TiltCardProps) {
@@ -134,10 +173,32 @@ export function TiltCard({
         }}
       >
         <span className="rk-tilt__flipper" data-flipped={flipped}>
-          <span className="rk-tilt__face rk-tilt__front" aria-hidden={flipped}>
-            <span className="rk-tilt__art" />
-            <span className="rk-tilt__label">{label}</span>
-            <span className="rk-tilt__title">{title}</span>
+          <span className="rk-tilt__face rk-tilt__front" data-finish={finish} aria-hidden={flipped}>
+            {finish === "holo" ? (
+              <>
+                {/* Fine wavy lines the foil shows through. */}
+                <span className="rk-tilt__lines" />
+                <span className="rk-tilt__foil" />
+                <span className="rk-tilt__emblem" style={{ "--rk-tilt-tri": TRIANGLE_MASK } as React.CSSProperties}>
+                  <svg viewBox="0 0 100 87" className="rk-tilt__triangle">
+                    {TRIANGLES.map((points) => (
+                      <polygon key={points} points={points} />
+                    ))}
+                  </svg>
+                  <span className="rk-tilt__emblem-foil" />
+                </span>
+              </>
+            ) : (
+              <span className="rk-tilt__art" />
+            )}
+            <span className="rk-tilt__top">
+              <span className="rk-tilt__label">{label}</span>
+              <span className="rk-tilt__label">{index}</span>
+            </span>
+            <span className="rk-tilt__name">
+              <span className="rk-tilt__title">{title}</span>
+              <span className="rk-tilt__caption">{caption}</span>
+            </span>
             <span className="rk-tilt__shade" />
             {glare ? <span className="rk-tilt__glare" /> : null}
           </span>
