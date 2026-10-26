@@ -51,3 +51,9 @@ npm run build
 Dockerfile build, port 3000 inside the container, health check `/health`. Set the
 variables from `.env.example` in the resource's environment, and point Paddle's
 notification destination at `https://<api domain>/billing/webhook`.
+
+## Dependency notes
+
+- `overrides.multer` in `package.json` raises multer to `^2.5.0`: `@nestjs/platform-express`
+  (12.0–12.2) pins `multer@2.4.0`, which has a denial-of-service advisory fixed in 2.5.0.
+  Remove the override once Nest ships a version that depends on 2.5.0 or later.
