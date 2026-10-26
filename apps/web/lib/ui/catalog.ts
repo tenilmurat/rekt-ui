@@ -2,6 +2,7 @@ import { contentsHook } from "@/components/blocks/contents-hook";
 import { contentsMarker } from "@/components/blocks/contents-marker";
 import { magnifyRuler } from "@/components/blocks/magnify-ruler";
 import { rollingCounter } from "@/components/blocks/rolling-counter";
+import { stackGallery } from "@/components/blocks/stack-gallery";
 import { surpriseButton } from "@/components/blocks/surprise-button";
 import { tiltCard } from "@/components/blocks/tilt-card";
 import type { UiBlock } from "@/lib/ui/types";
@@ -42,7 +43,7 @@ const PUBLISHED: UiBlock[] = [tiltCard];
  * while the live wall stays empty.
  */
 const EXAMPLES: UiBlock[] =
-  process.env.NODE_ENV === "development" ? [surpriseButton, contentsMarker, contentsHook, magnifyRuler, rollingCounter] : [];
+  process.env.NODE_ENV === "development" ? [stackGallery, surpriseButton, contentsMarker, contentsHook, magnifyRuler, rollingCounter] : [];
 
 export const BLOCKS: UiBlock[] = [...PUBLISHED, ...EXAMPLES];
 
