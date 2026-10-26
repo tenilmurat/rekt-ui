@@ -5,7 +5,7 @@ export const contentsMarkerMeta: UiBlockMeta = {
   id: "contents-marker",
   title: "Contents marker",
   description:
-    "A table of contents with a single dot that springs to the section you point at, overshooting a little before it settles. Choosing a section scrolls to it.",
+    "A table of contents with a single dot beside the chosen section. Choose another and the dot flies there along a curve that bows outward, then settles beside the new label. Hovering only darkens the text.",
   category: "navigation",
   name: "ContentsMarker",
   files: ["ContentsMarker.tsx", "ContentsMarker.css"],
@@ -13,17 +13,18 @@ export const contentsMarkerMeta: UiBlockMeta = {
   controls: [
     {
       type: "segmented",
-      prop: "follow",
-      label: "Follow",
+      prop: "position",
+      label: "Dot",
       options: [
-        { value: "hover", label: "Hover" },
-        { value: "click", label: "Click" },
+        { value: "before", label: "Before" },
+        { value: "after", label: "After" },
       ],
-      default: "hover",
+      default: "after",
     },
-    { type: "slider", prop: "bounce", label: "Bounce", min: 0, max: 100, step: 5, default: 60 },
+    { type: "slider", prop: "arc", label: "Arc", min: 0, max: 100, step: 5, default: 50 },
+    { type: "slider", prop: "speed", label: "Speed", min: 250, max: 1200, step: 50, unit: "ms", default: 560 },
   ],
   howItWorks:
-    "The list measures the item that should be marked (the one you point at with Follow: Hover, or the one you chose) and writes its vertical centre to a CSS variable. The dot is absolutely positioned and moves there with a transform transition on a cubic-bezier whose second control point goes above 1, which is what makes it overshoot and bounce back; the Bounce control raises that point. The dot stays hidden until the first measurement, so it never flies in from the top. Items are real links: choosing one marks it as the current location (aria-current) and smooth-scrolls to the element with the matching id if the page has one. Keyboard focus moves the dot too, and reduced motion makes it jump instead of spring.",
+    "Each label's text is wrapped in a span, so the component can measure where it ends. The dot's resting place is just after the chosen label's text (Dot: After) or in a gutter on the left (Dot: Before), at the label's vertical centre; it's written as an inline transform. When you choose another section, the dot flies there with the Web Animations API along a quadratic curve: the control point sits out to the dot's side, further out the longer the trip (the Arc control scales it), and the path is sampled into keyframes and played on a soft ease-out, so it swings out and settles. Labels have different widths, so the curve adapts to each trip. If you choose again mid-flight, the new flight starts from wherever the dot is on screen. Hovering only darkens the text. Items are real links that set aria-current and smooth-scroll to the matching id; reduced motion makes the dot jump instead of fly.",
   cardHeight: 340,
 };

@@ -7,14 +7,13 @@
   --rk-cmark-bg: #ffffff;
   --rk-cmark-ink: #141210;
   --rk-cmark-muted: #6b6763;
-  --rk-cmark-accent: #ff5a1f;
+  --rk-cmark-dot: #141210;
   --rk-cmark-edge: rgb(20 18 16 / 0.08);
-  --rk-cmark-duration: 520ms;
 
   display: inline-flex;
   min-width: 220px;
   flex-direction: column;
-  gap: 18px;
+  gap: 16px;
   padding: 26px 28px;
   border-radius: 20px;
   background: var(--rk-cmark-bg);
@@ -25,18 +24,24 @@
 
 .rk-cmark__title {
   margin: 0;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  color: var(--rk-cmark-muted);
+  font-size: 13px;
+  font-weight: 500;
 }
 
+/* The dot is placed inside this box; "before" leaves a gutter on the left for it. */
 .rk-cmark__body {
   position: relative;
-  padding-left: 20px;
 }
 
-/* The marker rides the vertical centre of the shown item. */
+.rk-cmark[data-position="before"] .rk-cmark__body {
+  padding-left: 22px;
+}
+
+/*
+  The component sets the dot's transform to its resting place beside the
+  chosen label, and plays the curved flight between labels over the top.
+*/
 .rk-cmark__dot {
   position: absolute;
   top: 0;
@@ -44,14 +49,18 @@
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: var(--rk-cmark-accent);
+  background: var(--rk-cmark-dot);
   opacity: 0;
-  transform: translateY(calc(var(--rk-cmark-y) - 50%));
+  pointer-events: none;
 }
 
 .rk-cmark__dot[data-ready="true"] {
   opacity: 1;
-  transition: transform var(--rk-cmark-duration) var(--rk-cmark-ease);
+}
+
+/* With the dot in the gutter, its x is measured from the gutter's edge. */
+.rk-cmark[data-position="before"] .rk-cmark__dot {
+  left: 22px;
 }
 
 .rk-cmark__list {
@@ -67,24 +76,25 @@
   display: block;
   padding: 5px 0;
   color: var(--rk-cmark-muted);
-  font-size: 14px;
+  font-size: 15px;
   text-decoration: none;
-  transition: color 160ms ease;
+  transition: color 240ms ease;
 }
 
-.rk-cmark__link[data-shown="true"],
+/* Hover only darkens the text; the dot moves on choosing. */
+.rk-cmark__link:hover,
 .rk-cmark__link[aria-current="location"] {
   color: var(--rk-cmark-ink);
 }
 
 .rk-cmark__link:focus-visible {
-  outline: 2px solid var(--rk-cmark-accent);
+  outline: 2px solid var(--rk-cmark-ink);
   outline-offset: 3px;
   border-radius: 4px;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .rk-cmark__dot[data-ready="true"] {
+  .rk-cmark__link {
     transition: none;
   }
 }
