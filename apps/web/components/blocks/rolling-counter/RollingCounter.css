@@ -71,22 +71,36 @@
   height: 1em;
 }
 
+.rk-counter__controls {
+  display: flex;
+  flex: none;
+  gap: 6px;
+}
+
+/* Round icon buttons; the icons are Lucide's Minus and Plus. */
 .rk-counter__button {
+  display: grid;
+  width: 32px;
   height: 32px;
-  padding: 0 12px;
+  place-items: center;
+  padding: 0;
   border: 0;
   border-radius: 999px;
   background: var(--rk-counter-button);
   color: var(--rk-counter-ink);
-  font: inherit;
-  font-size: 13px;
-  font-weight: 600;
   cursor: pointer;
-  transition: transform 150ms var(--rk-counter-ease);
+  transition:
+    transform 150ms var(--rk-counter-ease),
+    opacity 150ms ease;
 }
 
-.rk-counter__button:active {
+.rk-counter__button:active:not(:disabled) {
   transform: scale(0.94);
+}
+
+.rk-counter__button:disabled {
+  cursor: default;
+  opacity: 0.4;
 }
 
 .rk-counter__button:focus-visible {
