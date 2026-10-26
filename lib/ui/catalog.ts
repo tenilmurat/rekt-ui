@@ -1,4 +1,5 @@
 import { rollingCounter } from "@/components/blocks/rolling-counter";
+import { tiltCard } from "@/components/blocks/tilt-card";
 import type { UiBlock } from "@/lib/ui/types";
 
 export type { UiBlock } from "@/lib/ui/types";
@@ -35,7 +36,7 @@ const PUBLISHED: UiBlock[] = [];
  * Install / Usage / Code / How it works, Copy prompt — can be checked locally
  * while the live wall stays empty.
  */
-const EXAMPLES: UiBlock[] = process.env.NODE_ENV === "development" ? [rollingCounter] : [];
+const EXAMPLES: UiBlock[] = process.env.NODE_ENV === "development" ? [tiltCard, rollingCounter] : [];
 
 export const BLOCKS: UiBlock[] = [...PUBLISHED, ...EXAMPLES];
 

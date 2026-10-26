@@ -1,0 +1,180 @@
+/*
+  Tilt card. Every colour is a variable with a fallback, so it works as is;
+  point the --rk-tilt-* variables at your own tokens to theme it. The pose
+  variables (--rk-tilt-rx, -ry, -gx, -gy, -glow) are written by the component.
+*/
+.rk-tilt {
+  --rk-tilt-width: 240px;
+  --rk-tilt-radius: 24px;
+  --rk-tilt-shade: 0.5;
+  --rk-tilt-back-bg: #141210;
+  --rk-tilt-back-ink: #f5f3f0;
+  --rk-tilt-back-muted: #a8a29b;
+  --rk-tilt-flip-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  perspective: 900px;
+  font-family: inherit;
+}
+
+.rk-tilt__card {
+  --rk-tilt-rx: 0deg;
+  --rk-tilt-ry: 0deg;
+  --rk-tilt-gx: 50%;
+  --rk-tilt-gy: 50%;
+  --rk-tilt-glow: 0;
+  --rk-tilt-sx: 0px;
+  --rk-tilt-sy: 18px;
+
+  display: block;
+  width: var(--rk-tilt-width);
+  aspect-ratio: 3 / 4;
+  border-radius: var(--rk-tilt-radius);
+  cursor: pointer;
+  user-select: none;
+  transform: rotateX(var(--rk-tilt-rx)) rotateY(var(--rk-tilt-ry));
+  transform-style: preserve-3d;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.rk-tilt__card:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 6px;
+}
+
+/* Turns the whole card over; the tilt above stays on the outside. */
+.rk-tilt__flipper {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 700ms var(--rk-tilt-flip-ease);
+}
+
+.rk-tilt__flipper[data-flipped="true"] {
+  transform: rotateY(180deg);
+}
+
+.rk-tilt__face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 18px;
+  border-radius: var(--rk-tilt-radius);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  text-align: left;
+  box-shadow:
+    0 0 0 1px rgb(255 255 255 / 0.06) inset,
+    var(--rk-tilt-sx) var(--rk-tilt-sy) 40px rgb(20 18 16 / calc(0.18 + var(--rk-tilt-shade) * 0.22));
+}
+
+.rk-tilt__front {
+  justify-content: space-between;
+  background: #1b1a18;
+  color: #ffffff;
+}
+
+/* The artwork: soft colour fields, no image needed. Swap for an <img> if you like. */
+.rk-tilt__art {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(60% 50% at 20% 25%, #ff8a5c 0%, transparent 70%),
+    radial-gradient(55% 45% at 80% 30%, #7c5cff 0%, transparent 70%),
+    radial-gradient(70% 55% at 55% 85%, #2fd3c3 0%, transparent 70%),
+    radial-gradient(40% 35% at 30% 75%, #ffd166 0%, transparent 70%),
+    #1b1a18;
+  filter: saturate(1.1);
+}
+
+.rk-tilt__label,
+.rk-tilt__title,
+.rk-tilt__back-title,
+.rk-tilt__back-text,
+.rk-tilt__hint {
+  position: relative;
+  z-index: 1;
+}
+
+.rk-tilt__label {
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  opacity: 0.8;
+}
+
+.rk-tilt__title {
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  text-shadow: 0 1px 12px rgb(0 0 0 / 0.25);
+}
+
+.rk-tilt__back {
+  gap: 10px;
+  background: var(--rk-tilt-back-bg);
+  color: var(--rk-tilt-back-ink);
+  transform: rotateY(180deg);
+}
+
+.rk-tilt__back .rk-tilt__label {
+  color: var(--rk-tilt-back-muted);
+  opacity: 1;
+}
+
+.rk-tilt__back-title {
+  margin-top: auto;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.rk-tilt__back-text {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--rk-tilt-back-muted);
+}
+
+.rk-tilt__hint {
+  margin-top: 8px;
+  font-size: 11px;
+  color: var(--rk-tilt-back-muted);
+  opacity: 0.7;
+}
+
+/* Darkens the side that leans away from the light. */
+.rk-tilt__shade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    120% 120% at calc(100% - var(--rk-tilt-gx)) calc(100% - var(--rk-tilt-gy)),
+    rgb(0 0 0 / calc(var(--rk-tilt-shade) * 0.55)) 0%,
+    transparent 60%
+  );
+  opacity: var(--rk-tilt-glow);
+}
+
+/* The light that follows the pointer. */
+.rk-tilt__glare {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    80% 80% at var(--rk-tilt-gx) var(--rk-tilt-gy),
+    rgb(255 255 255 / 0.32) 0%,
+    rgb(255 255 255 / 0.08) 35%,
+    transparent 65%
+  );
+  mix-blend-mode: soft-light;
+  opacity: var(--rk-tilt-glow);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rk-tilt__flipper {
+    transition: none;
+  }
+}
