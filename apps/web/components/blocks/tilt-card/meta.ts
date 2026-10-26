@@ -8,7 +8,7 @@ export const tiltCardMeta: UiBlockMeta = {
   id: "tilt-card",
   title: "Tilt card",
   description:
-    "A dark card that leans in 3D under your pointer while the Rekt mark catches an iridescent foil, with a glare and a shade that follow. Press it and it turns over to the logo on its back.",
+    "A holographic card that leans in 3D under your pointer: a dot grid lights up in rainbow glitter where the light falls, and the Rekt mark catches the foil. Press it and it turns over to a plain back with just the logo.",
   category: "hover",
   name: "TiltCard",
   files: ["TiltCard.tsx", "TiltCard.css"],
@@ -40,6 +40,6 @@ export const tiltCardMeta: UiBlockMeta = {
     { type: "toggle", prop: "glare", label: "Glare", default: true },
   ],
   howItWorks:
-    "Two layers do two jobs. The outer card takes the tilt: on pointer move it works out where the pointer sits (−0.5 to 0.5 on each axis) and turns that into rotateX and rotateY, inverted for Sink. Each frame the pose eases 14% of the way to that target, so fast movements stay smooth and leaving the card lets it settle back. The pose is written as CSS variables that every effect reads. On the plain near-black face, the Rekt mark is an SVG with its own foil: a spectrum gradient whose position follows the pointer, cut to the logo's shape by an SVG mask of the same path, so the colours slide across the mark as the card moves. The inner layer turns the card over: pressing it toggles rotateY(180deg) with a 700ms ease, and both faces hide their back side, so you only ever see the one facing you; the back carries only the logo. It acts as a button (focusable, announced as pressed or not, flipped with Enter or Space); it's a div rather than a <button> because browsers flatten 3D inside buttons. Reduced motion turns the tilt and the flip animation off.",
+    "Two layers do two jobs. The outer card takes the tilt: on pointer move it works out where the pointer sits (−0.5 to 0.5 on each axis) and turns that into rotateX and rotateY, inverted for Sink. Each frame the pose eases 14% of the way to that target, so fast movements stay smooth and leaving the card lets it settle back. The pose is written as CSS variables that every effect reads. The holographic finish is built from masks over a near-black face: a fine dot grid; a spectrum gradient whose position follows the pointer, masked to the dot grid and to a soft spot at the pointer (two masks intersected), so the dots near the light turn to colour; and glitter, three coarser grids of bigger dots added together and cut to a tighter spot, with the spectrum running the other way, so bright specks pop in and out as you move. The Rekt mark is an SVG with its own foil, cut to its shape by an SVG mask of the same path. The inner layer turns the card over: pressing it toggles rotateY(180deg) with a 700ms ease, and both faces hide their back side, so you only ever see the one facing you; the back is plain, just the logo on the dark face. It acts as a button (focusable, announced as pressed or not, flipped with Enter or Space); it's a div rather than a <button> because browsers flatten 3D inside buttons. Reduced motion turns the tilt and the flip animation off.",
   cardHeight: 440,
 };

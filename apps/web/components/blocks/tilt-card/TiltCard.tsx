@@ -13,7 +13,7 @@ export type TiltCardProps = {
   corner?: number;
   /** A soft light that follows the pointer across the surface. */
   glare?: boolean;
-  /** "holo" is a plain dark card whose logo catches an iridescent foil; "color" is soft colour fields. */
+  /** "holo" is a dark card with an iridescent foil that follows the pointer; "color" is soft colour fields. */
   finish?: "holo" | "color";
   /** The small line at the top left of the front. */
   label?: string;
@@ -46,6 +46,17 @@ function Logo({ className }: { className: string }) {
       </svg>
       <span className="rk-tilt__logo-foil" />
     </span>
+  );
+}
+
+/** Dot grid, the foil seen through it, and the brighter glitter on top. */
+function Holo() {
+  return (
+    <>
+      <span className="rk-tilt__dots" />
+      <span className="rk-tilt__foil" />
+      <span className="rk-tilt__glitter" />
+    </>
   );
 }
 
@@ -159,7 +170,14 @@ export function TiltCard({
       >
         <span className="rk-tilt__flipper" data-flipped={flipped}>
           <span className="rk-tilt__face rk-tilt__front" data-finish={finish} aria-hidden={flipped}>
-            {finish === "holo" ? <Logo className="rk-tilt__logo--front" /> : <span className="rk-tilt__art" />}
+            {finish === "holo" ? (
+              <>
+                <Holo />
+                <Logo className="rk-tilt__logo--front" />
+              </>
+            ) : (
+              <span className="rk-tilt__art" />
+            )}
             <span className="rk-tilt__top">
               <span className="rk-tilt__label">{label}</span>
               <span className="rk-tilt__label">{index}</span>
@@ -171,7 +189,7 @@ export function TiltCard({
             <span className="rk-tilt__shade" />
             {glare ? <span className="rk-tilt__glare" /> : null}
           </span>
-          {/* The back carries only the logo. */}
+          {/* The back is plain: the dark face and the logo, no texture or foil behind it. */}
           <span className="rk-tilt__face rk-tilt__back" data-finish={finish} aria-hidden={!flipped}>
             <Logo className="rk-tilt__logo--back" />
             <span className="rk-tilt__shade" />
