@@ -13,18 +13,52 @@ export type TiltCardProps = {
   corner?: number;
   /** A soft light that follows the pointer across the surface. */
   glare?: boolean;
-  /** The small line at the top of the front. */
+  /** "holo" is a dark card with an iridescent foil that follows the pointer; "color" is soft colour fields. */
+  finish?: "holo" | "color";
+  /** The small line at the top left of the front. */
   label?: string;
+  /** The small mark at the top right of the front. */
+  index?: string;
   /** The name on the front. */
   title?: string;
-  /** The heading on the back. */
-  backTitle?: string;
-  /** The text on the back. */
-  backText?: string;
+  /** The line under the name. */
+  caption?: string;
 };
 
 type Pose = { rx: number; ry: number; gx: number; gy: number; glow: number };
 const REST: Pose = { rx: 0, ry: 0, gx: 50, gy: 50, glow: 0 };
+
+/** The Rekt mark: a rounded square frame. */
+const LOGO_PATH =
+  "M19 0C21.2091 0 23 1.79086 23 4V16C23 18.2091 21.2091 20 19 20H4C1.79094 19.9999 0 18.2091 0 16V4C0 1.79092 1.79094 0 4 0H19ZM5 4C4.44772 4 4 4.44772 4 5V15C4 15.5523 4.44772 16 5 16H18C18.5523 16 19 15.5523 19 15V5C19 4.44772 18.5523 4 18 4H5Z";
+
+/** The same mark as an image, used to cut the logo's foil to its shape. */
+const LOGO_MASK = `url("data:image/svg+xml,${encodeURIComponent(
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 23 20"><path d="${LOGO_PATH}" fill="#000" fill-rule="evenodd"/></svg>`,
+)}")`;
+
+/** The logo with its own foil, shared by both faces. */
+function Logo({ className }: { className: string }) {
+  return (
+    <span className={`rk-tilt__logo ${className}`} style={{ "--rk-tilt-logo": LOGO_MASK } as React.CSSProperties}>
+      <svg viewBox="0 0 23 20" aria-hidden="true">
+        <path d={LOGO_PATH} fillRule="evenodd" />
+      </svg>
+      <span className="rk-tilt__logo-foil" />
+    </span>
+  );
+}
+
+/** Dot grid, the foil seen through it, and the brighter glitter on top. */
+function Holo() {
+  return (
+    <>
+      <span className="rk-tilt__dots" />
+      <span className="rk-tilt__foil" />
+      <span className="rk-tilt__glitter" />
+    </>
+  );
+}
 
 /**
  * A card that tilts in 3D under the pointer, with a glare and a shade that
@@ -37,10 +71,11 @@ export function TiltCard({
   shade = 50,
   corner = 24,
   glare = true,
-  label = "Rekt UI · No. 001",
-  title = "Tilt card",
-  backTitle = "The other side",
-  backText = "Press the card again to turn it back. It tilts on this side too.",
+  finish = "holo",
+  label = "Holographic",
+  index = "No. 001",
+  title = "Rekt UI",
+  caption = "Tilt card edition",
 }: TiltCardProps) {
   const cardRef = useRef<HTMLDivElement | null>(null);
   const target = useRef<Pose>({ ...REST });
@@ -134,18 +169,29 @@ export function TiltCard({
         }}
       >
         <span className="rk-tilt__flipper" data-flipped={flipped}>
-          <span className="rk-tilt__face rk-tilt__front" aria-hidden={flipped}>
-            <span className="rk-tilt__art" />
-            <span className="rk-tilt__label">{label}</span>
-            <span className="rk-tilt__title">{title}</span>
+          <span className="rk-tilt__face rk-tilt__front" data-finish={finish} aria-hidden={flipped}>
+            {finish === "holo" ? (
+              <>
+                <Holo />
+                <Logo className="rk-tilt__logo--front" />
+              </>
+            ) : (
+              <span className="rk-tilt__art" />
+            )}
+            <span className="rk-tilt__top">
+              <span className="rk-tilt__label">{label}</span>
+              <span className="rk-tilt__label">{index}</span>
+            </span>
+            <span className="rk-tilt__name">
+              <span className="rk-tilt__title">{title}</span>
+              <span className="rk-tilt__caption">{caption}</span>
+            </span>
             <span className="rk-tilt__shade" />
             {glare ? <span className="rk-tilt__glare" /> : null}
           </span>
-          <span className="rk-tilt__face rk-tilt__back" aria-hidden={!flipped}>
-            <span className="rk-tilt__label">{label}</span>
-            <span className="rk-tilt__back-title">{backTitle}</span>
-            <span className="rk-tilt__back-text">{backText}</span>
-            <span className="rk-tilt__hint">Press to turn back</span>
+          {/* The back is plain: the dark face and the logo, no texture or foil behind it. */}
+          <span className="rk-tilt__face rk-tilt__back" data-finish={finish} aria-hidden={!flipped}>
+            <Logo className="rk-tilt__logo--back" />
             <span className="rk-tilt__shade" />
             {glare ? <span className="rk-tilt__glare" /> : null}
           </span>
