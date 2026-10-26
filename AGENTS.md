@@ -12,8 +12,9 @@ own `Dockerfile`, deploys as its own Coolify resource. The API is the separate
 **This repo is public.** Never commit secrets or Pro component source. Pro source lives in
 the backend's database and reaches Pro accounts through `GET /components/:id/source`.
 
-Design source of truth: Figma file `dbKPK65fA82qNvVafpPXls`, frames `286:605`
-(Default View) and `286:3044` (Full View). Fetch only the node you are changing.
+Design: Figma file `dbKPK65fA82qNvVafpPXls`. Its frames `286:605` / `286:3044` are the
+earlier sidebar library and no longer match; the wall layout below has no Figma frame yet.
+Fetch only the node you are changing.
 
 ## Commands (Node 24)
 `npm install`, `npm run dev`, `npm run build`, `npm run typecheck`
@@ -27,27 +28,35 @@ Design source of truth: Figma file `dbKPK65fA82qNvVafpPXls`, frames `286:605`
   `components/shell/Icon.tsx` so they follow the theme. Don't hand-draw SVGs.
 - Motion follows Beautiful UI: `--ease-out-strong`, `fade-up`, `pop-in`, press
   `active:scale-[0.96]`. `prefers-reduced-motion` is honoured globally in `globals.css`.
-- There is no Add Component UI. The library is curated in code.
+- There is no Add Component UI. The library is curated in code (`lib/ui/catalog.ts`).
 
-## Adding a component
+## Layout
+Modelled on bencho.dev's structure (not its code or content):
+- **UI** (`/`, `components/wall/UiWall.tsx`): centred hero, category chips (`?category=`),
+  then a 3-column masonry wall (`Masonry`: 1 / 2 / 3 columns at 0 / 640 / 1024px, 12px gaps,
+  20px gutters). Cards are 28px-radius live previews with the name in a pill bottom left and
+  save bottom right (`BlockCard`). Pressing a card opens `BlockDialog` over the wall
+  (`?c=<id>`): stage with Preview / Code on the left, details, style presets, Share and the
+  code action in a 300px panel on the right. A Pro band follows for free visitors.
+- **Good designs of X** (`/good-designs`): same hero, chips and masonry, screenshot tiles
+  (`DesignCard`) that open the live site.
+- With nothing published the UI wall shows stand-in cards and a short notice.
+
+## Publishing a component
+The wall reads `BLOCKS` in `lib/ui/catalog.ts`, which **starts empty on purpose**.
 1. Build the preview in `components/previews/<Name>.tsx`. It receives `paused`,
    `startedAt` and `expanded` plus its preset props, and must stop animating when
    `paused` is true.
-2. Add a `ComponentItem` to the category's `items` array in
-   `lib/registry/categories/<category>.ts` — title, description, source fields,
-   `presets`, `code`.
-   Set `replay: true` when the preview plays once and stops (a reveal, a run, a flow).
-   The canvas then shows a replay button, which remounts the preview — the surface keys
-   it on `startedAt`. Leave it off for looping, static or hover-driven components.
-3. It renders below the existing entries automatically, with its own deep link
-   `#<item id>`.
+2. Add an item to `BLOCKS`: `id`, `title`, `description`, `category` (an id from
+   `UI_CATEGORIES`), `component`, optional `presets` (shown as Style in the dialog),
+   `cardHeight` (varied heights make the masonry), `replay`, `tier`, `code`.
+3. `UI_CATEGORIES` is a placeholder list until the categories are decided.
 
-New category: add a `ComponentCategory` to `lib/registry/index.ts`. Categories with no
-items are filtered out — they are not listed and their route 404s, so a page only exists
-once it has something to show.
+`lib/registry/categories` holds the earlier curated set (from the Studio-Rekt library). It
+is **not published** — review an item before moving it into `BLOCKS`.
 
 ## Adding a tool
-Rekt UI's own tools are the second sidebar group ("Tools") and live in `lib/registry/tools.ts`: add a
+Rekt UI's own tools are the sidebar on `/create/<id>` pages and live in `lib/registry/tools.ts`: add a
 `ToolEntry` (id, sidebar name, page title, description, component) and `/create/<id>`,
 the nav row and the page appear. `ToolShell` supplies the frame; the tool itself owns its
 controls. REKT / CODE is the worked example — `components/create/code/` for the UI,

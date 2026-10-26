@@ -5,10 +5,10 @@ import { DesignCard } from "@/components/good-designs/DesignCard";
 import { AccountGate } from "@/components/site/AccountGate";
 import { BookmarkButton } from "@/components/site/BookmarkButton";
 import { getDesign } from "@/lib/good-designs";
-import { categories } from "@/lib/registry";
+import { UI_CATEGORIES, BLOCKS } from "@/lib/ui/catalog";
 import { useSession } from "@/lib/session";
 
-const allItems = categories.flatMap((c) => c.items.map((item) => ({ item, category: c })));
+const categoryName = (id: string) => UI_CATEGORIES.find((c) => c.id === id)?.label ?? "Component";
 
 export default function SavedPage() {
   return (
@@ -23,7 +23,7 @@ function SavedLists() {
   const ids = (kind: string) => [...bookmarks].filter((k) => k.startsWith(`${kind}:`)).map((k) => k.slice(kind.length + 1));
 
   // Bookmarks of items that were since removed from the library are skipped.
-  const components = ids("component").flatMap((id) => allItems.filter((entry) => entry.item.id === id));
+  const components = ids("component").flatMap((id) => BLOCKS.filter((block) => block.id === id));
   const designs = ids("design").flatMap((id) => getDesign(id) ?? []);
 
   if (!components.length && !designs.length) {
@@ -50,14 +50,14 @@ function SavedLists() {
             Components <span style={{ color: "var(--ink-3)" }}>{components.length}</span>
           </h2>
           <ul className="flex max-w-[640px] flex-col border-t" style={{ borderColor: "var(--line)" }}>
-            {components.map(({ item, category }) => (
+            {components.map((item) => (
               <li key={item.id} className="flex items-center justify-between gap-[16px] border-b py-[12px]" style={{ borderColor: "var(--line)" }}>
-                <Link href={`/${category.id}#${item.id}`} className="flex min-w-0 flex-col gap-[2px]">
+                <Link href={`/?c=${item.id}`} className="flex min-w-0 flex-col gap-[2px]">
                   <span className="text-[13px] font-medium" style={{ color: "var(--ink)" }}>
                     {item.title}
                   </span>
                   <span className="truncate text-[12px]" style={{ color: "var(--ink-3)" }}>
-                    {category.name} · {item.description}
+                    {categoryName(item.category)} · {item.description}
                   </span>
                 </Link>
                 <BookmarkButton kind="component" id={item.id} label={item.title} className="shrink-0" />

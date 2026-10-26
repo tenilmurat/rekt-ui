@@ -1,6 +1,10 @@
-import { redirect } from "next/navigation";
-import { firstCategory } from "@/lib/registry";
+import { Suspense } from "react";
+import { UiWall } from "@/components/wall/UiWall";
 
 export default function Home() {
-  redirect(`/${firstCategory.id}`);
+  return (
+    <Suspense>
+      <UiWall />
+    </Suspense>
+  );
 }

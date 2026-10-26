@@ -4,7 +4,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Icon } from "@/components/shell/Icon";
 import { ThemeToggle } from "@/components/shell/ThemeToggle";
-import { componentCategories } from "@/lib/registry";
 import { tools } from "@/lib/registry/tools";
 
 /**
@@ -129,17 +128,6 @@ export function Sidebar({
             aria-label="Library"
             className="no-scrollbar flex h-full flex-col gap-[32px] overflow-y-auto pb-[56px]"
           >
-            <NavGroup
-              label="Components"
-              items={componentCategories.map((c) => ({
-                id: c.id,
-                name: c.name,
-                fullParam: c.items[0]?.id,
-              }))}
-              basePath=""
-              activePath={pathname}
-              keepFullView={compact}
-            />
             <NavGroup
               label="Tools"
               items={tools.map((t) => ({ id: t.id, name: t.name, fullParam: "1" }))}

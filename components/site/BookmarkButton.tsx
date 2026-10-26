@@ -9,11 +9,14 @@ export function BookmarkButton({
   id,
   label,
   className = "",
+  round = false,
 }: {
   kind: BookmarkKind;
   id: string;
   label: string;
   className?: string;
+  /** The 38px round button that sits on wall cards. */
+  round?: boolean;
 }) {
   const { isBookmarked, toggleBookmark } = useSession();
   const saved = isBookmarked(kind, id);
@@ -25,7 +28,11 @@ export function BookmarkButton({
       aria-pressed={saved}
       aria-label={saved ? `Remove ${label} from Saved` : `Save ${label}`}
       title={saved ? "Saved" : "Save"}
-      className={`control flex items-center rounded-[8px] border p-[6px] active:scale-[0.96] ${className}`}
+      className={
+        round
+          ? `control flex size-[38px] items-center justify-center rounded-full border active:scale-[0.94] ${className}`
+          : `control flex items-center rounded-[8px] border p-[6px] active:scale-[0.96] ${className}`
+      }
       style={{ backgroundColor: "var(--control-bg)", borderColor: "var(--control-line)" }}
     >
       <Bookmark
