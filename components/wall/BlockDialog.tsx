@@ -3,11 +3,11 @@
 import Link from "next/link";
 import { useEffect, useId, useRef, useState } from "react";
 import { Bookmark, Box, Code2, Link2, Lock, RotateCcw, X } from "lucide-react";
-import { CodeBlock, CodeSection, FileTabs } from "@/components/wall/CodeView";
+import { CodeBlock, CodeSection, PillTabs } from "@/components/wall/CodeView";
 import { Controls } from "@/components/wall/Controls";
 import { useSession } from "@/lib/session";
 import { copyText, useToast } from "@/lib/toast";
-import { installCommand, promptFor, usageSnippet } from "@/lib/ui/snippets";
+import { INSTALL_DIR, cliCommand, manualInstall, promptFor, usageSnippet } from "@/lib/ui/snippets";
 import type { UiBlock } from "@/lib/ui/types";
 import { useBlockSource } from "@/lib/ui/use-block-source";
 import { useBlockValues } from "@/lib/ui/use-block-values";
@@ -25,6 +25,9 @@ export function BlockDialog({ block, onClose }: { block: UiBlock; onClose: () =>
   const { isBookmarked, toggleBookmark } = useSession();
   const saved = isBookmarked("component", block.id);
   const [activeFile, setActiveFile] = useState(block.files[0]);
+  // Pro components aren't in the public registry, so they install by hand.
+  const hasCli = block.tier !== "pro";
+  const [installMethod, setInstallMethod] = useState<"cli" | "manual">(hasCli ? "cli" : "manual");
   const toast = useToast();
   const closeRef = useRef<HTMLButtonElement | null>(null);
   const titleId = useId();
@@ -45,6 +48,7 @@ export function BlockDialog({ block, onClose }: { block: UiBlock; onClose: () =>
   }, [onClose]);
 
   const usage = usageSnippet(block, values);
+  const install = installMethod === "cli" ? cliCommand(block) : manualInstall(block);
   const fileCode = source.files?.find((f) => f.path === activeFile)?.code ?? null;
 
   async function share() {
@@ -140,8 +144,25 @@ export function BlockDialog({ block, onClose }: { block: UiBlock; onClose: () =>
             </div>
           ) : (
             <div className="no-scrollbar flex flex-1 flex-col gap-[10px] overflow-y-auto px-[12px] pb-[12px]">
-              <CodeSection title="Install" copy={installCommand(block)} copyLabel="Install command">
-                <CodeBlock code={installCommand(block)} language="plain" />
+              <CodeSection title="Install" copy={installMethod === "cli" ? cliCommand(block) : manualInstall(block).split("\n")[0]} copyLabel="Install command" defaultOpen>
+                {hasCli ? (
+                  <PillTabs
+                    label="Install method"
+                    items={[
+                      { id: "cli", label: "CLI" },
+                      { id: "manual", label: "Manual" },
+                    ]}
+                    active={installMethod}
+                    onSelect={(id) => setInstallMethod(id as "cli" | "manual")}
+                  />
+                ) : null}
+                <CodeBlock code={install} language="plain" />
+                {installMethod === "cli" ? (
+                  <p className="px-[8px] pt-[8px] text-[12px] leading-[1.5]" style={{ color: "var(--ink-3)" }}>
+                    Adds {block.files.join(" and ")} to <span className="font-mono">{INSTALL_DIR}/</span> from the Rekt UI registry, with
+                    anything it depends on. Works in any project set up with shadcn.
+                  </p>
+                ) : null}
               </CodeSection>
 
               <CodeSection title="Usage" copy={usage} copyLabel="Usage" defaultOpen>
@@ -149,7 +170,9 @@ export function BlockDialog({ block, onClose }: { block: UiBlock; onClose: () =>
               </CodeSection>
 
               <CodeSection title="Code" copy={fileCode} copyLabel={activeFile}>
-                {block.files.length > 1 ? <FileTabs files={block.files} active={activeFile} onSelect={setActiveFile} /> : null}
+                {block.files.length > 1 ? (
+                  <PillTabs label="Files" items={block.files.map((f) => ({ id: f, label: f }))} active={activeFile} onSelect={setActiveFile} mono />
+                ) : null}
                 {source.error ? (
                   <p className="px-[8px] py-[12px] text-[13px]" style={{ color: "var(--red)" }}>
                     {source.error}

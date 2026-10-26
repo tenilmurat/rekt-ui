@@ -127,32 +127,36 @@ export function CodeSection({
   );
 }
 
-/** The Code section's body when a component has several files: one tab per file. */
-export function FileTabs({
-  files,
+/** Small pill tabs inside a section: the install methods, or one tab per file. */
+export function PillTabs({
+  label,
+  items,
   active,
   onSelect,
+  mono = false,
 }: {
-  files: string[];
+  label: string;
+  items: { id: string; label: string }[];
   active: string;
-  onSelect: (path: string) => void;
+  onSelect: (id: string) => void;
+  mono?: boolean;
 }) {
   return (
-    <div role="tablist" aria-label="Files" className="mb-[8px] flex gap-[4px]">
-      {files.map((path) => (
+    <div role="tablist" aria-label={label} className="mb-[8px] flex gap-[4px]">
+      {items.map((item) => (
         <button
-          key={path}
+          key={item.id}
           type="button"
           role="tab"
-          aria-selected={path === active}
-          onClick={() => onSelect(path)}
-          className="h-[28px] rounded-full px-[10px] font-mono text-[12px] transition-colors"
+          aria-selected={item.id === active}
+          onClick={() => onSelect(item.id)}
+          className={`h-[28px] rounded-full px-[10px] text-[12px] transition-colors ${mono ? "font-mono" : "font-medium"}`}
           style={{
-            backgroundColor: path === active ? "var(--surface)" : "transparent",
-            color: path === active ? "var(--ink)" : "var(--ink-3)",
+            backgroundColor: item.id === active ? "var(--surface)" : "transparent",
+            color: item.id === active ? "var(--ink)" : "var(--ink-3)",
           }}
         >
-          {path}
+          {item.label}
         </button>
       ))}
     </div>

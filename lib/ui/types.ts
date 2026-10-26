@@ -41,4 +41,7 @@ export type UiBlock = {
   source?: { name: string; url?: string; license?: string };
 };
 
+/** Everything about a component except the component itself — safe to read on the server. */
+export type UiBlockMeta = Omit<UiBlock, "component">;
+
 export type SourceFile = { path: string; code: string };

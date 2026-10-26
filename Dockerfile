@@ -7,6 +7,7 @@ FROM node:24-alpine AS build
 WORKDIR /app
 ENV NEXT_TELEMETRY_DISABLED=1
 # Baked into the browser bundle at build time; set them as build variables in Coolify.
+ARG NEXT_PUBLIC_SITE_URL
 ARG NEXT_PUBLIC_API_URL
 ARG NEXT_PUBLIC_BASE_PATH
 ARG NEXT_PUBLIC_SUPABASE_URL

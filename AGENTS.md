@@ -53,10 +53,11 @@ components/blocks/<id>/
   <Name>.tsx   # "use client", named export <Name>, typed props with defaults
   <Name>.css   # class prefix rk-<short>-, colours as --rk-<short>-* variables with fallbacks,
                # prefers-reduced-motion handled
-  index.ts     # the site's description of it (a UiBlock) + imports the CSS for the preview
+  meta.ts      # the site's description of it (UiBlockMeta): plain data, read on the server too
+  index.ts     # meta + the component + its CSS import, for the wall and the dialog
 ```
 
-`index.ts` exports a `UiBlock` (`lib/ui/types.ts`): `id`, `title`, `description`,
+`meta.ts` exports a `UiBlockMeta` (`lib/ui/types.ts`): `id`, `title`, `description`,
 `category` (an id from `UI_CATEGORIES`), `component`, `name`, `files` (the .tsx first),
 `dependencies` (npm packages beyond React), `controls`, `howItWorks`, `cardHeight`,
 `tier`, and `source` for credit.
@@ -64,16 +65,27 @@ components/blocks/<id>/
 The dialog builds everything else from that, so nothing is written twice:
 - **Controls** (`segmented` / `toggle` / `slider`), one per prop. The preview and the card
   render with the tuned values.
-- **Install**: `npm install <dependencies>`, or "nothing to install beyond React".
-- **Usage**: imports + JSX with the tuned props (`lib/ui/snippets.ts`).
+- **Install**: two tabs. **CLI** — `npx shadcn@latest add <site>/r/<id>.json`, which puts the
+  files in the user's `components/rekt-ui/` and installs the dependencies. **Manual** —
+  `npm install <dependencies>`, then the files from the Code section.
+- **Usage**: imports from `@/components/rekt-ui/` + JSX with the tuned props
+  (`lib/ui/snippets.ts`).
 - **Code**: the real files, served as static JSON by `app/source/[id]` from the folder.
 - **How it works**: `howItWorks`.
 - **Copy prompt**: files, install, usage and notes in one message for an AI assistant.
 
 Reference: `components/blocks/rolling-counter`.
 
+## The registry
+`app/r/[item]` serves each free component as a shadcn registry item (`/r/<id>.json`), and
+`app/r/registry.json` lists them all. Both read `BLOCK_METAS` in `lib/ui/metas.ts` and the
+files from disk, and are built as static JSON. `NEXT_PUBLIC_SITE_URL` sets the address the
+install commands use (empty: the address the page is opened on). Tested end to end: a fresh
+Next.js + shadcn project installs the rolling counter and builds.
+
 ## Publishing
-The wall reads `BLOCKS` in `lib/ui/catalog.ts`. Add the block's `UiBlock` to `PUBLISHED`.
+1. Add the component's meta to `BLOCK_METAS` in `lib/ui/metas.ts` (free components only).
+2. Add its `UiBlock` (from `index.ts`) to `PUBLISHED` in `lib/ui/catalog.ts`.
 `EXAMPLES` (the rolling counter) appear only in `npm run dev`, so the live wall stays empty
 until real components are published. `UI_CATEGORIES` is a placeholder list.
 

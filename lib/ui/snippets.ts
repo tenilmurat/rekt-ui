@@ -5,6 +5,29 @@ export function defaultValues(block: UiBlock): ControlValues {
   return Object.fromEntries((block.controls ?? []).map((c) => [c.prop, c.default]));
 }
 
+/** Where installed components live in a project, by the CLI or by hand. */
+export const INSTALL_DIR = "components/rekt-ui";
+
+/** Where the site is served from, for the registry URLs in install commands. */
+export function siteOrigin() {
+  const fromEnv = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "");
+  if (fromEnv) return fromEnv;
+  return typeof window === "undefined" ? "" : `${window.location.origin}${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}`;
+}
+
+/** One command: the shadcn CLI fetches the files from Rekt UI's registry and installs the dependencies. */
+export function cliCommand(block: Pick<UiBlock, "id">) {
+  return `npx shadcn@latest add ${siteOrigin()}/r/${block.id}.json`;
+}
+
+/** By hand: the dependencies, then the files from the Code section. */
+export function manualInstall(block: UiBlock) {
+  const deps = block.dependencies?.length
+    ? `npm install ${block.dependencies.join(" ")}`
+    : "# nothing to install beyond React";
+  return `${deps}\n# then add ${block.files.join(" and ")} (Code, below) to ${INSTALL_DIR}/`;
+}
+
 export function installCommand(block: UiBlock) {
   return block.dependencies?.length
     ? `npm install ${block.dependencies.join(" ")}`
@@ -20,7 +43,7 @@ export function usageSnippet(block: UiBlock, values: ControlValues) {
   const css = block.files.find((f) => f.endsWith(".css"));
   const props = Object.entries(values).map(([k, v]) => `  ${prop(k, v)}`);
   const jsx = props.length ? `<${block.name}\n${props.join("\n")}\n/>` : `<${block.name} />`;
-  return [`import { ${block.name} } from "./${base}";`, css ? `import "./${css}";` : null, "", jsx]
+  return [`import { ${block.name} } from "@/${INSTALL_DIR}/${base}";`, css ? `import "@/${INSTALL_DIR}/${css}";` : null, "", jsx]
     .filter((line) => line !== null)
     .join("\n");
 }
@@ -42,7 +65,7 @@ export function promptFor(block: UiBlock, values: ControlValues, files: SourceFi
     "```",
     "",
     "## Files",
-    "Create these files next to each other (for example in components/ui/), unchanged:",
+    `Create these files in ${INSTALL_DIR}/, unchanged:`,
     "",
     ...files.flatMap((f) => [`### ${f.path}`, "```" + fence(f.path), f.code.trimEnd(), "```", ""]),
     "## Usage",
