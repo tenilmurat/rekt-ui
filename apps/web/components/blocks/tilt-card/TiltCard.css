@@ -10,10 +10,7 @@
   --rk-tilt-holo-bg: #0b0b0d;
   --rk-tilt-holo-ink: #f5f5f7;
   --rk-tilt-holo-muted: #8e8e96;
-  --rk-tilt-holo-dot: rgb(255 255 255 / 0.13);
   --rk-tilt-logo-fill: rgb(236 236 242 / 0.92);
-  /* Dot grid pitch; the foil and the glitter line up with it. */
-  --rk-tilt-pitch: 7px;
   /* The foil's spectrum. Its position follows the pointer, so the colours slide as the card moves. */
   --rk-tilt-foil: linear-gradient(
     115deg,
@@ -169,72 +166,6 @@
 .rk-tilt__front[data-finish="holo"] .rk-tilt__title {
   font-size: 24px;
   text-shadow: none;
-}
-
-.rk-tilt__dots,
-.rk-tilt__foil,
-.rk-tilt__glitter {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-
-/* A fine dot grid across the face. */
-.rk-tilt__dots {
-  background: radial-gradient(circle, var(--rk-tilt-holo-dot) 0.9px, transparent 1.3px) 0 0 /
-    var(--rk-tilt-pitch) var(--rk-tilt-pitch);
-}
-
-/*
-  The foil: the spectrum, seen only through the dots and only around the
-  pointer. The two masks are intersected — a soft spot at the pointer and the
-  dot grid — so the dots near the light turn to colour.
-*/
-.rk-tilt__foil {
-  background: var(--rk-tilt-foil);
-  background-size: 170% 170%;
-  background-position: var(--rk-tilt-gx) var(--rk-tilt-gy);
-  -webkit-mask:
-    radial-gradient(circle at var(--rk-tilt-gx) var(--rk-tilt-gy), #000 0%, rgb(0 0 0 / 0.5) 30%, transparent 62%) 0 0 / 100% 100%,
-    radial-gradient(circle, #000 1.25px, transparent 1.7px) 0 0 / var(--rk-tilt-pitch) var(--rk-tilt-pitch);
-  mask:
-    radial-gradient(circle at var(--rk-tilt-gx) var(--rk-tilt-gy), #000 0%, rgb(0 0 0 / 0.5) 30%, transparent 62%) 0 0 / 100% 100%,
-    radial-gradient(circle, #000 1.25px, transparent 1.7px) 0 0 / var(--rk-tilt-pitch) var(--rk-tilt-pitch);
-  -webkit-mask-composite: source-in;
-  mask-composite: intersect;
-  opacity: calc(0.18 + var(--rk-tilt-glow) * 0.82);
-}
-
-/*
-  Glitter: a sparse scatter of bigger, brighter dots that pop in and out as
-  the pointer moves. Three coarser grids (3, 5 and 7 dots apart, offset so they
-  sit on the fine grid's dots) are added together, then cut to a tighter spot
-  at the pointer. Its spectrum runs the other way to the foil's.
-*/
-.rk-tilt__glitter {
-  background: var(--rk-tilt-foil);
-  background-size: 140% 140%;
-  background-position: calc(100% - var(--rk-tilt-gx)) calc(100% - var(--rk-tilt-gy));
-  filter: brightness(1.35) saturate(1.3);
-  -webkit-mask:
-    radial-gradient(circle at var(--rk-tilt-gx) var(--rk-tilt-gy), #000 0%, transparent 42%) 0 0 / 100% 100%,
-    radial-gradient(circle, #000 1.6px, transparent 2.1px) calc(var(--rk-tilt-pitch) * 1) calc(var(--rk-tilt-pitch) * 2) /
-      calc(var(--rk-tilt-pitch) * 3) calc(var(--rk-tilt-pitch) * 3),
-    radial-gradient(circle, #000 1.6px, transparent 2.1px) calc(var(--rk-tilt-pitch) * 3) 0 /
-      calc(var(--rk-tilt-pitch) * 5) calc(var(--rk-tilt-pitch) * 5),
-    radial-gradient(circle, #000 1.6px, transparent 2.1px) calc(var(--rk-tilt-pitch) * 2) calc(var(--rk-tilt-pitch) * 4) /
-      calc(var(--rk-tilt-pitch) * 7) calc(var(--rk-tilt-pitch) * 7);
-  mask:
-    radial-gradient(circle at var(--rk-tilt-gx) var(--rk-tilt-gy), #000 0%, transparent 42%) 0 0 / 100% 100%,
-    radial-gradient(circle, #000 1.6px, transparent 2.1px) calc(var(--rk-tilt-pitch) * 1) calc(var(--rk-tilt-pitch) * 2) /
-      calc(var(--rk-tilt-pitch) * 3) calc(var(--rk-tilt-pitch) * 3),
-    radial-gradient(circle, #000 1.6px, transparent 2.1px) calc(var(--rk-tilt-pitch) * 3) 0 /
-      calc(var(--rk-tilt-pitch) * 5) calc(var(--rk-tilt-pitch) * 5),
-    radial-gradient(circle, #000 1.6px, transparent 2.1px) calc(var(--rk-tilt-pitch) * 2) calc(var(--rk-tilt-pitch) * 4) /
-      calc(var(--rk-tilt-pitch) * 7) calc(var(--rk-tilt-pitch) * 7);
-  -webkit-mask-composite: source-in, source-over, source-over;
-  mask-composite: intersect, add, add;
-  opacity: var(--rk-tilt-glow);
 }
 
 /* The Rekt mark, with its own foil cut to its shape. */
