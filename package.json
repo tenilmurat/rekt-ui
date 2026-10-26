@@ -1,0 +1,37 @@
+{
+  "name": "rektui",
+  "version": "0.1.0",
+  "description": "Add Rekt UI components to your project: npx rektui add <component>",
+  "keywords": [
+    "rekt-ui",
+    "react",
+    "components",
+    "ui",
+    "cli",
+    "animation",
+    "micro-interactions"
+  ],
+  "license": "MIT",
+  "author": "Rekt UI",
+  "type": "module",
+  "bin": {
+    "rektui": "bin/rektui.js"
+  },
+  "files": [
+    "bin",
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18.17"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "node --test"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "^6.0.2"
+  }
+}
