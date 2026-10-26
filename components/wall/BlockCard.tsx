@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef } from "react";
 import { Lock, Maximize2 } from "lucide-react";
 import type { UiBlock } from "@/lib/ui/types";
 import { useBlockValues } from "@/lib/ui/use-block-values";
@@ -8,13 +9,15 @@ import { useInView } from "@/lib/use-in-view";
 export const DEFAULT_CARD_HEIGHT = 380;
 
 /**
- * One component on the wall, live and usable in place. Its name (bottom left)
- * and the round button (bottom right) open it with its controls and code.
+ * One component on the wall, live and usable in place. Clicking the card around
+ * it, its name (bottom left) or the round button (bottom right) opens it with
+ * its controls and code.
  */
 export function BlockCard({ block, onOpen }: { block: UiBlock; onOpen: () => void }) {
   const { ref, active } = useInView<HTMLElement>();
   const { values, startedAt } = useBlockValues(block);
   const Component = block.component;
+  const componentRef = useRef<HTMLDivElement | null>(null);
 
   return (
     <article
@@ -22,9 +25,18 @@ export function BlockCard({ block, onOpen }: { block: UiBlock; onOpen: () => voi
       className="relative overflow-hidden rounded-[28px]"
       style={{ height: block.cardHeight ?? DEFAULT_CARD_HEIGHT, backgroundColor: "var(--surface)" }}
     >
-      <div className="flex h-full w-full items-center justify-center px-[24px] pb-[40px]">
-        {/* Off screen, the card drops its preview so nothing runs unseen. */}
-        {active ? <Component key={startedAt} {...values} /> : null}
+      {/* Clicks on the component work it; clicks on the card around it open the
+          dialog. Keyboard users open it with the two buttons below. */}
+      <div
+        onClick={(e) => {
+          if (!componentRef.current?.contains(e.target as Node)) onOpen();
+        }}
+        className="flex h-full w-full cursor-pointer items-center justify-center px-[24px] pb-[40px]"
+      >
+        <div ref={componentRef} className="cursor-auto">
+          {/* Off screen, the card drops its preview so nothing runs unseen. */}
+          {active ? <Component key={startedAt} {...values} /> : null}
+        </div>
       </div>
 
       <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between gap-[12px] p-[14px]">
