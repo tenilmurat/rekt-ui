@@ -2,8 +2,8 @@
   Magnify ruler. Every colour is a variable with a fallback, so it works as
   is; point the --rk-ruler-* variables at your own tokens to theme it.
   Light theme; a dark theme can be added by redefining the same variables.
-  Each tick's --rk-ruler-g (0–1, how close the pointer or the chosen
-  section's peak is) is written, already eased, by the component.
+  Each tick's --rk-ruler-g (0–1, how close the pointer is) is written,
+  already eased, by the component.
 */
 .rk-ruler {
   --rk-ruler-bg: #f3f4f5;
@@ -58,12 +58,11 @@
 .rk-ruler__tick--major .rk-ruler__line {
   height: 1.5px;
   background: var(--rk-ruler-tick-strong);
-  transition: background-color 360ms ease, height 360ms ease;
+  transition: background-color 360ms ease;
 }
 
-/* The chosen section: orange, and held at the top of its own peak by the component. */
+/* The chosen section: orange, the same length as the others. */
 .rk-ruler__tick--major[data-active="true"] .rk-ruler__line {
-  height: 2px;
   background: var(--rk-ruler-accent);
 }
 
