@@ -1,0 +1,96 @@
+/*
+  Contents marker. Every colour is a variable with a fallback, so it works as
+  is; point the --rk-cmark-* variables at your own tokens to theme it.
+*/
+.rk-cmark {
+  --rk-cmark-bg: #ffffff;
+  --rk-cmark-ink: #141210;
+  --rk-cmark-muted: #8a847d;
+  --rk-cmark-accent: #ff5a1f;
+  --rk-cmark-edge: rgb(20 18 16 / 0.08);
+  --rk-cmark-duration: 520ms;
+
+  display: inline-flex;
+  min-width: 220px;
+  flex-direction: column;
+  gap: 18px;
+  padding: 26px 28px;
+  border-radius: 20px;
+  background: var(--rk-cmark-bg);
+  color: var(--rk-cmark-ink);
+  box-shadow: 0 0 0 1px var(--rk-cmark-edge);
+  font-family: inherit;
+}
+
+.rk-cmark[data-fill="dark"] {
+  --rk-cmark-bg: #111110;
+  --rk-cmark-ink: #f5f3f0;
+  --rk-cmark-muted: #8c867f;
+  --rk-cmark-edge: rgb(255 255 255 / 0.07);
+}
+
+.rk-cmark__title {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.rk-cmark__body {
+  position: relative;
+  padding-left: 20px;
+}
+
+/* The marker rides the vertical centre of the shown item. */
+.rk-cmark__dot {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--rk-cmark-accent);
+  opacity: 0;
+  transform: translateY(calc(var(--rk-cmark-y) - 50%));
+}
+
+.rk-cmark__dot[data-ready="true"] {
+  opacity: 1;
+  transition: transform var(--rk-cmark-duration) var(--rk-cmark-ease);
+}
+
+.rk-cmark__list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.rk-cmark__link {
+  display: block;
+  padding: 5px 0;
+  color: var(--rk-cmark-muted);
+  font-size: 14px;
+  text-decoration: none;
+  transition: color 160ms ease;
+}
+
+.rk-cmark__link[data-shown="true"],
+.rk-cmark__link[aria-current="location"] {
+  color: var(--rk-cmark-ink);
+}
+
+.rk-cmark__link:focus-visible {
+  outline: 2px solid var(--rk-cmark-accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rk-cmark__dot[data-ready="true"] {
+    transition: none;
+  }
+}

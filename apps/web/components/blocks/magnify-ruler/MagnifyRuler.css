@@ -1,0 +1,120 @@
+/*
+  Magnify ruler. Every colour is a variable with a fallback, so it works as
+  is; point the --rk-ruler-* variables at your own tokens to theme it. Each
+  tick's --rk-ruler-g (0–1, how close the pointer is) is written by the component.
+*/
+.rk-ruler {
+  --rk-ruler-bg: #f3f4f5;
+  --rk-ruler-ink: #141210;
+  --rk-ruler-tick: rgb(20 18 16 / 0.28);
+  --rk-ruler-tick-strong: rgb(20 18 16 / 0.8);
+  --rk-ruler-accent: #ff5a1f;
+  --rk-ruler-edge: rgb(20 18 16 / 0.06);
+  --rk-ruler-strength: 28px;
+  --rk-ruler-pitch: 7px;
+
+  display: inline-flex;
+  padding: 18px 92px 18px 28px;
+  border-radius: 20px;
+  background: var(--rk-ruler-bg);
+  color: var(--rk-ruler-ink);
+  box-shadow: 0 0 0 1px var(--rk-ruler-edge);
+  font-family: inherit;
+}
+
+.rk-ruler[data-fill="dark"] {
+  --rk-ruler-bg: #111110;
+  --rk-ruler-ink: #f5f3f0;
+  --rk-ruler-tick: rgb(255 255 255 / 0.25);
+  --rk-ruler-tick-strong: rgb(255 255 255 / 0.85);
+  --rk-ruler-edge: rgb(255 255 255 / 0.07);
+}
+
+.rk-ruler__ticks {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  cursor: pointer;
+}
+
+.rk-ruler__tick {
+  --rk-ruler-g: 0;
+  --rk-ruler-base: 14px;
+
+  position: relative;
+  display: flex;
+  height: var(--rk-ruler-pitch);
+  align-items: center;
+}
+
+.rk-ruler__tick--major {
+  --rk-ruler-base: 24px;
+}
+
+/* The tick: longer and darker the closer the pointer is. */
+.rk-ruler__line {
+  display: block;
+  width: calc(var(--rk-ruler-base) + var(--rk-ruler-strength) * var(--rk-ruler-g));
+  height: 1px;
+  background: color-mix(in srgb, var(--rk-ruler-tick-strong) calc(var(--rk-ruler-g) * 100%), var(--rk-ruler-tick));
+  transition: width 90ms linear;
+}
+
+.rk-ruler__tick--major .rk-ruler__line {
+  height: 1.5px;
+  background: var(--rk-ruler-tick-strong);
+}
+
+.rk-ruler__tick--major[data-active="true"] .rk-ruler__line {
+  background: var(--rk-ruler-accent);
+}
+
+/* Section ticks are buttons the full row tall, so they're easy to hit and reachable by keyboard. */
+.rk-ruler__button {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  gap: 10px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.rk-ruler__button:focus-visible {
+  outline: 2px solid var(--rk-ruler-accent);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
+/* Names fade in near the pointer; the current section's stays visible. */
+.rk-ruler__label {
+  position: absolute;
+  left: calc(var(--rk-ruler-base) + var(--rk-ruler-strength) * var(--rk-ruler-g) + 10px);
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: var(--rk-ruler-g);
+  transform: translateX(calc((1 - var(--rk-ruler-g)) * -4px));
+  transition: left 90ms linear;
+  pointer-events: none;
+}
+
+.rk-ruler__tick--major[data-active="true"] .rk-ruler__label {
+  opacity: max(var(--rk-ruler-g), 0.85);
+  color: var(--rk-ruler-accent);
+}
+
+.rk-ruler__label[data-visible="false"] {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rk-ruler__line,
+  .rk-ruler__label {
+    transition: none;
+  }
+}

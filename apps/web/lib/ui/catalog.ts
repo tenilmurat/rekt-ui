@@ -1,3 +1,6 @@
+import { contentsHook } from "@/components/blocks/contents-hook";
+import { contentsMarker } from "@/components/blocks/contents-marker";
+import { magnifyRuler } from "@/components/blocks/magnify-ruler";
 import { rollingCounter } from "@/components/blocks/rolling-counter";
 import { tiltCard } from "@/components/blocks/tilt-card";
 import type { UiBlock } from "@/lib/ui/types";
@@ -27,6 +30,7 @@ export const UI_CATEGORIES: UiCategory[] = [
   { id: "select", label: "Select" },
   { id: "loading", label: "Loading" },
   { id: "text", label: "Text" },
+  { id: "navigation", label: "Navigation" },
 ];
 
 const PUBLISHED: UiBlock[] = [tiltCard];
@@ -36,7 +40,8 @@ const PUBLISHED: UiBlock[] = [tiltCard];
  * Install / Usage / Code / How it works, Copy prompt — can be checked locally
  * while the live wall stays empty.
  */
-const EXAMPLES: UiBlock[] = process.env.NODE_ENV === "development" ? [rollingCounter] : [];
+const EXAMPLES: UiBlock[] =
+  process.env.NODE_ENV === "development" ? [contentsMarker, contentsHook, magnifyRuler, rollingCounter] : [];
 
 export const BLOCKS: UiBlock[] = [...PUBLISHED, ...EXAMPLES];
 

@@ -1,0 +1,136 @@
+/*
+  Contents hook. Every colour is a variable with a fallback, so it works as
+  is; point the --rk-chook-* variables at your own tokens to theme it.
+*/
+.rk-chook {
+  --rk-chook-bg: #ffffff;
+  --rk-chook-ink: #141210;
+  --rk-chook-muted: #8a847d;
+  --rk-chook-rail: rgb(20 18 16 / 0.1);
+  --rk-chook-accent: #ff5a1f;
+  --rk-chook-edge: rgb(20 18 16 / 0.08);
+  --rk-chook-duration: 420ms;
+  --rk-chook-ease: cubic-bezier(0.23, 1, 0.32, 1);
+
+  display: inline-flex;
+  min-width: 220px;
+  flex-direction: column;
+  gap: 18px;
+  padding: 26px 28px 26px 22px;
+  border-radius: 20px;
+  background: var(--rk-chook-bg);
+  color: var(--rk-chook-ink);
+  box-shadow: 0 0 0 1px var(--rk-chook-edge);
+  font-family: inherit;
+}
+
+.rk-chook[data-fill="dark"] {
+  --rk-chook-bg: #111110;
+  --rk-chook-ink: #f5f3f0;
+  --rk-chook-muted: #8c867f;
+  --rk-chook-rail: rgb(255 255 255 / 0.1);
+  --rk-chook-edge: rgb(255 255 255 / 0.07);
+}
+
+.rk-chook__title {
+  margin: 0 0 0 28px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.rk-chook__body {
+  position: relative;
+  padding-left: 28px;
+}
+
+.rk-chook__svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: visible;
+}
+
+.rk-chook__rail {
+  stroke: var(--rk-chook-rail);
+  stroke-width: 1;
+}
+
+.rk-chook__hook {
+  fill: none;
+  stroke: var(--rk-chook-accent);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.rk-chook__hook--dashed {
+  stroke-dasharray: 3 3;
+  stroke-linecap: butt;
+}
+
+/* Draws the line from its start: the dash covers the whole path and slides into view. */
+.rk-chook__draw {
+  fill: none;
+  stroke-width: 3;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: rk-chook-draw var(--rk-chook-duration) var(--rk-chook-ease) forwards;
+}
+
+.rk-chook__hook.rk-chook__draw {
+  stroke-width: 1.5;
+}
+
+@keyframes rk-chook-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.rk-chook__list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.rk-chook__link {
+  display: block;
+  padding: 6px 0;
+  color: var(--rk-chook-muted);
+  font-size: 14px;
+  text-decoration: none;
+  transition:
+    color 160ms ease,
+    transform 220ms var(--rk-chook-ease);
+}
+
+.rk-chook__link[data-shown="true"],
+.rk-chook__link[aria-current="location"] {
+  color: var(--rk-chook-ink);
+}
+
+.rk-chook__link[data-shown="true"] {
+  transform: translateX(2px);
+}
+
+.rk-chook__link:focus-visible {
+  outline: 2px solid var(--rk-chook-accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rk-chook__draw {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+
+  .rk-chook__link {
+    transition: color 160ms ease;
+  }
+}
