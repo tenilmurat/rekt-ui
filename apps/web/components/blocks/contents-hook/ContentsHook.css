@@ -8,12 +8,16 @@
   --rk-chook-ink: #141210;
   --rk-chook-muted: #6b6763;
   --rk-chook-line: rgb(20 18 16 / 0.14);
+  /* The open section's colour (bar) and each section's own (hook, icon); set by the component. */
   --rk-chook-bar: #141210;
-  --rk-chook-accent: #ff5a1f;
+  --rk-chook-accent: #141210;
   --rk-chook-edge: rgb(20 18 16 / 0.08);
-  --rk-chook-duration: 420ms;
   --rk-chook-row: 32px;
-  --rk-chook-ease: cubic-bezier(0.23, 1, 0.32, 1);
+  /* Gentle by design: long, soft ease-outs rather than quick snaps. */
+  --rk-chook-duration: 700ms;
+  --rk-chook-fold: 620ms;
+  --rk-chook-ease: cubic-bezier(0.32, 0.72, 0, 1);
+  --rk-chook-draw-ease: cubic-bezier(0.65, 0, 0.35, 1);
 
   position: relative;
   display: inline-flex;
@@ -49,10 +53,11 @@
   width: 2px;
   border-radius: 2px;
   background: var(--rk-chook-bar);
-  /* Short, because it is re-placed every frame while a panel moves. */
+  /* Same timing as the panels, so the bar and the heading arrive together. */
   transition:
-    transform 160ms var(--rk-chook-ease),
-    height 160ms var(--rk-chook-ease);
+    transform var(--rk-chook-fold) var(--rk-chook-ease),
+    height var(--rk-chook-fold) var(--rk-chook-ease),
+    background-color 400ms ease;
 }
 
 .rk-chook__heading {
@@ -66,7 +71,7 @@
   font-size: 14px;
   text-align: left;
   cursor: pointer;
-  transition: color 160ms ease;
+  transition: color 280ms ease;
 }
 
 .rk-chook__heading:hover,
@@ -84,8 +89,8 @@
   grid-template-rows: 0fr;
   opacity: 0;
   transition:
-    grid-template-rows 320ms var(--rk-chook-ease),
-    opacity 220ms ease;
+    grid-template-rows var(--rk-chook-fold) var(--rk-chook-ease),
+    opacity 420ms ease;
 }
 
 .rk-chook__section[data-open="true"] .rk-chook__panel {
@@ -94,10 +99,11 @@
 }
 
 .rk-chook__items {
+  position: relative;
   min-height: 0;
   overflow: hidden;
   margin: 0;
-  padding: 0 0 4px 2px;
+  padding: 0 0 0 2px;
   list-style: none;
 }
 
@@ -105,6 +111,11 @@
   display: flex;
   height: var(--rk-chook-row);
   align-items: center;
+}
+
+/* Space under the last item lives inside the clipped list, so a closed panel is exactly 0px tall. */
+.rk-chook__item:last-child {
+  margin-bottom: 4px;
 }
 
 .rk-chook__tree {
@@ -122,7 +133,19 @@
   stroke-dasharray: 2.5 2.5;
 }
 
-/* The hook: the same connector in the accent colour, drawing itself from the top. */
+/*
+  The hook: one line from the top of the list, down the trunk and round the
+  corner to the chosen item, in the section's colour. It sits over the tree
+  and draws itself from the top.
+*/
+.rk-chook__hooks {
+  position: absolute;
+  top: 0;
+  left: 2px;
+  overflow: visible;
+  pointer-events: none;
+}
+
 .rk-chook__hook {
   fill: none;
   stroke: var(--rk-chook-accent);
@@ -130,7 +153,7 @@
   stroke-linecap: round;
   stroke-dasharray: 1;
   stroke-dashoffset: 1;
-  animation: rk-chook-draw var(--rk-chook-duration) var(--rk-chook-ease) forwards;
+  animation: rk-chook-draw var(--rk-chook-duration) var(--rk-chook-draw-ease) forwards;
 }
 
 @keyframes rk-chook-draw {
@@ -149,19 +172,20 @@
   color: var(--rk-chook-muted);
   font-size: 13.5px;
   text-decoration: none;
-  transition:
-    color 160ms ease,
-    transform 220ms var(--rk-chook-ease);
+  transition: color 280ms ease;
 }
 
 .rk-chook__icon {
   flex: none;
   opacity: 0.8;
+  transition:
+    color 280ms ease,
+    opacity 280ms ease;
 }
 
-.rk-chook__link[data-hooked="true"] {
+/* Hover only darkens the text; the hook stays on the chosen item. */
+.rk-chook__link:hover {
   color: var(--rk-chook-ink);
-  transform: translateX(2px);
 }
 
 .rk-chook__link[aria-current="location"] {

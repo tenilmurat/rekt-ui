@@ -15,18 +15,21 @@ import {
 } from "lucide-react";
 
 export type ContentsHookItem = { label: string; icon?: LucideIcon };
-export type ContentsHookSection = { label: string; items: ContentsHookItem[] };
+export type ContentsHookSection = {
+  label: string;
+  /** The section's colour: its rail bar, its hook and its active icon. */
+  color?: string;
+  items: ContentsHookItem[];
+};
 
 export type ContentsHookProps = {
-  /** "hover" hooks whatever item is pointed at; "click" only the chosen one. */
-  follow?: "hover" | "click";
   /** The tree connectors' line style. */
   line?: "solid" | "dashed";
-  /** How long the active hook takes to draw, in milliseconds. */
+  /** How long the hook takes to draw, in milliseconds. */
   speed?: number;
   /** Show each item's icon. */
   icons?: boolean;
-  /** The sections, each with its items. */
+  /** The sections, each with its colour and items. */
   sections?: ContentsHookSection[];
   /** Called when an item is chosen. */
   onSelect?: (section: string, item: string) => void;
@@ -35,6 +38,7 @@ export type ContentsHookProps = {
 const SECTIONS: ContentsHookSection[] = [
   {
     label: "Getting started",
+    color: "#3b6ef5",
     items: [
       { label: "Introduction", icon: BookOpen },
       { label: "Installation", icon: Download },
@@ -43,6 +47,7 @@ const SECTIONS: ContentsHookSection[] = [
   },
   {
     label: "Components",
+    color: "#f2622e",
     items: [
       { label: "Buttons", icon: MousePointerClick },
       { label: "Cards", icon: LayoutGrid },
@@ -51,6 +56,7 @@ const SECTIONS: ContentsHookSection[] = [
   },
   {
     label: "Theming",
+    color: "#14a37f",
     items: [
       { label: "Colours", icon: Palette },
       { label: "Typography", icon: Type },
@@ -59,52 +65,53 @@ const SECTIONS: ContentsHookSection[] = [
   },
 ];
 
+const FALLBACK_COLOR = "#141210";
+
 const slug = (text: string) => text.toLowerCase().replace(/[^a-z0-9]+/g, "-");
 
 /** Item row height in px; the connectors are drawn to it. */
 const ROW = 32;
 const MID = ROW / 2;
 
+/** The hook for item `index`: from the top of the list, down the trunk, round the corner, out to the item. */
+const hookPath = (index: number) => {
+  const y = index * ROW + MID;
+  return `M 1 0 V ${y - 6} Q 1 ${y} 7 ${y} H 14`;
+};
+
 /**
- * A sidebar of sections on a thin rail. Opening a section unfolds its items
- * on tree connectors; the active item's connector redraws itself as a hook,
- * and a bar on the rail slides to the open section. Choosing an item scrolls
- * to the element with its id, when the page has one.
+ * A sidebar of sections on a thin rail, each in its own colour. Opening a
+ * section unfolds its items on tree connectors; the chosen item gets a hook
+ * that draws itself from the top of the list down to it, and a bar on the
+ * rail moves straight to the open section. Choosing an item scrolls to the
+ * element with its id, when the page has one.
  */
 export function ContentsHook({
-  follow = "hover",
   line = "solid",
-  speed = 420,
+  speed = 700,
   icons = true,
   sections = SECTIONS,
   onSelect,
 }: ContentsHookProps) {
   const [open, setOpen] = useState(0);
   const [active, setActive] = useState<{ section: number; item: number }>({ section: 0, item: 0 });
-  const [pointed, setPointed] = useState<number | null>(null);
   const [bar, setBar] = useState<{ y: number; height: number } | null>(null);
   const headerRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  const navRef = useRef<HTMLElement | null>(null);
+  const panelRefs = useRef<(HTMLDivElement | null)[]>([]);
   const baseId = useId();
 
-  // The item that gets the hook: pointed at (with Follow: Hover) or chosen, in the open section.
-  const hooked =
-    follow === "hover" && pointed !== null ? pointed : active.section === open ? active.item : null;
-
-  // The rail's bar sits beside the open section's heading. While a panel folds
-  // or unfolds the headings below it move, so the bar re-measures every time
-  // the sidebar changes size and rides along with them.
+  /*
+    Place the bar where the open heading will be once the panels have finished
+    moving, so it travels there in one straight move. Any panel above it is
+    folding away: right now it still has its full height, so taking that off
+    the heading's current position gives where the heading ends up.
+  */
   useLayoutEffect(() => {
-    const measure = () => {
-      const header = headerRefs.current[open];
-      if (header) setBar({ y: header.offsetTop, height: header.offsetHeight });
-    };
-    measure();
-    const nav = navRef.current;
-    if (!nav || typeof ResizeObserver === "undefined") return;
-    const observer = new ResizeObserver(measure);
-    observer.observe(nav);
-    return () => observer.disconnect();
+    const header = headerRefs.current[open];
+    if (!header) return;
+    let folding = 0;
+    for (let k = 0; k < open; k++) folding += panelRefs.current[k]?.offsetHeight ?? 0;
+    setBar({ y: header.offsetTop - folding, height: header.offsetHeight });
   }, [open, sections]);
 
   const choose = (section: number, item: number) => {
@@ -116,26 +123,34 @@ export function ContentsHook({
 
   return (
     <nav
-      ref={navRef}
       className="rk-chook"
       data-line={line}
       aria-label="Sidebar"
-      style={{ "--rk-chook-duration": `${Math.max(0, speed)}ms`, "--rk-chook-row": `${ROW}px` } as React.CSSProperties}
+      style={
+        {
+          "--rk-chook-duration": `${Math.max(0, speed)}ms`,
+          "--rk-chook-row": `${ROW}px`,
+          "--rk-chook-bar": sections[open]?.color ?? FALLBACK_COLOR,
+        } as React.CSSProperties
+      }
     >
       <span className="rk-chook__rail" aria-hidden="true">
         {bar ? (
-          <span
-            className="rk-chook__bar"
-            style={{ transform: `translateY(${bar.y}px)`, height: bar.height } as React.CSSProperties}
-          />
+          <span className="rk-chook__bar" style={{ transform: `translateY(${bar.y}px)`, height: bar.height }} />
         ) : null}
       </span>
 
       {sections.map((section, s) => {
         const isOpen = s === open;
         const panelId = `${baseId}-${s}`;
+        const hooked = isOpen && active.section === s ? active.item : null;
         return (
-          <div key={section.label} className="rk-chook__section" data-open={isOpen}>
+          <div
+            key={section.label}
+            className="rk-chook__section"
+            data-open={isOpen}
+            style={{ "--rk-chook-accent": section.color ?? FALLBACK_COLOR } as React.CSSProperties}
+          >
             <button
               ref={(el) => {
                 headerRefs.current[s] = el;
@@ -144,45 +159,49 @@ export function ContentsHook({
               className="rk-chook__heading"
               aria-expanded={isOpen}
               aria-controls={panelId}
-              onClick={() => {
-                setOpen(s);
-                setPointed(null);
-              }}
+              onClick={() => setOpen(s)}
             >
               {section.label}
             </button>
 
             {/* Unfolds with a grid-rows transition; closed items are inert, so Tab skips them. */}
-            <div id={panelId} className="rk-chook__panel" inert={!isOpen}>
-              <ol className="rk-chook__items" onPointerLeave={() => setPointed(null)}>
+            <div
+              ref={(el) => {
+                panelRefs.current[s] = el;
+              }}
+              id={panelId}
+              className="rk-chook__panel"
+              inert={!isOpen}
+            >
+              <ol className="rk-chook__items">
+                {/* The hook: one path from the top of the list to the chosen item, drawn on top of the tree. */}
+                {hooked !== null ? (
+                  <svg
+                    className="rk-chook__hooks"
+                    width="16"
+                    height={section.items.length * ROW}
+                    viewBox={`0 0 16 ${section.items.length * ROW}`}
+                    aria-hidden="true"
+                  >
+                    <path key={`${s}-${hooked}`} className="rk-chook__hook" d={hookPath(hooked)} pathLength={1} />
+                  </svg>
+                ) : null}
+
                 {section.items.map((item, i) => {
                   const last = i === section.items.length - 1;
                   const isActive = active.section === s && active.item === i;
-                  const isHooked = isOpen && hooked === i;
                   const Icon = item.icon;
                   return (
                     <li key={item.label} className="rk-chook__item">
                       {/* Tree connector: down from the row above, round the corner, out to the item. */}
                       <svg className="rk-chook__tree" width="16" height={ROW} viewBox={`0 0 16 ${ROW}`} aria-hidden="true">
-                        <path className="rk-chook__branch" d={`M 1 0 V ${MID - 5} Q 1 ${MID} 6 ${MID} H 14`} />
-                        {last ? null : <path className="rk-chook__branch" d={`M 1 ${MID - 5} V ${ROW}`} />}
-                        {isHooked ? (
-                          <path
-                            key={`${s}-${i}`}
-                            className="rk-chook__hook"
-                            d={`M 1 0 V ${MID - 5} Q 1 ${MID} 6 ${MID} H 14`}
-                            pathLength={1}
-                          />
-                        ) : null}
+                        <path className="rk-chook__branch" d={`M 1 0 V ${MID - 6} Q 1 ${MID} 7 ${MID} H 14`} />
+                        {last ? null : <path className="rk-chook__branch" d={`M 1 ${MID - 6} V ${ROW}`} />}
                       </svg>
                       <a
                         href={`#${slug(item.label)}`}
                         className="rk-chook__link"
-                        data-hooked={isHooked}
                         aria-current={isActive ? "location" : undefined}
-                        onPointerEnter={() => setPointed(i)}
-                        onFocus={() => setPointed(i)}
-                        onBlur={() => setPointed(null)}
                         onClick={(event) => {
                           event.preventDefault();
                           choose(s, i);
