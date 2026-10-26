@@ -1,0 +1,471 @@
+@import "tailwindcss";
+
+/*
+  Tokens come from the two Figma frames (286:605 default view, 286:3044 full view).
+  Muted text is darkened from the mock's #808080 / #B8B8B8 to meet WCAG 2.2 AA
+  (AGENTS.md: text >= 4.5:1). Everything else matches the design exactly.
+
+  The second block is the foundation the curated Beautiful UI components expect
+  (ink / canvas / surface / inset / hover / field / line / accent …). Their values
+  are mapped onto this app's palette so a curated component sits correctly on the
+  preview canvas in both themes.
+*/
+:root {
+  --bg: #ffffff;
+  --surface: #f5f5f5;
+  --surface-raised: #ffffff;
+  --line: #ebebeb;
+  --line-soft: #f5f5f5;
+  --line-strong: #d9dadc;
+  --ink: #141210;
+  --ink-title: #000000;
+  --ink-2: #6b6763;
+  --ink-3: #7a746e;
+  --icon: #57534e;
+  --focus: #141210;
+  /* hover tints sit between the surface behind the control and its selected
+     state, so hover never reads as "selected" */
+  --row-hover: #fafaf9;
+  --pill-hover: #fafaf9;
+
+  --radius-chip: 6px;
+  --radius-control: 8px;
+  --radius-card: 10px;
+  --radius-window: 14px;
+  --radius-pill: 107px;
+
+  --shadow-knob: 0 1.5px 1.5px rgba(20, 18, 16, 0.1);
+  --shadow-raised: 0 1px 2px rgba(20, 18, 16, 0.06);
+  --shadow-overlay: 0 12px 32px rgba(20, 18, 16, 0.12);
+
+  --ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
+  --sidebar-width: 230px;
+  --entry-width: 562px;
+
+  /* curated-component foundation */
+  --canvas: #ffffff;
+  --inset: #f1f1f0;
+  --hover: #ededec;
+  --hover-2: #f4f4f3;
+  --field: #f7f7f6;
+  --accent: #2f6fec;
+  --accent-ink: #ffffff;
+  --green: #1f7a5f;
+  --green-tint: #e7f5ef;
+  --red: #b3261e;
+  --red-tint: #fcebea;
+  --orange: #e56d24;
+  --tooltip-bg: #1b1a18;
+  --tooltip-fg: #f5f3f0;
+  --tooltip-muted: #a8a29b;
+  --shadow-hairline: 0 0 0 1px var(--line);
+  --shadow-btn: 0 0 0 1px var(--line), 0 1px 2px rgba(20, 18, 16, 0.05);
+  --shadow-card: 0 0 0 1px var(--line), 0 2px 6px rgba(20, 18, 16, 0.06);
+}
+
+.dark {
+  --bg: #0e0d0c;
+  --surface: #171615;
+  --surface-raised: #1b1a18;
+  --line: #262422;
+  --line-soft: #1f1e1c;
+  --line-strong: #322f2c;
+  --ink: #f5f3f0;
+  --ink-title: #ffffff;
+  --ink-2: #a8a29b;
+  --ink-3: #8c867f;
+  --icon: #a8a29b;
+  --focus: #f5f3f0;
+  --row-hover: #131211;
+  --pill-hover: #191817;
+
+  --shadow-knob: 0 1.5px 1.5px rgba(0, 0, 0, 0.4);
+  --shadow-raised: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-overlay: 0 12px 32px rgba(0, 0, 0, 0.5);
+
+  --canvas: #0e0d0c;
+  --inset: #201f1d;
+  --hover: #262422;
+  --hover-2: #1f1e1c;
+  --field: #211f1e;
+  --accent: #5b8dfa;
+  --accent-ink: #0e0d0c;
+  --green: #4ac08f;
+  --green-tint: #17291f;
+  --red: #f2837b;
+  --red-tint: #2a1a19;
+  --orange: #f09455;
+  --tooltip-bg: #2a2826;
+  --tooltip-fg: #f5f3f0;
+  --tooltip-muted: #a8a29b;
+  --shadow-hairline: 0 0 0 1px var(--line);
+  --shadow-btn: 0 0 0 1px var(--line), 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-card: 0 0 0 1px var(--line), 0 2px 6px rgba(0, 0, 0, 0.45);
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface-raised);
+  --color-surface-muted: var(--surface);
+  --color-inset: var(--inset);
+  --color-hover: var(--hover);
+  --color-hover-2: var(--hover-2);
+  --color-field: var(--field);
+  --color-line: var(--line);
+  --color-line-soft: var(--line-soft);
+  --color-line-strong: var(--line-strong);
+  --color-ink: var(--ink);
+  --color-ink-title: var(--ink-title);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-icon: var(--icon);
+  --color-accent: var(--accent);
+  --color-green: var(--green);
+  --color-green-tint: var(--green-tint);
+  --color-red: var(--red);
+  --color-red-tint: var(--red-tint);
+  --color-orange: var(--orange);
+
+  --radius-chip: var(--radius-chip);
+  --radius-control: var(--radius-control);
+  --radius-card: var(--radius-card);
+  --radius-window: var(--radius-window);
+
+  --shadow-hairline: var(--shadow-hairline);
+  --shadow-btn: var(--shadow-btn);
+  --shadow-card: var(--shadow-card);
+  --shadow-raised: var(--shadow-raised);
+  --shadow-overlay: var(--shadow-overlay);
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+}
+
+* {
+  border-color: var(--line);
+}
+
+/* One scrollbar for the whole document, on the right; the gutter is reserved
+   so centred content doesn't shift when a page grows past the viewport. */
+html {
+  scrollbar-gutter: stable;
+}
+
+/* Inner areas that still need to scroll (preset row, code panel, sidebar nav)
+   scroll without drawing a second scrollbar. */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/*
+  Hover / press feedback for the app's own chrome.
+
+  These controls take their colours inline from tokens, and an inline style beats
+  a class — so the class redefines the *token* instead of the property. Anything
+  wearing .control paints itself with var(--control-bg) / var(--control-line).
+*/
+.control {
+  --control-bg: var(--surface-raised);
+  --control-line: var(--line-soft);
+  cursor: pointer;
+  transition:
+    background-color 150ms var(--ease-out-strong),
+    border-color 150ms var(--ease-out-strong),
+    transform 150ms var(--ease-out-strong);
+}
+
+.control:hover {
+  --control-bg: var(--hover-2);
+  --control-line: var(--line-strong);
+}
+
+.control:active {
+  --control-bg: var(--hover);
+}
+
+.control:disabled,
+.control[aria-disabled="true"] {
+  cursor: default;
+  --control-bg: var(--surface-raised);
+  --control-line: var(--line-soft);
+}
+
+/* Rows and pills that are transparent until pointed at. */
+.control-quiet {
+  --control-bg: transparent;
+  --control-fg: var(--ink-2);
+  cursor: pointer;
+  transition:
+    background-color 150ms var(--ease-out-strong),
+    color 150ms var(--ease-out-strong),
+    transform 150ms var(--ease-out-strong);
+}
+
+.control-quiet:hover {
+  --control-bg: var(--row-hover);
+  --control-fg: var(--ink);
+}
+
+.control-quiet:active {
+  --control-bg: var(--hover);
+}
+
+/* control-quiet sitting on the preview canvas rather than the page. */
+.control-quiet.on-canvas:hover {
+  --control-bg: var(--pill-hover);
+}
+
+/* A filled chip: already tinted at rest, one step darker on hover. */
+.control-chip {
+  --control-bg: var(--surface);
+  --control-fg: var(--ink-2);
+  cursor: pointer;
+  transition:
+    background-color 150ms var(--ease-out-strong),
+    color 150ms var(--ease-out-strong),
+    transform 150ms var(--ease-out-strong);
+}
+
+.control-chip:hover {
+  --control-bg: var(--hover);
+  --control-fg: var(--ink);
+}
+
+/* Inline links: colour only, no background. */
+.link-quiet {
+  --control-fg: var(--ink-2);
+  transition: color 150ms var(--ease-out-strong);
+}
+
+.link-quiet:hover {
+  --control-fg: var(--ink);
+}
+
+/* Small utilities the curated components reference. */
+.animated-underline {
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 2px;
+  transition: text-decoration-color 150ms var(--ease-out-strong);
+}
+
+.animated-underline:hover {
+  text-decoration-color: currentColor;
+}
+
+.source-avatar {
+  object-fit: cover;
+  flex: none;
+}
+
+.primitive-icon-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: var(--radius-chip);
+}
+
+.primitive-card-pad {
+  padding: 1rem 1rem 0.75rem;
+}
+
+.primitive-card-footer {
+  padding: 0.5rem 0.75rem 0.75rem;
+}
+
+/* Motion language shared with the panel (Beautiful UI): fade-up, pop-in, pixel-on, shimmer */
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pixel-on {
+  0%,
+  100% {
+    opacity: 0.15;
+  }
+  18%,
+  42% {
+    opacity: 1;
+  }
+  62% {
+    opacity: 0.15;
+  }
+}
+
+@keyframes shimmer-text {
+  from {
+    background-position: 150% center;
+  }
+  to {
+    background-position: -50% center;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes eq-bounce {
+  0%,
+  100% {
+    transform: scaleY(0.35);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes caret-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes drift {
+  from {
+    transform: translate(0, 0);
+  }
+  to {
+    transform: translate(24px, 24px);
+  }
+}
+
+/*
+  Magic UI's animated theme toggler (components/shell/magicui). The first rule is
+  the one their registry ships: no crossfade, so the new theme is revealed purely
+  by the clip-path. The second honours the two custom properties the component
+  writes on <html> while a transition runs — it pins the collapsed clip until the
+  JS animation takes over, which their code relies on for Firefox.
+*/
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+[data-magicui-theme-vt="active"]::view-transition-new(root) {
+  clip-path: var(--magicui-theme-vt-clip-from);
+  animation-duration: var(--magicui-theme-toggle-vt-duration, 400ms);
+}
+
+/* REKT / ASCII pulse: opacity and a touch of scale, nothing aggressive. */
+@keyframes ascii-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.55;
+    transform: scale(0.985);
+  }
+}
+
+.ascii-pulse {
+  animation-name: ascii-pulse;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+/* Toast: drops in from the top edge, lifts back out. */
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes toast-out {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.98);
+  }
+}
+
+.toast-in {
+  animation: toast-in 280ms var(--ease-out-strong) both;
+}
+
+.toast-out {
+  animation: toast-out 220ms var(--ease-out-strong) both;
+}
+
+.animate-fade-up {
+  animation: fade-up 400ms var(--ease-out-strong) both;
+}
+
+.animate-pop-in {
+  animation: pop-in 200ms var(--ease-out-strong) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
