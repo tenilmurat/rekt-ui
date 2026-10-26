@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# Read-only by default: no job here can push, comment or change settings.
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  web:
+    name: web
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: apps/web } }
+    steps:
+      # Actions pinned to full commit SHAs, so a moved tag can't change what runs.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with: { persist-credentials: false }
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with: { node-version: 24, cache: npm, cache-dependency-path: apps/web/package-lock.json }
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run build
+
+  api:
+    name: api
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: apps/api } }
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with: { persist-credentials: false }
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with: { node-version: 24, cache: npm, cache-dependency-path: apps/api/package-lock.json }
+      - run: npm ci
+      - run: npm test
+      - run: npm run test:e2e
+      - run: npm run build
+
+  cli:
+    name: cli
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: packages/cli } }
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with: { persist-credentials: false }
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with: { node-version: 24, cache: npm, cache-dependency-path: packages/cli/package-lock.json }
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
