@@ -5,7 +5,7 @@ import { BLOCK_METAS, getMeta } from "@/lib/ui/metas";
 /**
  * The files of a free component, for the Code tab. Built once into static
  * JSON, so the files aren't shipped in the page bundle. Pro source never lives
- * here: it comes from rektui-backend.
+ * here: it comes from the API (apps/api).
  */
 export const dynamic = "force-static";
 export const dynamicParams = false;

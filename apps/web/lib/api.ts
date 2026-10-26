@@ -11,7 +11,7 @@ export class ApiError extends Error {
 }
 
 /**
- * Calls rektui-backend as the signed-in user: the Supabase access token goes in
+ * Calls the API (apps/api) as the signed-in user: the Supabase access token goes in
  * the Authorization header and the backend checks it before doing anything.
  * Errors carry the backend's own message, which is written for people.
  */

@@ -1,6 +1,6 @@
 # rektui
 
-Add [Rekt UI](https://github.com/tenilmurat/rektui-frontend) components to your project with one command.
+Add [Rekt UI](https://github.com/tenilmurat/rekt-ui) components to your project with one command.
 
 ```bash
 npx rektui@latest add rolling-counter
@@ -54,5 +54,5 @@ REKTUI_REGISTRY=http://localhost:3500 node bin/rektui.js add rolling-counter
 1. Set `DEFAULT_REGISTRY` in `src/registry.js` to the live site, e.g. `https://rektui.com`.
 2. `npm whoami`, with two-factor authentication on for the account.
 3. `npm publish --access public` (the first publish reserves the name `rektui`).
-4. In rektui-frontend, set `NEXT_PUBLIC_REKTUI_CLI=1` (a build variable in Coolify): the
+4. In `apps/web`, set `NEXT_PUBLIC_REKTUI_CLI=1` (a build variable in Coolify): the
    Install section then leads with `npx rektui@latest add <name>`.

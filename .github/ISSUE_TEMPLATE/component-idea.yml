@@ -1,0 +1,26 @@
+name: Component idea
+description: Suggest a component for Rekt UI
+labels: ["component idea"]
+body:
+  - type: input
+    id: name
+    attributes:
+      label: Component
+      placeholder: e.g. Swipe-to-dismiss card stack
+    validations: { required: true }
+  - type: textarea
+    id: behaviour
+    attributes:
+      label: What it does
+      description: How it looks and moves, and what the user does with it.
+    validations: { required: true }
+  - type: textarea
+    id: controls
+    attributes:
+      label: Controls worth having
+      placeholder: e.g. Speed, Direction, Fill
+  - type: input
+    id: reference
+    attributes:
+      label: Reference
+      description: A link to something similar, if there is one.

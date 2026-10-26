@@ -5,7 +5,7 @@
 -- browser key can read or write this table. The backend uses the secret key and
 -- hands a row out only to an account with an active Pro or Lifetime plan.
 create table public.component_sources (
-  id text primary key,            -- the ComponentItem id in rektui-frontend
+  id text primary key,            -- the component id in apps/web
   title text not null,
   usage text not null,            -- the snippet shown in the Code panel
   files jsonb not null default '[]'::jsonb,  -- [{ "path": "Loader.tsx", "code": "…" }]

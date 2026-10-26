@@ -1,0 +1,23 @@
+name: Bug
+description: Something on the site, a component or the CLI doesn't work
+labels: ["bug"]
+body:
+  - type: input
+    id: where
+    attributes:
+      label: Where
+      placeholder: e.g. Tilt card, the Pricing page, npx rektui add
+    validations: { required: true }
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened, and what you expected
+    validations: { required: true }
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+  - type: input
+    id: env
+    attributes:
+      label: Browser / OS / Node version

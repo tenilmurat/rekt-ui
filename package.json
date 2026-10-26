@@ -1,0 +1,17 @@
+{
+  "name": "rekt-ui",
+  "private": true,
+  "description": "Rekt UI: the website, the API and the rektui CLI",
+  "scripts": {
+    "setup": "npm --prefix apps/web install && npm --prefix apps/api install && npm --prefix packages/cli install",
+    "dev:web": "npm --prefix apps/web run dev",
+    "dev:api": "npm --prefix apps/api run start:dev",
+    "check:web": "npm --prefix apps/web run typecheck && npm --prefix apps/web run build",
+    "check:api": "npm --prefix apps/api test && npm --prefix apps/api run test:e2e && npm --prefix apps/api run build",
+    "check:cli": "npm --prefix packages/cli run typecheck && npm --prefix packages/cli test",
+    "check": "npm run check:web && npm run check:api && npm run check:cli"
+  },
+  "engines": {
+    "node": ">=24"
+  }
+}

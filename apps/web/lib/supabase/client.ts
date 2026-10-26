@@ -5,7 +5,7 @@ let client: SupabaseClient | null = null;
 
 /**
  * The browser's Supabase client, used for sign-in only — data goes through
- * rektui-backend. PKCE: Google and the emailed link return with a `?code` that
+ * the API. PKCE: Google and the emailed link return with a `?code` that
  * app/auth/callback swaps for a session.
  */
 export function getSupabase(): SupabaseClient | null {

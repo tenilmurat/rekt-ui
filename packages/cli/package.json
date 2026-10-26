@@ -33,5 +33,14 @@
   "devDependencies": {
     "@types/node": "^24.0.0",
     "typescript": "^6.0.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tenilmurat/rekt-ui.git",
+    "directory": "packages/cli"
+  },
+  "homepage": "https://github.com/tenilmurat/rekt-ui/tree/main/packages/cli#readme",
+  "bugs": {
+    "url": "https://github.com/tenilmurat/rekt-ui/issues"
   }
 }

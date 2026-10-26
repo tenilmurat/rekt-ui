@@ -1,8 +1,8 @@
-# rektui-frontend
+# Rekt UI — website (`apps/web`)
 
 The website for **Rekt UI**: a curated library of interface and motion components,
 "Good designs of X", and Pro plans. The API lives in
-[rektui-backend](https://github.com/tenilmurat/rektui-backend).
+[`apps/api`](../api).
 
 **Stack:** Next.js 16 · React 19 · Tailwind v4 · Supabase Auth (sign-in only) · Paddle.js (checkout)
 

@@ -16,7 +16,7 @@ export function siteOrigin() {
 }
 
 /**
- * Rekt UI's own installer (the `rektui` package, repo rektui-cli). Shown once
+ * Rekt UI's own installer (the `rektui` package, packages/cli). Shown once
  * it is published: set NEXT_PUBLIC_REKTUI_CLI=1.
  */
 export const rektuiCliPublished = process.env.NEXT_PUBLIC_REKTUI_CLI === "1";

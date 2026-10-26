@@ -1,4 +1,4 @@
-# Rekt UI — frontend (rektui-frontend)
+# Rekt UI — website (`apps/web`)
 
 Rekt UI is its own product, sold on its own — not part of Rekt Studio or studiorekt.com.
 Don't bring Rekt Studio branding, logos or links in. The name lives in `lib/brand.ts`;
@@ -7,7 +7,7 @@ until there is a drawn logo.
 
 Curated UI motion / component library, sold with Pro accounts. Next.js 16, Tailwind v4,
 own `Dockerfile`, deploys as its own Coolify resource. The API is the separate
-**rektui-backend** repo (NestJS); this app has no server code of its own.
+API in `apps/api` (NestJS); this app has no server code of its own.
 
 **This repo is public.** Never commit secrets or Pro component source. Pro source lives in
 the backend's database and reaches Pro accounts through `GET /components/:id/source`.
@@ -66,7 +66,7 @@ The dialog builds everything else from that, so nothing is written twice:
 - **Controls** (`segmented` / `toggle` / `slider`), one per prop. The preview and the card
   render with the tuned values.
 - **Install**: tabs. **rektui** — `npx rektui@latest add <id>`, Rekt UI's own CLI (repo
-  rektui-cli), shown once `NEXT_PUBLIC_REKTUI_CLI=1`. **shadcn** —
+  `packages/cli`), shown once `NEXT_PUBLIC_REKTUI_CLI=1`. **shadcn** —
   `npx shadcn@latest add <site>/r/<id>.json`. Both put the files in the user's
   `components/rekt-ui/` and install the dependencies. **Manual** — `npm install
   <dependencies>`, then the files from the Code section.
@@ -92,7 +92,7 @@ Next.js + shadcn project installs the rolling counter and builds.
 until real components are published. `UI_CATEGORIES` is a placeholder list.
 
 Pro components: set `tier: "pro"`; free accounts see a lock instead of the Code tab, and
-Pro accounts get the files from rektui-backend (`GET /components/:id/source`, returning
+Pro accounts get the files from the API (`GET /components/:id/source`, returning
 `{ files }`). Their source must not be committed to this public repo.
 
 `lib/registry/categories` holds the earlier curated set (from the Studio-Rekt library),
@@ -121,7 +121,7 @@ The library is a product now: a header (`components/site/SiteHeader.tsx`) with *
   `public/good-designs` (960px-wide WebP).
 - **Accounts:** Supabase handles sign-in only — Google or an emailed link, no passwords
   (`components/site/SignInDialog.tsx`, PKCE, `app/auth/callback` swaps the code in the
-  browser). Everything else goes to rektui-backend through `api()` in `lib/api.ts`, which
+  browser). Everything else goes to the API (`apps/api`) through `api()` in `lib/api.ts`, which
   sends the Supabase access token as a Bearer header.
 - **Session:** `SessionProvider` (`lib/session.tsx`) loads `GET /me` (account, plan,
   bookmarks) in the browser, so every page stays static. Bookmarks are

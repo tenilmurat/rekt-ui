@@ -1,5 +1,5 @@
 /**
- * Supabase runs sign-in; rektui-backend holds everything else (plan, bookmarks,
+ * Supabase runs sign-in; the API holds everything else (plan, bookmarks,
  * billing). Without all three values the site still works, signed out: browsing
  * is open, and the sign-in dialog says accounts aren't switched on yet.
  */

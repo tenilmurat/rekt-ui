@@ -13,7 +13,7 @@ const cache = new Map<string, SourceFile[]>();
 
 /**
  * A component's files for the Code tab. Free components come from the static
- * /source/<id> JSON; Pro ones from rektui-backend, only for Pro accounts — Pro
+ * /source/<id> JSON; Pro ones from the API, only for Pro accounts — Pro
  * source is never in this public repo. Nothing loads until `enabled`.
  */
 export function useBlockSource(block: UiBlock, enabled: boolean) {

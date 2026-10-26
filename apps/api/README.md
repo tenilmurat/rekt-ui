@@ -1,6 +1,6 @@
-# rektui-backend
+# Rekt UI — API (`apps/api`)
 
-The API behind [rektui-frontend](https://github.com/tenilmurat/rektui-frontend):
+The API behind [the website](../web):
 accounts, bookmarks, billing and Pro component source.
 
 **Stack:** Node.js 24 · NestJS 12 · TypeScript · Supabase (Postgres + Auth) · Paddle (merchant of record)

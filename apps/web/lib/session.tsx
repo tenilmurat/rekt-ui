@@ -37,7 +37,7 @@ const SessionContext = createContext<Session | null>(null);
 
 const key = (kind: BookmarkKind, id: string) => `${kind}:${id}`;
 
-/** What rektui-backend's GET /me returns. */
+/** What the API's GET /me returns. */
 type Me = {
   account: Account;
   plan: PlanId;
@@ -48,7 +48,7 @@ type Me = {
 
 /**
  * The visitor's account, plan and bookmarks. Supabase signs them in; the rest
- * comes from rektui-backend, read in the browser so every page can stay static.
+ * comes from the API, read in the browser so every page can stay static.
  */
 export function SessionProvider({ children }: { children: React.ReactNode }) {
   const supabase = getSupabase();
