@@ -3,8 +3,6 @@
 import { useId, useLayoutEffect, useRef, useState } from "react";
 
 export type ContentsHookProps = {
-  /** Surface of the panel. */
-  fill?: "light" | "dark";
   /** "hover" hooks whatever is pointed at; "click" only the chosen section. */
   follow?: "hover" | "click";
   /** The hook's line style. */
@@ -31,7 +29,6 @@ const slug = (text: string) => text.toLowerCase().replace(/[^a-z0-9]+/g, "-");
  * section scrolls to the element with its id, when the page has one.
  */
 export function ContentsHook({
-  fill = "dark",
   follow = "hover",
   line = "dashed",
   speed = 420,
@@ -68,7 +65,6 @@ export function ContentsHook({
   return (
     <nav
       className="rk-chook"
-      data-fill={fill}
       aria-label={title}
       style={{ "--rk-chook-duration": `${Math.max(0, speed)}ms` } as React.CSSProperties}
     >

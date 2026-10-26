@@ -3,8 +3,6 @@
 import { useLayoutEffect, useRef, useState } from "react";
 
 export type ContentsMarkerProps = {
-  /** Surface of the panel. */
-  fill?: "light" | "dark";
   /** "hover" moves the marker to whatever is pointed at; "click" only when an item is chosen. */
   follow?: "hover" | "click";
   /** How far the marker overshoots before it settles, 0–100. */
@@ -27,7 +25,6 @@ const slug = (text: string) => text.toLowerCase().replace(/[^a-z0-9]+/g, "-");
  * the element with its id, when the page has one.
  */
 export function ContentsMarker({
-  fill = "dark",
   follow = "hover",
   bounce = 60,
   title = "Contents",
@@ -59,7 +56,6 @@ export function ContentsMarker({
   return (
     <nav
       className="rk-cmark"
-      data-fill={fill}
       aria-label={title}
       style={
         {

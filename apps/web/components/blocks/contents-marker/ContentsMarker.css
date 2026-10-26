@@ -1,11 +1,12 @@
 /*
   Contents marker. Every colour is a variable with a fallback, so it works as
   is; point the --rk-cmark-* variables at your own tokens to theme it.
+  Light theme; a dark theme can be added by redefining the same variables.
 */
 .rk-cmark {
   --rk-cmark-bg: #ffffff;
   --rk-cmark-ink: #141210;
-  --rk-cmark-muted: #8a847d;
+  --rk-cmark-muted: #6b6763;
   --rk-cmark-accent: #ff5a1f;
   --rk-cmark-edge: rgb(20 18 16 / 0.08);
   --rk-cmark-duration: 520ms;
@@ -20,13 +21,6 @@
   color: var(--rk-cmark-ink);
   box-shadow: 0 0 0 1px var(--rk-cmark-edge);
   font-family: inherit;
-}
-
-.rk-cmark[data-fill="dark"] {
-  --rk-cmark-bg: #111110;
-  --rk-cmark-ink: #f5f3f0;
-  --rk-cmark-muted: #8c867f;
-  --rk-cmark-edge: rgb(255 255 255 / 0.07);
 }
 
 .rk-cmark__title {

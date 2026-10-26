@@ -1,7 +1,9 @@
 /*
   Magnify ruler. Every colour is a variable with a fallback, so it works as
-  is; point the --rk-ruler-* variables at your own tokens to theme it. Each
-  tick's --rk-ruler-g (0–1, how close the pointer is) is written by the component.
+  is; point the --rk-ruler-* variables at your own tokens to theme it.
+  Light theme; a dark theme can be added by redefining the same variables.
+  Each tick's --rk-ruler-g (0–1, how close the pointer is) is written by the
+  component.
 */
 .rk-ruler {
   --rk-ruler-bg: #f3f4f5;
@@ -20,14 +22,6 @@
   color: var(--rk-ruler-ink);
   box-shadow: 0 0 0 1px var(--rk-ruler-edge);
   font-family: inherit;
-}
-
-.rk-ruler[data-fill="dark"] {
-  --rk-ruler-bg: #111110;
-  --rk-ruler-ink: #f5f3f0;
-  --rk-ruler-tick: rgb(255 255 255 / 0.25);
-  --rk-ruler-tick-strong: rgb(255 255 255 / 0.85);
-  --rk-ruler-edge: rgb(255 255 255 / 0.07);
 }
 
 .rk-ruler__ticks {

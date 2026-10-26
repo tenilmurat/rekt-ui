@@ -1,11 +1,12 @@
 /*
   Contents hook. Every colour is a variable with a fallback, so it works as
   is; point the --rk-chook-* variables at your own tokens to theme it.
+  Light theme; a dark theme can be added by redefining the same variables.
 */
 .rk-chook {
   --rk-chook-bg: #ffffff;
   --rk-chook-ink: #141210;
-  --rk-chook-muted: #8a847d;
+  --rk-chook-muted: #6b6763;
   --rk-chook-rail: rgb(20 18 16 / 0.1);
   --rk-chook-accent: #ff5a1f;
   --rk-chook-edge: rgb(20 18 16 / 0.08);
@@ -22,14 +23,6 @@
   color: var(--rk-chook-ink);
   box-shadow: 0 0 0 1px var(--rk-chook-edge);
   font-family: inherit;
-}
-
-.rk-chook[data-fill="dark"] {
-  --rk-chook-bg: #111110;
-  --rk-chook-ink: #f5f3f0;
-  --rk-chook-muted: #8c867f;
-  --rk-chook-rail: rgb(255 255 255 / 0.1);
-  --rk-chook-edge: rgb(255 255 255 / 0.07);
 }
 
 .rk-chook__title {

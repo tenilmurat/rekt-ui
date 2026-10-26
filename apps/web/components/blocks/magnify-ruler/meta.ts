@@ -11,16 +11,6 @@ export const magnifyRulerMeta: UiBlockMeta = {
   files: ["MagnifyRuler.tsx", "MagnifyRuler.css"],
   dependencies: [],
   controls: [
-    {
-      type: "segmented",
-      prop: "fill",
-      label: "Fill",
-      options: [
-        { value: "light", label: "Light" },
-        { value: "dark", label: "Dark" },
-      ],
-      default: "light",
-    },
     { type: "slider", prop: "reach", label: "Reach", min: 16, max: 140, step: 4, unit: "px", default: 56 },
     { type: "slider", prop: "strength", label: "Strength", min: 0, max: 60, step: 2, unit: "px", default: 28 },
     { type: "toggle", prop: "labels", label: "Labels", default: true },

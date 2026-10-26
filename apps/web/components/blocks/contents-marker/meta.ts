@@ -13,16 +13,6 @@ export const contentsMarkerMeta: UiBlockMeta = {
   controls: [
     {
       type: "segmented",
-      prop: "fill",
-      label: "Fill",
-      options: [
-        { value: "light", label: "Light" },
-        { value: "dark", label: "Dark" },
-      ],
-      default: "dark",
-    },
-    {
-      type: "segmented",
       prop: "follow",
       label: "Follow",
       options: [

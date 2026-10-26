@@ -3,8 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 
 export type MagnifyRulerProps = {
-  /** Surface of the panel. */
-  fill?: "light" | "dark";
   /** How far from the pointer ticks still grow, in px. */
   reach?: number;
   /** How much a tick under the pointer grows, in px. */
@@ -29,7 +27,6 @@ const slug = (text: string) => text.toLowerCase().replace(/[^a-z0-9]+/g, "-");
  * get close, and clicking anywhere jumps to the nearest section.
  */
 export function MagnifyRuler({
-  fill = "light",
   reach = 56,
   strength = 28,
   labels = true,
@@ -102,7 +99,6 @@ export function MagnifyRuler({
   return (
     <nav
       className="rk-ruler"
-      data-fill={fill}
       aria-label="Sections"
       style={{ "--rk-ruler-strength": `${Math.max(0, strength)}px` } as React.CSSProperties}
     >
