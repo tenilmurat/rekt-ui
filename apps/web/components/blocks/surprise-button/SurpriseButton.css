@@ -1,0 +1,122 @@
+/*
+  Surprise button. Every colour is a variable with a fallback, so it works as
+  is; point the --rk-surprise-* variables at your own tokens to theme it.
+  Light theme; a dark theme can be added by redefining the same variables.
+*/
+.rk-surprise {
+  --rk-surprise-ink: #000000;
+  --rk-surprise-muted: #666666;
+  --rk-surprise-band-1: #c99ac6;
+  --rk-surprise-band-2: #ee7059;
+  --rk-surprise-band-3: #f0b94e;
+  --rk-surprise-band-4: #b6c7ea;
+  --rk-surprise-band-5: #5c8fe2;
+  --rk-surprise-speed: 700ms;
+
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--rk-surprise-muted);
+  font: inherit;
+  font-size: 16px;
+  line-height: normal;
+  text-align: left;
+  cursor: pointer;
+  transition: color 200ms ease;
+}
+
+.rk-surprise[data-size="sm"] {
+  font-size: 13px;
+}
+
+.rk-surprise[data-size="lg"] {
+  font-size: 22px;
+}
+
+.rk-surprise:hover,
+.rk-surprise:focus-visible {
+  color: var(--rk-surprise-ink);
+}
+
+.rk-surprise:focus-visible {
+  outline: 2px solid var(--rk-surprise-ink);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+.rk-surprise__label {
+  position: relative;
+  display: inline-block;
+  transform-origin: left center;
+  transition: transform 360ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/*
+  The sweep: a copy of the label filled with a gradient three times its width.
+  Only the middle third is coloured — ink on the left, clear on the right — so
+  sliding it from right to left starts fully clear, passes the band through
+  the text and ends on solid ink, matching the hovered text underneath.
+*/
+.rk-surprise__sweep {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+      90deg,
+      var(--rk-surprise-ink) 0 33.4%,
+      var(--rk-surprise-band-1) 40%,
+      var(--rk-surprise-band-2) 45%,
+      var(--rk-surprise-band-3) 50%,
+      var(--rk-surprise-band-4) 55%,
+      var(--rk-surprise-band-5) 60%,
+      transparent 66.6% 100%
+    )
+    100% 0 / 300% 100% no-repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* The animation is only set while hovered, so it plays from the start on every new hover. */
+.rk-surprise:hover .rk-surprise__sweep,
+.rk-surprise:focus-visible .rk-surprise__sweep {
+  opacity: 1;
+  animation: rk-surprise-sweep var(--rk-surprise-speed) cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+.rk-surprise[data-lift="true"]:hover .rk-surprise__label,
+.rk-surprise[data-lift="true"]:focus-visible .rk-surprise__label {
+  transform: scale(1.04);
+}
+
+.rk-surprise:active .rk-surprise__label {
+  transform: scale(0.96);
+  transition-duration: 90ms;
+  transition-timing-function: cubic-bezier(0.4, 0, 1, 1);
+}
+
+@keyframes rk-surprise-sweep {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: 0 0;
+  }
+}
+
+/* Hover still darkens the text; no sweep, lift or press. */
+@media (prefers-reduced-motion: reduce) {
+  .rk-surprise__sweep {
+    display: none;
+  }
+
+  .rk-surprise .rk-surprise__label,
+  .rk-surprise:hover .rk-surprise__label,
+  .rk-surprise:focus-visible .rk-surprise__label,
+  .rk-surprise:active .rk-surprise__label {
+    transform: none;
+    transition: none;
+  }
+}
