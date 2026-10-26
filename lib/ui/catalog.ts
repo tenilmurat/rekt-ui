@@ -1,13 +1,18 @@
-import type { ComponentItem } from "@/lib/registry/types";
+import { rollingCounter } from "@/components/blocks/rolling-counter";
+import type { UiBlock } from "@/lib/ui/types";
+
+export type { UiBlock } from "@/lib/ui/types";
 
 /**
- * What the UI wall shows. It starts empty on purpose: components are added here
- * one by one once they are designed and reviewed.
+ * What the UI wall shows. It starts empty on purpose: components are added
+ * here one by one once they are designed and reviewed.
  *
- * To publish one: build its preview in components/previews/, then add a
- * ComponentItem below with `category` set to an id from UI_CATEGORIES. The
- * earlier curated set in lib/registry/categories is not published; move an item
- * here only after checking it.
+ * A component is a folder in components/blocks/<id>/ holding exactly the
+ * files a visitor takes home — <Name>.tsx and <Name>.css — plus an index.ts
+ * that describes it as a UiBlock (see rolling-counter, the reference).
+ * To publish it, import that UiBlock and add it to PUBLISHED.
+ *
+ * The earlier curated set in lib/registry/categories is not published.
  */
 export type UiCategory = { id: string; label: string };
 
@@ -23,12 +28,15 @@ export const UI_CATEGORIES: UiCategory[] = [
   { id: "text", label: "Text" },
 ];
 
-/** A published component, plus how tall its card is on the wall. */
-export type UiBlock = ComponentItem & {
-  /** Card height on the wall in px; varied heights make the masonry. Default 380. */
-  cardHeight?: number;
-};
+const PUBLISHED: UiBlock[] = [];
 
-export const BLOCKS: UiBlock[] = [];
+/**
+ * Shown only in `npm run dev`, so the whole flow — card, dialog, controls,
+ * Install / Usage / Code / How it works, Copy prompt — can be checked locally
+ * while the live wall stays empty.
+ */
+const EXAMPLES: UiBlock[] = process.env.NODE_ENV === "development" ? [rollingCounter] : [];
+
+export const BLOCKS: UiBlock[] = [...PUBLISHED, ...EXAMPLES];
 
 export const getBlock = (id: string) => BLOCKS.find((b) => b.id === id);

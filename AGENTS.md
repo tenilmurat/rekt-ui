@@ -21,7 +21,7 @@ Fetch only the node you are changing.
 
 ## Conventions
 - Tokens live in `app/globals.css` (`--bg`, `--surface`, `--line`, `--ink`, `--ink-2`,
-  `--ink-3`, `--icon`, radii, `--ease-out-strong`). No raw hex in components.
+  `--ink-3`, `--icon`, radii, `--ease-out-strong`). No raw hex in site components (the blocks in `components/blocks` are the exception: they carry hex fallbacks so they work anywhere).
   Muted text is darkened from the mock's `#808080` / `#B8B8B8` to `--ink-2` / `--ink-3`
   so 13px text clears WCAG 2.2 AA.
 - Icons are the Figma SVGs in `public/icons`, drawn as CSS masks by
@@ -29,31 +29,60 @@ Fetch only the node you are changing.
 - Motion follows Beautiful UI: `--ease-out-strong`, `fade-up`, `pop-in`, press
   `active:scale-[0.96]`. `prefers-reduced-motion` is honoured globally in `globals.css`.
 - There is no Add Component UI. The library is curated in code (`lib/ui/catalog.ts`).
+- Site chrome uses Tailwind; the components people take home (`components/blocks`) use plain CSS.
 
 ## Layout
 Modelled on bencho.dev's structure (not its code or content):
 - **UI** (`/`, `components/wall/UiWall.tsx`): centred hero, category chips (`?category=`),
   then a 3-column masonry wall (`Masonry`: 1 / 2 / 3 columns at 0 / 640 / 1024px, 12px gaps,
-  20px gutters). Cards are 28px-radius live previews with the name in a pill bottom left and
-  save bottom right (`BlockCard`). Pressing a card opens `BlockDialog` over the wall
-  (`?c=<id>`): stage with Preview / Code on the left, details, style presets, Share and the
-  code action in a 300px panel on the right. A Pro band follows for free visitors.
+  20px gutters). Cards are 28px-radius live previews (`BlockCard`); `BlockDialog` opens over the wall
+  (`?c=<id>`): Preview / Code stage on the left (Code = Install, Usage, Code, How it works,
+  plus Copy prompt), and description, controls, Share and Save in a 320px panel on the right.
+  Cards are live in place; the name pill and the round button open the dialog. A Pro band
+  follows for free visitors.
 - **Good designs of X** (`/good-designs`): same hero, chips and masonry, screenshot tiles
   (`DesignCard`) that open the live site.
 - With nothing published the UI wall shows stand-in cards and a short notice.
 
-## Publishing a component
-The wall reads `BLOCKS` in `lib/ui/catalog.ts`, which **starts empty on purpose**.
-1. Build the preview in `components/previews/<Name>.tsx`. It receives `paused`,
-   `startedAt` and `expanded` plus its preset props, and must stop animating when
-   `paused` is true.
-2. Add an item to `BLOCKS`: `id`, `title`, `description`, `category` (an id from
-   `UI_CATEGORIES`), `component`, optional `presets` (shown as Style in the dialog),
-   `cardHeight` (varied heights make the masonry), `replay`, `tier`, `code`.
-3. `UI_CATEGORIES` is a placeholder list until the categories are decided.
+## Components: what every one ships with
+Rekt UI sells components people take into their own projects, so each one is real,
+self-contained source — **one `.tsx` and one `.css`**, no Tailwind, no imports from this app:
 
-`lib/registry/categories` holds the earlier curated set (from the Studio-Rekt library). It
-is **not published** — review an item before moving it into `BLOCKS`.
+```
+components/blocks/<id>/
+  <Name>.tsx   # "use client", named export <Name>, typed props with defaults
+  <Name>.css   # class prefix rk-<short>-, colours as --rk-<short>-* variables with fallbacks,
+               # prefers-reduced-motion handled
+  index.ts     # the site's description of it (a UiBlock) + imports the CSS for the preview
+```
+
+`index.ts` exports a `UiBlock` (`lib/ui/types.ts`): `id`, `title`, `description`,
+`category` (an id from `UI_CATEGORIES`), `component`, `name`, `files` (the .tsx first),
+`dependencies` (npm packages beyond React), `controls`, `howItWorks`, `cardHeight`,
+`tier`, and `source` for credit.
+
+The dialog builds everything else from that, so nothing is written twice:
+- **Controls** (`segmented` / `toggle` / `slider`), one per prop. The preview and the card
+  render with the tuned values.
+- **Install**: `npm install <dependencies>`, or "nothing to install beyond React".
+- **Usage**: imports + JSX with the tuned props (`lib/ui/snippets.ts`).
+- **Code**: the real files, served as static JSON by `app/source/[id]` from the folder.
+- **How it works**: `howItWorks`.
+- **Copy prompt**: files, install, usage and notes in one message for an AI assistant.
+
+Reference: `components/blocks/rolling-counter`.
+
+## Publishing
+The wall reads `BLOCKS` in `lib/ui/catalog.ts`. Add the block's `UiBlock` to `PUBLISHED`.
+`EXAMPLES` (the rolling counter) appear only in `npm run dev`, so the live wall stays empty
+until real components are published. `UI_CATEGORIES` is a placeholder list.
+
+Pro components: set `tier: "pro"`; free accounts see a lock instead of the Code tab, and
+Pro accounts get the files from rektui-backend (`GET /components/:id/source`, returning
+`{ files }`). Their source must not be committed to this public repo.
+
+`lib/registry/categories` holds the earlier curated set (from the Studio-Rekt library),
+written with Tailwind and not in this format. It is **not published**.
 
 ## Adding a tool
 Rekt UI's own tools are the sidebar on `/create/<id>` pages and live in `lib/registry/tools.ts`: add a

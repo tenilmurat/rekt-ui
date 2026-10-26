@@ -1,0 +1,111 @@
+/*
+  Rolling counter. Every colour is a variable with a fallback, so it works as
+  is; point the --rk-counter-* variables at your own tokens to theme it.
+*/
+.rk-counter {
+  --rk-counter-bg: #ffffff;
+  --rk-counter-ink: #141210;
+  --rk-counter-muted: #6b6763;
+  --rk-counter-button: #f1f1f0;
+  --rk-counter-edge: rgb(20 18 16 / 0.08);
+  --rk-counter-ease: cubic-bezier(0.23, 1, 0.32, 1);
+
+  position: relative;
+  display: inline-flex;
+  min-width: 232px;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px 22px;
+  border-radius: 22px;
+  background: var(--rk-counter-bg);
+  color: var(--rk-counter-ink);
+  box-shadow:
+    0 0 0 1px var(--rk-counter-edge),
+    0 8px 24px rgb(20 18 16 / 0.08);
+  font-family: inherit;
+}
+
+.rk-counter[data-fill="dark"] {
+  --rk-counter-bg: #1b1a18;
+  --rk-counter-ink: #f5f3f0;
+  --rk-counter-muted: #a8a29b;
+  --rk-counter-button: #2a2826;
+  --rk-counter-edge: rgb(255 255 255 / 0.07);
+}
+
+.rk-counter__label {
+  font-size: 13px;
+  color: var(--rk-counter-muted);
+}
+
+.rk-counter__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.rk-counter__value {
+  display: inline-flex;
+  font-size: 40px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* One window per digit; the reel of 0–9 slides behind it. */
+.rk-counter__digit {
+  display: inline-block;
+  height: 1em;
+  overflow: hidden;
+}
+
+.rk-counter__reel {
+  display: flex;
+  flex-direction: column;
+  transition: transform 600ms var(--rk-counter-ease);
+}
+
+.rk-counter__reel > span {
+  height: 1em;
+}
+
+.rk-counter__button {
+  height: 32px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--rk-counter-button);
+  color: var(--rk-counter-ink);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 150ms var(--rk-counter-ease);
+}
+
+.rk-counter__button:active {
+  transform: scale(0.94);
+}
+
+.rk-counter__button:focus-visible {
+  outline: 2px solid var(--rk-counter-ink);
+  outline-offset: 2px;
+}
+
+/* The number for screen readers; the rolling digits are decoration. */
+.rk-counter__sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rk-counter__reel {
+    transition: none;
+  }
+}

@@ -2,29 +2,33 @@
 
 import Link from "next/link";
 import { useEffect, useId, useRef, useState } from "react";
-import { Code2, Eye, Link2, Lock, RotateCcw, X } from "lucide-react";
-import { SourceBadge } from "@/components/library/SourceBadge";
-import { BookmarkButton } from "@/components/site/BookmarkButton";
-import { usePreviewState } from "@/lib/preview-state";
+import { Bookmark, Box, Code2, Link2, Lock, RotateCcw, X } from "lucide-react";
+import { CodeBlock, CodeSection, FileTabs } from "@/components/wall/CodeView";
+import { Controls } from "@/components/wall/Controls";
+import { useSession } from "@/lib/session";
 import { copyText, useToast } from "@/lib/toast";
-import type { UiBlock } from "@/lib/ui/catalog";
-import { useBlockCode } from "@/lib/ui/use-block-code";
+import { installCommand, promptFor, usageSnippet } from "@/lib/ui/snippets";
+import type { UiBlock } from "@/lib/ui/types";
+import { useBlockSource } from "@/lib/ui/use-block-source";
+import { useBlockValues } from "@/lib/ui/use-block-values";
 
 /**
- * A component, opened from the wall: the live stage on the left (Preview or
- * Code), its details and settings on the right. The URL carries `?c=<id>`, so
- * the open component can be shared and survives a reload.
+ * A component, opened from the wall. Left: the live stage, or the Code tab —
+ * Install, Usage (with the tuned props), the real .tsx / .css files and How it
+ * works, plus Copy prompt for AI assistants. Right: description, controls,
+ * Share and Save. `?c=<id>` keeps it open across reloads and shares.
  */
 export function BlockDialog({ block, onClose }: { block: UiBlock; onClose: () => void }) {
   const [view, setView] = useState<"preview" | "code">("preview");
-  const { presetId, startedAt, setPreset, restart } = usePreviewState(block.id);
-  const presets = block.presets ?? [];
-  const preset = presets.find((p) => p.id === presetId) ?? presets[0];
-  const code = useBlockCode(block, view === "code");
+  const { values, startedAt, restart, setValue } = useBlockValues(block);
+  const source = useBlockSource(block, view === "code");
+  const { isBookmarked, toggleBookmark } = useSession();
+  const saved = isBookmarked("component", block.id);
+  const [activeFile, setActiveFile] = useState(block.files[0]);
   const toast = useToast();
   const closeRef = useRef<HTMLButtonElement | null>(null);
   const titleId = useId();
-  const Preview = block.component;
+  const Component = block.component;
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
@@ -40,15 +44,18 @@ export function BlockDialog({ block, onClose }: { block: UiBlock; onClose: () =>
     };
   }, [onClose]);
 
+  const usage = usageSnippet(block, values);
+  const fileCode = source.files?.find((f) => f.path === activeFile)?.code ?? null;
+
   async function share() {
     const ok = await copyText(window.location.href);
     toast(ok ? `Link to ${block.title} copied` : "Couldn't copy the link — check clipboard permission", ok ? "done" : "warn");
   }
 
-  async function copyCode() {
-    if (!code.usage) return;
-    const ok = await copyText(code.usage);
-    toast(ok ? `${block.title} code copied` : "Couldn't copy — check clipboard permission", ok ? "done" : "warn");
+  async function copyPrompt() {
+    if (!source.files) return;
+    const ok = await copyText(promptFor(block, values, source.files));
+    toast(ok ? "Prompt copied — paste it into your AI assistant" : "Couldn't copy — check clipboard permission", ok ? "done" : "warn");
   }
 
   return (
@@ -62,84 +69,119 @@ export function BlockDialog({ block, onClose }: { block: UiBlock; onClose: () =>
         style={{ backgroundColor: "rgba(20,18,16,0.32)", backdropFilter: "blur(2px)" }}
       />
 
-      <div className="animate-pop-in relative flex h-full max-h-[640px] w-full max-w-[1000px] flex-col gap-[10px] md:flex-row">
+      <div className="animate-pop-in relative flex h-full max-h-[680px] w-full max-w-[1040px] flex-col gap-[10px] md:flex-row">
         {/* Stage */}
         <section
           aria-label={`${block.title} ${view}`}
-          className="relative min-h-[320px] flex-1 overflow-hidden rounded-[28px]"
+          className="relative flex min-h-[320px] flex-1 flex-col overflow-hidden rounded-[28px]"
           style={{ backgroundColor: "var(--surface)" }}
         >
-          <div className="absolute left-[12px] top-[12px] z-10 flex rounded-full p-[3px]" role="tablist" aria-label="View" style={{ backgroundColor: "var(--hover-2)" }}>
-            {(
-              [
-                { id: "preview", label: "Preview", icon: Eye },
-                { id: "code", label: "Code", icon: Code2 },
-              ] as const
-            ).map(({ id, label, icon: IconGlyph }) => (
-              <button
-                key={id}
-                type="button"
-                role="tab"
-                aria-selected={view === id}
-                aria-label={label}
-                title={label}
-                onClick={() => setView(id)}
-                className="flex size-[30px] items-center justify-center rounded-full transition-colors"
-                style={{
-                  backgroundColor: view === id ? "var(--surface-raised)" : "transparent",
-                  color: view === id ? "var(--ink)" : "var(--ink-3)",
-                  boxShadow: view === id ? "var(--shadow-raised)" : "none",
-                }}
-              >
-                <IconGlyph size={15} strokeWidth={1.875} />
-              </button>
-            ))}
-          </div>
+          <div className="flex items-center justify-between gap-[8px] p-[12px]">
+            <div className="flex rounded-full p-[3px]" role="tablist" aria-label="View" style={{ backgroundColor: "var(--hover-2)" }}>
+              {(
+                [
+                  { id: "preview", label: "Preview", icon: Box },
+                  { id: "code", label: "Code", icon: Code2 },
+                ] as const
+              ).map(({ id, label, icon: Glyph }) => (
+                <button
+                  key={id}
+                  type="button"
+                  role="tab"
+                  aria-selected={view === id}
+                  aria-label={label}
+                  title={label}
+                  onClick={() => setView(id)}
+                  className="flex size-[34px] items-center justify-center rounded-full transition-colors"
+                  style={{
+                    backgroundColor: view === id ? "var(--ink)" : "transparent",
+                    color: view === id ? "var(--bg)" : "var(--ink-3)",
+                  }}
+                >
+                  <Glyph size={16} strokeWidth={1.875} />
+                </button>
+              ))}
+            </div>
 
-          <div className="absolute right-[12px] top-[12px] z-10 flex gap-[6px]">
-            {block.replay && view === "preview" ? (
+            {view === "code" && !source.locked ? (
+              <button
+                type="button"
+                onClick={copyPrompt}
+                disabled={!source.files}
+                className="h-[40px] rounded-full px-[18px] text-[14px] font-medium transition-transform active:scale-[0.97] disabled:opacity-50"
+                style={{ backgroundColor: "var(--ink)", color: "var(--bg)" }}
+              >
+                Copy prompt
+              </button>
+            ) : view === "preview" ? (
               <button
                 type="button"
                 onClick={restart}
-                aria-label={`Play ${block.title} again`}
+                aria-label={`Restart ${block.title}`}
+                title="Restart"
                 className="control flex size-[36px] items-center justify-center rounded-full border active:scale-[0.94]"
                 style={{ backgroundColor: "var(--control-bg)", borderColor: "var(--control-line)", color: "var(--icon)" }}
               >
                 <RotateCcw size={15} strokeWidth={1.875} />
               </button>
             ) : null}
-            <BookmarkButton kind="component" id={block.id} label={block.title} round />
           </div>
 
           {view === "preview" ? (
-            <div className="flex h-full w-full items-center justify-center px-[24px] pt-[48px]">
-              <Preview key={startedAt} {...(preset?.props ?? {})} startedAt={startedAt} expanded />
+            <div className="flex flex-1 items-center justify-center px-[24px] pb-[48px]">
+              <Component key={startedAt} {...values} />
             </div>
-          ) : code.locked ? (
-            <div className="flex h-full flex-col items-center justify-center gap-[12px] px-[24px] text-center">
+          ) : source.locked ? (
+            <div className="flex flex-1 flex-col items-center justify-center gap-[12px] px-[24px] pb-[48px] text-center">
               <Lock size={20} strokeWidth={1.75} style={{ color: "var(--icon)" }} aria-hidden="true" />
-              <p className="max-w-[280px] text-[14px]" style={{ color: "var(--ink)" }}>
-                {block.title} is a Pro component. Its full source comes with Pro.
+              <p className="max-w-[300px] text-[14px]" style={{ color: "var(--ink)" }}>
+                {block.title} is a Pro component. Its install steps, usage and full source come with Pro.
               </p>
             </div>
           ) : (
-            <pre
-              className="no-scrollbar h-full overflow-auto px-[24px] pb-[24px] pt-[64px] font-mono text-[12.5px] leading-[1.65]"
-              style={{ color: "var(--ink)" }}
-            >
-              <code>{code.loading ? "// Loading source…" : (code.usage ?? "// Code coming soon")}</code>
-            </pre>
+            <div className="no-scrollbar flex flex-1 flex-col gap-[10px] overflow-y-auto px-[12px] pb-[12px]">
+              <CodeSection title="Install" copy={installCommand(block)} copyLabel="Install command">
+                <CodeBlock code={installCommand(block)} language="plain" />
+              </CodeSection>
+
+              <CodeSection title="Usage" copy={usage} copyLabel="Usage" defaultOpen>
+                <CodeBlock code={usage} language="tsx" />
+              </CodeSection>
+
+              <CodeSection title="Code" copy={fileCode} copyLabel={activeFile}>
+                {block.files.length > 1 ? <FileTabs files={block.files} active={activeFile} onSelect={setActiveFile} /> : null}
+                {source.error ? (
+                  <p className="px-[8px] py-[12px] text-[13px]" style={{ color: "var(--red)" }}>
+                    {source.error}
+                  </p>
+                ) : fileCode === null ? (
+                  <p role="status" className="px-[8px] py-[12px] text-[13px]" style={{ color: "var(--ink-3)" }}>
+                    Loading {activeFile}…
+                  </p>
+                ) : (
+                  <CodeBlock code={fileCode} language={activeFile.endsWith(".css") ? "css" : "tsx"} />
+                )}
+              </CodeSection>
+
+              {block.howItWorks ? (
+                <CodeSection title="How it works" copy={block.howItWorks} copyLabel="How it works">
+                  <p className="px-[8px] pb-[6px] text-[13.5px] leading-[1.65]" style={{ color: "var(--ink-2)" }}>
+                    {block.howItWorks}
+                  </p>
+                </CodeSection>
+              ) : null}
+            </div>
           )}
         </section>
 
         {/* Details */}
         <aside
-          className="flex max-h-[45%] w-full shrink-0 flex-col overflow-hidden rounded-[28px] p-[18px] md:max-h-none md:w-[300px]"
+          className="flex max-h-[48%] w-full shrink-0 flex-col overflow-hidden rounded-[28px] p-[20px] md:max-h-none md:w-[320px]"
           style={{ backgroundColor: "var(--surface)" }}
         >
-          <header className="flex flex-col gap-[8px] pb-[14px]">
+          <header className="flex flex-col gap-[10px] pb-[18px]">
             <div className="flex items-start justify-between gap-[12px]">
-              <h2 id={titleId} className="text-[15px] font-medium" style={{ color: "var(--ink-title)" }}>
+              <h2 id={titleId} className="text-[18px] font-medium tracking-[-0.18px]" style={{ color: "var(--ink-title)" }}>
                 {block.title}
               </h2>
               <button
@@ -147,66 +189,48 @@ export function BlockDialog({ block, onClose }: { block: UiBlock; onClose: () =>
                 type="button"
                 onClick={onClose}
                 aria-label="Close"
-                className="control-quiet -mr-[6px] -mt-[4px] flex size-[30px] shrink-0 items-center justify-center rounded-full"
+                className="control-quiet -mr-[6px] -mt-[2px] flex size-[32px] shrink-0 items-center justify-center rounded-full"
                 style={{ backgroundColor: "var(--control-bg)", color: "var(--control-fg)" }}
               >
-                <X size={16} strokeWidth={1.875} />
+                <X size={17} strokeWidth={1.875} />
               </button>
             </div>
-            <p className="text-[13px] leading-[1.55]" style={{ color: "var(--ink-2)" }}>
+            <p className="text-[13.5px] leading-[1.6]" style={{ color: "var(--ink-2)" }}>
               {block.description}
             </p>
           </header>
 
-          <div className="no-scrollbar flex flex-1 flex-col gap-[18px] overflow-y-auto py-[6px]">
-            {presets.length > 1 ? (
-              <section className="flex flex-col gap-[8px]">
-                <h3 className="text-[12px]" style={{ color: "var(--ink-3)" }}>
-                  Style
-                </h3>
-                <div className="flex flex-wrap gap-[6px]">
-                  {presets.map((p) => (
-                    <button
-                      key={p.id}
-                      type="button"
-                      aria-pressed={p.id === preset?.id}
-                      onClick={() => setPreset(p.id)}
-                      className="control-chip h-[30px] rounded-full px-[12px] text-[13px]"
-                      style={{
-                        backgroundColor: p.id === preset?.id ? "var(--ink)" : "var(--surface-raised)",
-                        color: p.id === preset?.id ? "var(--bg)" : "var(--ink-2)",
-                      }}
-                    >
-                      {p.label}
-                    </button>
-                  ))}
-                </div>
-              </section>
-            ) : null}
-
-            {block.sourceName ? (
-              <section className="flex items-center gap-[8px] text-[12px]" style={{ color: "var(--ink-3)" }}>
-                <SourceBadge item={block} size={24} />
-                Based on {block.sourceName}
-                {block.license ? ` · ${block.license}` : ""}
-              </section>
+          <div className="no-scrollbar flex-1 overflow-y-auto py-[4px]">
+            {block.controls?.length ? <Controls controls={block.controls} values={values} onChange={setValue} /> : null}
+            {block.source ? (
+              <p className="mt-[18px] text-[12px]" style={{ color: "var(--ink-3)" }}>
+                Based on{" "}
+                {block.source.url ? (
+                  <a href={block.source.url} target="_blank" rel="noreferrer noopener" className="underline underline-offset-2">
+                    {block.source.name}
+                  </a>
+                ) : (
+                  block.source.name
+                )}
+                {block.source.license ? ` · ${block.source.license}` : ""}
+              </p>
             ) : null}
           </div>
 
-          <div className="flex flex-col gap-[8px] pt-[12px]">
+          <div className="flex flex-col gap-[8px] pt-[14px]">
             <button
               type="button"
               onClick={share}
-              className="control flex h-[40px] items-center justify-center gap-[7px] rounded-full border text-[13px] font-medium active:scale-[0.98]"
+              className="control flex h-[44px] items-center justify-center gap-[8px] rounded-full border text-[14px] font-medium active:scale-[0.98]"
               style={{ backgroundColor: "var(--control-bg)", borderColor: "var(--control-line)", color: "var(--ink)" }}
             >
-              <Link2 size={15} strokeWidth={1.875} />
+              <Link2 size={16} strokeWidth={1.875} />
               Share
             </button>
-            {code.locked ? (
+            {source.locked ? (
               <Link
                 href="/pricing"
-                className="flex h-[40px] items-center justify-center rounded-full text-[13px] font-medium transition-transform active:scale-[0.98]"
+                className="flex h-[44px] items-center justify-center rounded-full text-[14px] font-medium transition-transform active:scale-[0.98]"
                 style={{ backgroundColor: "var(--ink)", color: "var(--bg)" }}
               >
                 Get Pro
@@ -214,12 +238,13 @@ export function BlockDialog({ block, onClose }: { block: UiBlock; onClose: () =>
             ) : (
               <button
                 type="button"
-                onClick={() => (view === "code" ? copyCode() : setView("code"))}
-                disabled={view === "code" && !code.usage}
-                className="flex h-[40px] items-center justify-center rounded-full text-[13px] font-medium transition-transform active:scale-[0.98] disabled:opacity-50"
+                onClick={() => void toggleBookmark("component", block.id, block.title)}
+                aria-pressed={saved}
+                className="flex h-[44px] items-center justify-center gap-[8px] rounded-full text-[14px] font-medium transition-transform active:scale-[0.98]"
                 style={{ backgroundColor: "var(--ink)", color: "var(--bg)" }}
               >
-                {view === "code" ? "Copy code" : "Get the code"}
+                <Bookmark size={16} strokeWidth={1.875} style={{ fill: saved ? "currentColor" : "none" }} />
+                {saved ? "Saved" : "Save"}
               </button>
             )}
           </div>
