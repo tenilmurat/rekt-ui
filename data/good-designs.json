@@ -1,0 +1,983 @@
+[
+ {
+  "id": "web-kits-audio",
+  "name": "@web-kits/audio",
+  "summary": "Declarative audio synthesis for the web",
+  "url": "https://audio.raphaelsalaja.com/",
+  "x": "component-libraries",
+  "screenshot": "https://build.studiorekt.com/screenshots/web-kits-audio.jpg",
+  "creator": null
+ },
+ {
+  "id": "k",
+  "name": "⌘K",
+  "summary": "Fast, unstyled command menu React component",
+  "url": "https://github.com/dip/cmdk",
+  "x": "component-libraries",
+  "screenshot": "https://build.studiorekt.com/screenshots/k.jpg",
+  "creator": null
+ },
+ {
+  "id": "21st-dev",
+  "name": "21st",
+  "summary": "12,000+ community React components",
+  "url": "https://21st.dev/",
+  "x": "component-libraries",
+  "screenshot": "https://build.studiorekt.com/screenshots/21st-dev.jpg",
+  "creator": null
+ },
+ {
+  "id": "60fps",
+  "name": "60fps",
+  "summary": "UI animation inspiration for mobile and web apps",
+  "url": "https://60fps.design/",
+  "x": "collections",
+  "screenshot": "https://build.studiorekt.com/screenshots/60fps.jpg",
+  "creator": null
+ },
+ {
+  "id": "abtest-design",
+  "name": "abtest.design",
+  "summary": "Curated collection of A/B test results from best-in-class apps",
+  "url": "https://abtest.design/",
+  "x": "collections",
+  "screenshot": "https://build.studiorekt.com/screenshots/abtest-design.jpg",
+  "creator": null
+ },
+ {
+  "id": "particle-simulator",
+  "name": "AI Particle Simulator",
+  "summary": "3D particle swarm simulator",
+  "url": "https://particles.casberry.in/",
+  "x": "generative-sites",
+  "screenshot": "https://build.studiorekt.com/screenshots/particle-simulator.jpg",
+  "creator": null
+ },
+ {
+  "id": "aicss",
+  "name": "AICSS",
+  "summary": "Beautifully designed, copy-paste UI components for AI agent conversations: thinking states, tool calls, streaming text, citations, tables and more",
+  "url": "https://aicss.dev",
+  "x": "component-libraries",
+  "screenshot": "https://build.studiorekt.com/screenshots/aicss.jpg",
+  "creator": null
+ },
+ {
+  "id": "amicro",
+  "name": "Amicro",
+  "summary": "React micro-transitions and interactions",
+  "url": "https://amicro.vercel.app/",
+  "x": "component-libraries",
+  "screenshot": "https://build.studiorekt.com/screenshots/amicro.jpg",
+  "creator": null
+ },
+ {
+  "id": "ascii-studio",
+  "name": "ASCII Studio",
+  "summary": "Turn videos and images into ASCII art",
+  "url": "https://www.asciistudio.space/",
+  "x": "generative-sites",
+  "screenshot": "https://build.studiorekt.com/screenshots/ascii-studio.jpg",
+  "creator": null
+ },
+ {
+  "id": "babytrack",
+  "name": "BabyTrack",
+  "summary": "Blob tracking video effects",
+  "url": "https://artkit.cc/baby-track",
+  "x": "generative-sites",
+  "screenshot": "https://build.studiorekt.com/screenshots/babytrack.jpg",
+  "creator": null
+ },
+ {
+  "id": "bakers-studio-tools",
+  "name": "Bakers Studio Tools",
+  "summary": "Generate patterned ID cards as SVG",
+  "url": "https://bakers.studio/tools",
+  "x": "generative-sites",
+  "screenshot": "https://build.studiorekt.com/screenshots/bakers-studio-tools.jpg",
+  "creator": null
+ },
+ {
+  "id": "beam",
+  "name": "Beam",
+  "summary": "Animated border beam for React",
+  "url": "https://libraries.dev/beam",
+  "x": "component-libraries",
+  "screenshot": "https://build.studiorekt.com/screenshots/beam.jpg",
+  "creator": null
+ },
+ {
+  "id": "beautiful-ui",
+  "name": "Beautiful UI",
+  "summary": "A small library of extremely crafted, copy-paste components for chat agents, thinking states, human-in-the-loop approvals, and everything agents need to talk to humans beautifully",
+  "url": "https://beautifului.dev",
+  "x": "component-libraries",
+  "screenshot": "https://build.studiorekt.com/screenshots/beautiful-ui.jpg",
+  "creator": null
+ },
+ {
+  "id": "bootstrap-icons",
+  "name": "Bootstrap Icons",
+  "summary": "Official open-source icons for Bootstrap",
+  "url": "https://icons.getbootstrap.com/",
+  "x": "icon-sets",
+  "screenshot": "https://build.studiorekt.com/screenshots/bootstrap-icons.jpg",
+  "creator": null
+ },
+ {
+  "id": "brainless",
+  "name": "brainless",
+  "summary": "AI coding agent interfaces as shadcn components",
+  "url": "https://brainless.swerdlow.dev/",
+  "x": "component-libraries",
+  "screenshot": "https://build.studiorekt.com/screenshots/brainless.jpg",
+  "creator": null
+ },
+ {
+  "id": "brand-assets-generator",
+  "name": "Brand Assets Generator",
+  "summary": "Generate composed brand imagery",
+  "url": "https://brand-generator.stoyanov.works/",
+  "x": "generative-sites",
+  "screenshot": "https://build.studiorekt.com/screenshots/brand-assets-generator.jpg",
+  "creator": null
+ },
+ {
+  "id": "calligraph",
+  "name": "Calligraph",
+  "summary": "Fluid text transitions powered by Motion",
+  "url": "https://calligraph.raphaelsalaja.com/",
+  "x": "component-libraries",
+  "screenshot": "https://build.studiorekt.com/screenshots/calligraph.jpg",
+  "creator": null
+ },
+ {
+  "id": "crd-ui",
+  "name": "crd-ui",
+  "summary": "A credit & debit card component for payment forms: live brand detection, 3D flip, themeable variants",
+  "url": "https://crd-ui.juanda.co/",
+  "x": "component-libraries",
+  "screenshot": "https://build.studiorekt.com/screenshots/crd-ui.jpg",
+  "creator": null
+ },
+ {
+  "id": "cuelume",
+  "name": "Cuelume",
+  "summary": "Cuelume is a tiny, dependency-free library of carefully designed interaction sounds, synthesized live with Web Audio",
+  "url": "https://cuelume.dev",
+  "x": "component-libraries",
+  "screenshot": "https://build.studiorekt.com/screenshots/cuelume.jpg",
+  "creator": null
+ },
+ {
+  "id": "cult-ui",
+  "name": "Cult UI",
+  "summary": "Animated shadcn components, blocks and templates",
+  "url": "https://www.cult-ui.com/",
+  "x": "component-libraries",
+  "screenshot": "https://build.studiorekt.com/screenshots/cult-ui.jpg",
+  "creator": null
+ },
+ {
+  "id": "cutting-mat-generator",
+  "name": "Cutting Mat Generator",
+  "summary": "Customizable SVG cutting mat backgrounds",
+  "url": "https://cutting-mat-generator.vercel.app/",
+  "x": "generative-sites",
+  "screenshot": "https://build.studiorekt.com/screenshots/cutting-mat-generator.jpg",
+  "creator": null
+ },
+ {
+  "id": "design-books",
+  "name": "Design Books",
+  "summary": "A curated reading list for product, interaction, and visual designers studying usability, systems, typography, research, and the craft of making useful things",
+  "url": "https://designbooks.org/",
+  "x": "collections",
+  "screenshot": "https://build.studiorekt.com/screenshots/design-books.jpg",
+  "creator": null
+ },
+ {
+  "id": "design-engineer-tools",
+  "name": "Design Engineer Tools",
+  "summary": "A list of useful tools for web-focused design engineers",
+  "url": "https://designengineer.tools/",
+  "x": "collections",
+  "screenshot": "https://build.studiorekt.com/screenshots/design-engineer-tools.jpg",
+  "creator": null
+ },
+ {
+  "id": "design-principles",
+  "name": "Design Principles",
+  "summary": "A curated collection of design principles used as decision-making frameworks",
+  "url": "https://principles.design/",
+  "x": "collections",
+  "screenshot": "https://build.studiorekt.com/screenshots/design-principles.jpg",
+  "creator": null
+ },
+ {
+  "id": "design-spells",
+  "name": "Design Spells",
+  "summary": "Discover micro-interactions, easter eggs, and other seemingly extra design details that infuse life, personality, and fun back into the web",
+  "url": "https://designspells.com",
+  "x": "collections",
+  "screenshot": "https://build.studiorekt.com/screenshots/design-spells.jpg",
+  "creator": null
+ },
+ {
+  "id": "design-system-checklist",
+  "name": "Design System Checklist",
+  "summary": "An open-source checklist to help you plan, build and grow your design system",
+  "url": "https://www.designsystemchecklist.com/",
+  "x": "creative-tools",
+  "screenshot": "https://build.studiorekt.com/screenshots/design-system-checklist.jpg",
+  "creator": null
+ },
+ {
+  "id": "design-systems-surf",
+  "name": "Design Systems Surf",
+  "summary": "Best-in-class Design Systems collection with a repository of Components and Foundations references from top-tier tech companies and leading UI teams",
+  "url": "https://designsystems.surf/",
+  "x": "collections",
+  "screenshot": "https://build.studiorekt.com/screenshots/design-systems-surf.jpg",
+  "creator": null
+ },
+ {
+  "id": "design-tokens-generator",
+  "name": "Design Tokens Generator",
+  "summary": "Paste brand colors or a Figma, Tokens Studio, or DTCG export and get production-ready design tokens: semantic CSS variables with dark mode, a Tailwind v4 @theme, DTCG tokens.json, and rules your AI coding agents can follow",
+  "url": "https://design.dev/ai/design-tokens-generator/",
+  "x": "creative-tools",
+  "screenshot": "https://build.studiorekt.com/screenshots/design-tokens-generator.jpg",
+  "creator": null
+ },
+ {
+  "id": "devl-dev",
+  "name": "devl.dev",
+  "summary": "Two years of UI experiments",
+  "url": "https://devl.dev/",
+  "x": "component-libraries",
+  "screenshot": "https://build.studiorekt.com/screenshots/devl-dev.jpg",
+  "creator": null
+ },
+ {
+  "id": "dither-kit",
+  "name": "dither-kit",
+  "summary": "Composable, dithered charts with a recharts-style children-as-config API",
+  "url": "https://www.tripwire.sh/dither-kit",
+  "x": "component-libraries",
+  "screenshot": "https://build.studiorekt.com/screenshots/dither-kit.jpg",
+  "creator": null
+ },
+ {
+  "id": "dot-dither",
+  "name": "Dot Dither",
+  "summary": "Dot dither SVG generator",
+  "url": "https://cotool-dither.vercel.app",
+  "x": "generative-sites",
+  "screenshot": "https://build.studiorekt.com/screenshots/dot-dither.jpg",
+  "creator": null
+ },
+ {
+  "id": "dot-matrix",
+  "name": "Dot Matrix",
+  "summary": "Dot Matrix is a React component library of dot matrix loaders—expressive loading primitives you install via the shadcn registry and own as local code",
+  "url": "https://dotmatrix.zzzzshawn.cloud",
+  "x": "component-libraries",
+  "screenshot": "https://build.studiorekt.com/screenshots/dot-matrix.jpg",
+  "creator": null
+ },
+ {
+  "id": "easing-graphs",
+  "name": "Easing Graphs",
+  "summary": "A curated collection of easing graphs",
+  "url": "https://www.easing.dev/",
+  "x": "creative-tools",
+  "screenshot": "https://build.studiorekt.com/screenshots/easing-graphs.jpg",
+  "creator": null
+ },
+ {
+  "id": "efecto",
+  "name": "Efecto",
+  "summary": "A design tool built for humans and AI agents",
+  "url": "https://efecto.app",
+  "x": "creative-tools",
+  "screenshot": "https://build.studiorekt.com/screenshots/efecto.jpg",
+  "creator": null
+ },
+ {
+  "id": "fancy-components",
+  "name": "Fancy Components",
+  "summary": "Ready to use, fancy React components to make the web fun again",
+  "url": "https://www.fancycomponents.dev/",
+  "x": "component-libraries",
+  "screenshot": "https://build.studiorekt.com/screenshots/fancy-components.jpg",
+  "creator": null
+ },
+ {
+  "id": "feather",
+  "name": "Feather",
+  "summary": "Simple open-source icons on a 24px grid",
+  "url": "https://feathericons.com/",
+  "x": "icon-sets",
+  "screenshot": "https://build.studiorekt.com/screenshots/feather.jpg",
+  "creator": null
+ },
+ {
+  "id": "fluid",
+  "name": "FLUID",
+  "summary": "Generative backgrounds and OG images",
+  "url": "https://fluid.krackeddevs.com",
+  "x": "generative-sites",
+  "screenshot": "https://build.studiorekt.com/screenshots/fluid.jpg",
+  "creator": null
+ },
+ {
+  "id": "font-awesome",
+  "name": "Font Awesome",
+  "summary": "The web's most popular icon toolkit",
+  "url": "https://fontawesome.com/icons",
+  "x": "icon-sets",
+  "screenshot": "https://build.studiorekt.com/screenshots/font-awesome.jpg",
+  "creator": null
+ },
+ {
+  "id": "fontshare",
+  "name": "Fontshare",
+  "summary": "Quality fonts, free",
+  "url": "https://www.fontshare.com/",
+  "x": "type-sites",
+  "screenshot": "https://build.studiorekt.com/screenshots/fontshare.jpg",
+  "creator": null
+ },
+ {
+  "id": "gradient-border-plugin",
+  "name": "Gradient Border Plugin",
+  "summary": "A simple Tailwind CSS plugin for beautiful gradient borders using mask-composite",
+  "url": "https://gradient-border.floriankiem.com/",
+  "x": "component-libraries",
+  "screenshot": "https://build.studiorekt.com/screenshots/gradient-border-plugin.jpg",
+  "creator": null
+ },
+ {
+  "id": "gradient-lab",
+  "name": "Gradient Lab",
+  "summary": "Animated gradient background generator",
+  "url": "https://backgrounds.supply/gradient-lab",
+  "x": "generative-sites",
+  "screenshot": "https://build.studiorekt.com/screenshots/gradient-lab.jpg",
+  "creator": null
+ },
+ {
+  "id": "gradientool",
+  "name": "GRADIENTOOL",
+  "summary": "A simple tool for infinite unique outputs",
+  "url": "https://gradientool.com/",
+  "x": "generative-sites",
+  "screenshot": "https://build.studiorekt.com/screenshots/gradientool.jpg",
+  "creator": null
+ },
+ {
+  "id": "grainrad",
+  "name": "Grainrad",
+  "summary": "ASCII, dithering and retro effects",
+  "url": "https://grainrad.com",
+  "x": "generative-sites",
+  "screenshot": "https://build.studiorekt.com/screenshots/grainrad.jpg",
+  "creator": null
+ },
+ {
+  "id": "hashvatar",
+  "name": "Hashvatar",
+  "summary": "Generate deterministic, unique avatars from wallet addresses, usernames, or any string",
+  "url": "https://www.hashvatar.com/",
+  "x": "component-libraries",
+  "screenshot": "https://build.studiorekt.com/screenshots/hashvatar.jpg",
+  "creator": null
+ },
+ {
+  "id": "heroicons",
+  "name": "Heroicons",
+  "summary": "Hand-crafted SVG icons by the Tailwind team",
+  "url": "https://heroicons.com/",
+  "x": "icon-sets",
+  "screenshot": "https://build.studiorekt.com/screenshots/heroicons.jpg",
+  "creator": null
+ },
+ {
+  "id": "hofmann-gr1d",
+  "name": "Hofmann GR1D",
+  "summary": "Hofmann-style grid compositions",
+  "url": "https://ynwu.app/tool-runs/HofmannGR1D_ynwumk4_2025",
+  "x": "generative-sites",
+  "screenshot": "https://build.studiorekt.com/screenshots/hofmann-gr1d.jpg",
+  "creator": null
+ },
+ {
+  "id": "holocloth",
+  "name": "Holocloth",
+  "summary": "Holographic cloth simulation",
+  "url": "https://holocloth.vercel.app/",
+  "x": "generative-sites",
+  "screenshot": "https://build.studiorekt.com/screenshots/holocloth.jpg",
+  "creator": null
+ },
+ {
+  "id": "icones",
+  "name": "Icônes",
+  "summary": "Search 100+ open-source icon sets at once",
+  "url": "https://icones.js.org/",
+  "x": "icon-sets",
+  "screenshot": "https://build.studiorekt.com/screenshots/icones.jpg",
+  "creator": null
+ },
+ {
+  "id": "iconoir",
+  "name": "Iconoir",
+  "summary": "Open-source icons, no premium tier",
+  "url": "https://iconoir.com/",
+  "x": "icon-sets",
+  "screenshot": "https://build.studiorekt.com/screenshots/iconoir.jpg",
+  "creator": null
+ },
+ {
+  "id": "images-in-motion",
+  "name": "Images in motion",
+  "summary": "Open-source JS library for displaying independent columns, opposite directions: a continuous animated image pattern for the web",
+  "url": "https://iim.smartsquad.io",
+  "x": "component-libraries",
+  "screenshot": "https://build.studiorekt.com/screenshots/images-in-motion.jpg",
+  "creator": null
+ },
+ {
+  "id": "khagwal-interactions",
+  "name": "Interactions by Nitish Khagwal",
+  "summary": "Handcrafted interactions focused on utility & beauty",
+  "url": "https://khagwal.com/interactions/",
+  "x": "collections",
+  "screenshot": "https://build.studiorekt.com/screenshots/khagwal-interactions.jpg",
+  "creator": null
+ },
+ {
+  "id": "interior-dev",
+  "name": "interior.dev",
+  "summary": "Micro-interactions for react, built for the half-second after a click",
+  "url": "https://www.interior.dev/",
+  "x": "component-libraries",
+  "screenshot": "https://build.studiorekt.com/screenshots/interior-dev.jpg",
+  "creator": null
+ },
+ {
+  "id": "kokonutui",
+  "name": "KokonutUI",
+  "summary": "100+ free React and Tailwind components",
+  "url": "https://kokonutui.com/",
+  "x": "component-libraries",
+  "screenshot": "https://build.studiorekt.com/screenshots/kokonutui.jpg",
+  "creator": null
+ },
+ {
+  "id": "kugiri",
+  "name": "kugiri",
+  "summary": "Splits text into lines, words and characters exactly where the browser already broke it",
+  "url": "https://edoardolunardi.github.io/kugiri/",
+  "x": "component-libraries",
+  "screenshot": "https://build.studiorekt.com/screenshots/kugiri.jpg",
+  "creator": null
+ },
+ {
+  "id": "laws-of-ux",
+  "name": "Laws of UX",
+  "summary": "Laws of UX is a collection of best practices that designers can consider when building user interfaces",
+  "url": "https://lawsofux.com/",
+  "x": "collections",
+  "screenshot": "https://build.studiorekt.com/screenshots/laws-of-ux.jpg",
+  "creator": null
+ },
+ {
+  "id": "liquid-gooey",
+  "name": "Liquid Gooey",
+  "summary": "Liquid UI effects for React",
+  "url": "https://libraries.dev/gooey",
+  "x": "component-libraries",
+  "screenshot": "https://build.studiorekt.com/screenshots/liquid-gooey.jpg",
+  "creator": null
+ },
+ {
+  "id": "liquid-orb-editor",
+  "name": "Liquid Orb Editor",
+  "summary": "Design animated liquid orbs",
+  "url": "https://lersent001.github.io/orb/",
+  "x": "generative-sites",
+  "screenshot": "https://build.studiorekt.com/screenshots/liquid-orb-editor.jpg",
+  "creator": null
+ },
+ {
+  "id": "liquid-glass",
+  "name": "liquid-glass",
+  "summary": "A headless React lens that refracts the live page",
+  "url": "https://glass.samasante.com/",
+  "x": "component-libraries",
+  "screenshot": "https://build.studiorekt.com/screenshots/liquid-glass.jpg",
+  "creator": null
+ },
+ {
+  "id": "liveline",
+  "name": "Liveline",
+  "summary": "Real-time animated line chart for React",
+  "url": "https://github.com/benjitaylor/liveline",
+  "x": "component-libraries",
+  "screenshot": "https://build.studiorekt.com/screenshots/liveline.jpg",
+  "creator": null
+ },
+ {
+  "id": "loading-dev",
+  "name": "loading.dev",
+  "summary": "A lightweight library full of beautiful loading indicators for React",
+  "url": "https://loading.dev/",
+  "x": "component-libraries",
+  "screenshot": "https://build.studiorekt.com/screenshots/loading-dev.jpg",
+  "creator": null
+ },
+ {
+  "id": "logomotion",
+  "name": "Logomotion",
+  "summary": "Animate a logo in one click",
+  "url": "https://www.logomotion.design/",
+  "x": "creative-tools",
+  "screenshot": "https://build.studiorekt.com/screenshots/logomotion.jpg",
+  "creator": null
+ },
+ {
+  "id": "logopack",
+  "name": "Logopack",
+  "summary": "Export an SVG logo to PNG, JPG and WebP",
+  "url": "https://logokit.base44.app/",
+  "x": "creative-tools",
+  "screenshot": "https://build.studiorekt.com/screenshots/logopack.jpg",
+  "creator": null
+ },
+ {
+  "id": "lucide",
+  "name": "Lucide",
+  "summary": "Clean, consistent open-source icons",
+  "url": "https://lucide.dev/icons/",
+  "x": "icon-sets",
+  "screenshot": "https://build.studiorekt.com/screenshots/lucide.jpg",
+  "creator": null
+ },
+ {
+  "id": "madera",
+  "name": "Madera",
+  "summary": "Simple furniture builder",
+  "url": "https://madera.app",
+  "x": "creative-tools",
+  "screenshot": "https://build.studiorekt.com/screenshots/madera.jpg",
+  "creator": null
+ },
+ {
+  "id": "magic-ui",
+  "name": "Magic UI",
+  "summary": "Beautiful UI components and templates to make your landing page look stunning",
+  "url": "https://magicui.design/",
+  "x": "component-libraries",
+  "screenshot": "https://build.studiorekt.com/screenshots/magic-ui.jpg",
+  "creator": null
+ },
+ {
+  "id": "mantine",
+  "name": "Mantine",
+  "summary": "Full-featured React component library",
+  "url": "https://mantine.dev/",
+  "x": "component-libraries",
+  "screenshot": "https://build.studiorekt.com/screenshots/mantine.jpg",
+  "creator": null
+ },
+ {
+  "id": "material-symbols",
+  "name": "Material Symbols",
+  "summary": "Google's variable icon font",
+  "url": "https://fonts.google.com/icons",
+  "x": "icon-sets",
+  "screenshot": "https://build.studiorekt.com/screenshots/material-symbols.jpg",
+  "creator": null
+ },
+ {
+  "id": "morphicons",
+  "name": "morphicons",
+  "summary": "Morph any SVG icon into any other with spring physics",
+  "url": "https://www.morphicons.com/",
+  "x": "component-libraries",
+  "screenshot": "https://build.studiorekt.com/screenshots/morphicons.jpg",
+  "creator": null
+ },
+ {
+  "id": "nexvyn-ui",
+  "name": "Nexvyn UI",
+  "summary": "React components with live previews",
+  "url": "https://ui.nexvyn.dev/components",
+  "x": "component-libraries",
+  "screenshot": "https://build.studiorekt.com/screenshots/nexvyn-ui.jpg",
+  "creator": null
+ },
+ {
+  "id": "numberflow",
+  "name": "NumberFlow",
+  "summary": "A React component to animate numbers",
+  "url": "https://number-flow.barvian.me/",
+  "x": "component-libraries",
+  "screenshot": "https://build.studiorekt.com/screenshots/numberflow.jpg",
+  "creator": null
+ },
+ {
+  "id": "nutelch",
+  "name": "nutelch",
+  "summary": "Explore chroma relative to the color gamut",
+  "url": "https://meodai.github.io/nutelch/",
+  "x": "generative-sites",
+  "screenshot": "https://build.studiorekt.com/screenshots/nutelch.jpg",
+  "creator": null
+ },
+ {
+  "id": "oddgrid",
+  "name": "Oddgrid",
+  "summary": "Generative pixel grid artwork",
+  "url": "https://oddgrid.vercel.app/",
+  "x": "generative-sites",
+  "screenshot": "https://build.studiorekt.com/screenshots/oddgrid.jpg",
+  "creator": null
+ },
+ {
+  "id": "oklch-fyi",
+  "name": "OKLCH.fyi",
+  "summary": "Convert, generate and explore OKLCH colors – a powerful tool to build unique and uniform color palettes",
+  "url": "https://oklch.fyi/",
+  "x": "creative-tools",
+  "screenshot": "https://build.studiorekt.com/screenshots/oklch-fyi.jpg",
+  "creator": null
+ },
+ {
+  "id": "page-mascot",
+  "name": "page-mascot",
+  "summary": "A React mascot that follows the cursor",
+  "url": "https://koboyo.com/page-mascot",
+  "x": "component-libraries",
+  "screenshot": "https://build.studiorekt.com/screenshots/page-mascot.jpg",
+  "creator": null
+ },
+ {
+  "id": "pangram-pangram",
+  "name": "Pangram Pangram",
+  "summary": "Free-to-try fonts from an independent foundry",
+  "url": "https://pangrampangram.com/collections/fonts",
+  "x": "type-sites",
+  "screenshot": "https://build.studiorekt.com/screenshots/pangram-pangram.jpg",
+  "creator": null
+ },
+ {
+  "id": "phosphor-icons",
+  "name": "Phosphor Icons",
+  "summary": "Flexible icon family in six weights",
+  "url": "https://phosphoricons.com/",
+  "x": "icon-sets",
+  "screenshot": "https://build.studiorekt.com/screenshots/phosphor-icons.jpg",
+  "creator": null
+ },
+ {
+  "id": "radix-icons",
+  "name": "Radix Icons",
+  "summary": "Crisp 15×15 icons by WorkOS",
+  "url": "https://www.radix-ui.com/icons",
+  "x": "icon-sets",
+  "screenshot": "https://build.studiorekt.com/screenshots/radix-icons.jpg",
+  "creator": null
+ },
+ {
+  "id": "rare-ui",
+  "name": "Rare UI",
+  "summary": "Unusual animated React components",
+  "url": "https://www.rareui.com/",
+  "x": "component-libraries",
+  "screenshot": "https://build.studiorekt.com/screenshots/rare-ui.jpg",
+  "creator": null
+ },
+ {
+  "id": "raylight",
+  "name": "Raylight",
+  "summary": "Turn screenshots into product videos",
+  "url": "https://www.raylight.app/",
+  "x": "creative-tools",
+  "screenshot": "https://build.studiorekt.com/screenshots/raylight.jpg",
+  "creator": null
+ },
+ {
+  "id": "remediate",
+  "name": "Remediate",
+  "summary": "Capture screenshots, video, voice notes, and annotations from users as in-app feedback",
+  "url": "https://www.remediate.ski/",
+  "x": "component-libraries",
+  "screenshot": "https://build.studiorekt.com/screenshots/remediate.jpg",
+  "creator": null
+ },
+ {
+  "id": "remix-icon",
+  "name": "Remix Icon",
+  "summary": "Neutral-style open-source system icons",
+  "url": "https://remixicon.com/",
+  "x": "icon-sets",
+  "screenshot": "https://build.studiorekt.com/screenshots/remix-icon.jpg",
+  "creator": null
+ },
+ {
+  "id": "rogo",
+  "name": "Rogo",
+  "summary": "Hofmann-inspired graphic design tool",
+  "url": "https://www.vanity-ibex.xyz/lab/rogo_rework/",
+  "x": "generative-sites",
+  "screenshot": "https://build.studiorekt.com/screenshots/rogo.jpg",
+  "creator": null
+ },
+ {
+  "id": "runebender",
+  "name": "Runebender",
+  "summary": "Font editor running in the browser",
+  "url": "https://runebender.org/wasm-editor/",
+  "x": "type-sites",
+  "screenshot": "https://build.studiorekt.com/screenshots/runebender.jpg",
+  "creator": null
+ },
+ {
+  "id": "evil-rabbit-shaders",
+  "name": "Shaders by Evil Rabbit",
+  "summary": "A series of shaders by Evil Rabbit",
+  "url": "https://shaders.evilrabbit.com",
+  "x": "generative-sites",
+  "screenshot": "https://build.studiorekt.com/screenshots/evil-rabbit-shaders.jpg",
+  "creator": null
+ },
+ {
+  "id": "shadowlab",
+  "name": "shadowLab",
+  "summary": "A playground for creating box shadows for web and React Native",
+  "url": "https://shadowlab.mocarski.design/",
+  "x": "creative-tools",
+  "screenshot": "https://build.studiorekt.com/screenshots/shadowlab.jpg",
+  "creator": null
+ },
+ {
+  "id": "shoogle",
+  "name": "Shoogle",
+  "summary": "Search shadcn UI blocks, components and templates across the shadcn registries",
+  "url": "https://shoogle.dev",
+  "x": "component-libraries",
+  "screenshot": "https://build.studiorekt.com/screenshots/shoogle.jpg",
+  "creator": null
+ },
+ {
+  "id": "sonner",
+  "name": "Sonner",
+  "summary": "An opinionated toast component for React",
+  "url": "https://sonner.emilkowal.ski/",
+  "x": "component-libraries",
+  "screenshot": "https://build.studiorekt.com/screenshots/sonner.jpg",
+  "creator": null
+ },
+ {
+  "id": "soundcn",
+  "name": "soundcn",
+  "summary": "700+ curated UI sound effects for modern web apps",
+  "url": "https://soundcn.xyz/",
+  "x": "component-libraries",
+  "screenshot": "https://build.studiorekt.com/screenshots/soundcn.jpg",
+  "creator": null
+ },
+ {
+  "id": "spectrum-ui",
+  "name": "Spectrum UI",
+  "summary": "Animated React components and blocks",
+  "url": "https://ui.spectrumhq.in/",
+  "x": "component-libraries",
+  "screenshot": "https://build.studiorekt.com/screenshots/spectrum-ui.jpg",
+  "creator": null
+ },
+ {
+  "id": "spell-ui",
+  "name": "Spell UI",
+  "summary": "Refined components for React and Tailwind",
+  "url": "https://spell.sh/",
+  "x": "component-libraries",
+  "screenshot": "https://build.studiorekt.com/screenshots/spell-ui.jpg",
+  "creator": null
+ },
+ {
+  "id": "sref",
+  "name": "SREF",
+  "summary": "Reusable style references for AI images",
+  "url": "https://sref-five.vercel.app/",
+  "x": "creative-tools",
+  "screenshot": "https://build.studiorekt.com/screenshots/sref.jpg",
+  "creator": null
+ },
+ {
+  "id": "svg-repo",
+  "name": "SVG Repo",
+  "summary": "Free SVG vectors and icons",
+  "url": "https://www.svgrepo.com/",
+  "x": "icon-sets",
+  "screenshot": "https://build.studiorekt.com/screenshots/svg-repo.jpg",
+  "creator": null
+ },
+ {
+  "id": "svgl",
+  "name": "SVGL",
+  "summary": "SVG logos for popular brands",
+  "url": "https://svgl.app/",
+  "x": "collections",
+  "screenshot": "https://build.studiorekt.com/screenshots/svgl.jpg",
+  "creator": null
+ },
+ {
+  "id": "symbols-effect",
+  "name": "Symbols Effect",
+  "summary": "Turn images and video into symbol patterns",
+  "url": "https://www.arlan.me/vault/sandbox",
+  "x": "generative-sites",
+  "screenshot": "https://build.studiorekt.com/screenshots/symbols-effect.jpg",
+  "creator": null
+ },
+ {
+  "id": "tabler-icons",
+  "name": "Tabler Icons",
+  "summary": "6,000+ free SVG icons",
+  "url": "https://tabler.io/icons",
+  "x": "icon-sets",
+  "screenshot": "https://build.studiorekt.com/screenshots/tabler-icons.jpg",
+  "creator": null
+ },
+ {
+  "id": "the-component-gallery",
+  "name": "The Component Gallery",
+  "summary": "An up-to-date repository of interface components based on examples from the world of design systems, designed to be a reference for anyone building user interfaces",
+  "url": "https://component.gallery/",
+  "x": "collections",
+  "screenshot": "https://build.studiorekt.com/screenshots/the-component-gallery.jpg",
+  "creator": null
+ },
+ {
+  "id": "noun-project",
+  "name": "The Noun Project",
+  "summary": "Millions of icons from a global community",
+  "url": "https://thenounproject.com/icons/",
+  "x": "icon-sets",
+  "screenshot": "https://build.studiorekt.com/screenshots/noun-project.jpg",
+  "creator": null
+ },
+ {
+  "id": "thinking-orbs",
+  "name": "Thinking orbs",
+  "summary": "Dotted thought-orb loading indicators for AI and agent UIs",
+  "url": "https://libraries.dev/orbs",
+  "x": "component-libraries",
+  "screenshot": "https://build.studiorekt.com/screenshots/thinking-orbs.jpg",
+  "creator": null
+ },
+ {
+  "id": "tooooools",
+  "name": "Tooooools",
+  "summary": "Lo-fi effects for images and video",
+  "url": "https://tooooools.app/",
+  "x": "generative-sites",
+  "screenshot": "https://build.studiorekt.com/screenshots/tooooools.jpg",
+  "creator": null
+ },
+ {
+  "id": "torph",
+  "name": "Torph",
+  "summary": "Dependency-free animated text component",
+  "url": "https://torph.lochie.me/",
+  "x": "component-libraries",
+  "screenshot": "https://build.studiorekt.com/screenshots/torph.jpg",
+  "creator": null
+ },
+ {
+  "id": "transitions-dev",
+  "name": "Transitions.dev",
+  "summary": "Collection of the most essential transitions for web apps that you can just copy and paste into any project",
+  "url": "https://transitions.dev/",
+  "x": "component-libraries",
+  "screenshot": "https://build.studiorekt.com/screenshots/transitions-dev.jpg",
+  "creator": null
+ },
+ {
+  "id": "ui-camera",
+  "name": "UI Camera",
+  "summary": "Create beautiful product visuals from your UI",
+  "url": "https://ui.camera",
+  "x": "creative-tools",
+  "screenshot": "https://build.studiorekt.com/screenshots/ui-camera.jpg",
+  "creator": null
+ },
+ {
+  "id": "ui-playbook",
+  "name": "UI Playbook",
+  "summary": "The documented collection of UI components",
+  "url": "https://uiplaybook.dev/",
+  "x": "component-libraries",
+  "screenshot": "https://build.studiorekt.com/screenshots/ui-playbook.jpg",
+  "creator": null
+ },
+ {
+  "id": "ui-land",
+  "name": "ui.land",
+  "summary": "The Digital Library for Designers and Engineers",
+  "url": "https://ui.land/",
+  "x": "collections",
+  "screenshot": "https://build.studiorekt.com/screenshots/ui-land.jpg",
+  "creator": null
+ },
+ {
+  "id": "unicorn-studio",
+  "name": "Unicorn Studio",
+  "summary": "Design interactive WebGL graphics",
+  "url": "https://www.unicorn.studio/",
+  "x": "generative-sites",
+  "screenshot": "https://build.studiorekt.com/screenshots/unicorn-studio.jpg",
+  "creator": null
+ },
+ {
+  "id": "untitled-grid",
+  "name": "Untitled Grid",
+  "summary": "An infinite modular grid that grows from your clicks",
+  "url": "https://enzovcarrieri.github.io/untitled-grid/",
+  "x": "generative-sites",
+  "screenshot": "https://build.studiorekt.com/screenshots/untitled-grid.jpg",
+  "creator": null
+ },
+ {
+  "id": "uselayouts",
+  "name": "useLayouts",
+  "summary": "Free React components with animation, built with Framer Motion and Tailwind CSS",
+  "url": "https://uselayouts.com/",
+  "x": "component-libraries",
+  "screenshot": "https://build.studiorekt.com/screenshots/uselayouts.jpg",
+  "creator": null
+ },
+ {
+  "id": "visuelle",
+  "name": "Visuelle",
+  "summary": "Graphic design and everything in between",
+  "url": "https://visuelle.co.uk/",
+  "x": "collections",
+  "screenshot": "https://build.studiorekt.com/screenshots/visuelle.jpg",
+  "creator": null
+ },
+ {
+  "id": "webhaptics",
+  "name": "WebHaptics",
+  "summary": "Haptic feedback for the mobile web",
+  "url": "https://haptics.lochie.me",
+  "x": "component-libraries",
+  "screenshot": "https://build.studiorekt.com/screenshots/webhaptics.jpg",
+  "creator": null
+ }
+]
