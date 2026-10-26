@@ -7,7 +7,7 @@ import { CodeBlock, CodeSection, PillTabs } from "@/components/wall/CodeView";
 import { Controls } from "@/components/wall/Controls";
 import { useSession } from "@/lib/session";
 import { copyText, useToast } from "@/lib/toast";
-import { INSTALL_DIR, cliCommand, manualInstall, promptFor, usageSnippet } from "@/lib/ui/snippets";
+import { INSTALL_DIR, cliCommand, manualInstall, promptFor, rektuiCliPublished, rektuiCommand, usageSnippet } from "@/lib/ui/snippets";
 import type { UiBlock } from "@/lib/ui/types";
 import { useBlockSource } from "@/lib/ui/use-block-source";
 import { useBlockValues } from "@/lib/ui/use-block-values";
@@ -27,7 +27,13 @@ export function BlockDialog({ block, onClose }: { block: UiBlock; onClose: () =>
   const [activeFile, setActiveFile] = useState(block.files[0]);
   // Pro components aren't in the public registry, so they install by hand.
   const hasCli = block.tier !== "pro";
-  const [installMethod, setInstallMethod] = useState<"cli" | "manual">(hasCli ? "cli" : "manual");
+  type InstallMethod = "rektui" | "cli" | "manual";
+  const methods: { id: InstallMethod; label: string }[] = [
+    ...(hasCli && rektuiCliPublished ? [{ id: "rektui" as const, label: "rektui" }] : []),
+    ...(hasCli ? [{ id: "cli" as const, label: "shadcn" }] : []),
+    { id: "manual", label: "Manual" },
+  ];
+  const [installMethod, setInstallMethod] = useState<InstallMethod>(methods[0].id);
   const toast = useToast();
   const closeRef = useRef<HTMLButtonElement | null>(null);
   const titleId = useId();
@@ -48,7 +54,8 @@ export function BlockDialog({ block, onClose }: { block: UiBlock; onClose: () =>
   }, [onClose]);
 
   const usage = usageSnippet(block, values);
-  const install = installMethod === "cli" ? cliCommand(block) : manualInstall(block);
+  const install =
+    installMethod === "rektui" ? rektuiCommand(block) : installMethod === "cli" ? cliCommand(block) : manualInstall(block);
   const fileCode = source.files?.find((f) => f.path === activeFile)?.code ?? null;
 
   async function share() {
@@ -144,23 +151,22 @@ export function BlockDialog({ block, onClose }: { block: UiBlock; onClose: () =>
             </div>
           ) : (
             <div className="no-scrollbar flex flex-1 flex-col gap-[10px] overflow-y-auto px-[12px] pb-[12px]">
-              <CodeSection title="Install" copy={installMethod === "cli" ? cliCommand(block) : manualInstall(block).split("\n")[0]} copyLabel="Install command" defaultOpen>
-                {hasCli ? (
+              <CodeSection title="Install" copy={installMethod === "manual" ? install.split("\n")[0] : install} copyLabel="Install command" defaultOpen>
+                {methods.length > 1 ? (
                   <PillTabs
                     label="Install method"
-                    items={[
-                      { id: "cli", label: "CLI" },
-                      { id: "manual", label: "Manual" },
-                    ]}
+                    items={methods}
                     active={installMethod}
-                    onSelect={(id) => setInstallMethod(id as "cli" | "manual")}
+                    onSelect={(id) => setInstallMethod(id as InstallMethod)}
+                    mono
                   />
                 ) : null}
                 <CodeBlock code={install} language="plain" />
-                {installMethod === "cli" ? (
+                {installMethod !== "manual" ? (
                   <p className="px-[8px] pt-[8px] text-[12px] leading-[1.5]" style={{ color: "var(--ink-3)" }}>
                     Adds {block.files.join(" and ")} to <span className="font-mono">{INSTALL_DIR}/</span> from the Rekt UI registry, with
-                    anything it depends on. Works in any project set up with shadcn.
+                    anything it depends on.{" "}
+                    {installMethod === "rektui" ? "Works in any React project." : "Works in any project set up with shadcn."}
                   </p>
                 ) : null}
               </CodeSection>

@@ -65,9 +65,11 @@ components/blocks/<id>/
 The dialog builds everything else from that, so nothing is written twice:
 - **Controls** (`segmented` / `toggle` / `slider`), one per prop. The preview and the card
   render with the tuned values.
-- **Install**: two tabs. **CLI** — `npx shadcn@latest add <site>/r/<id>.json`, which puts the
-  files in the user's `components/rekt-ui/` and installs the dependencies. **Manual** —
-  `npm install <dependencies>`, then the files from the Code section.
+- **Install**: tabs. **rektui** — `npx rektui@latest add <id>`, Rekt UI's own CLI (repo
+  rektui-cli), shown once `NEXT_PUBLIC_REKTUI_CLI=1`. **shadcn** —
+  `npx shadcn@latest add <site>/r/<id>.json`. Both put the files in the user's
+  `components/rekt-ui/` and install the dependencies. **Manual** — `npm install
+  <dependencies>`, then the files from the Code section.
 - **Usage**: imports from `@/components/rekt-ui/` + JSX with the tuned props
   (`lib/ui/snippets.ts`).
 - **Code**: the real files, served as static JSON by `app/source/[id]` from the folder.

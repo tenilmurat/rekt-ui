@@ -15,6 +15,16 @@ export function siteOrigin() {
   return typeof window === "undefined" ? "" : `${window.location.origin}${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}`;
 }
 
+/**
+ * Rekt UI's own installer (the `rektui` package, repo rektui-cli). Shown once
+ * it is published: set NEXT_PUBLIC_REKTUI_CLI=1.
+ */
+export const rektuiCliPublished = process.env.NEXT_PUBLIC_REKTUI_CLI === "1";
+
+export function rektuiCommand(block: Pick<UiBlock, "id">) {
+  return `npx rektui@latest add ${block.id}`;
+}
+
 /** One command: the shadcn CLI fetches the files from Rekt UI's registry and installs the dependencies. */
 export function cliCommand(block: Pick<UiBlock, "id">) {
   return `npx shadcn@latest add ${siteOrigin()}/r/${block.id}.json`;
