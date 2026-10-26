@@ -48,7 +48,7 @@ export function UiWall() {
   return (
     <main className="pb-[96px]">
       <PageHero
-        pill={BLOCKS.length ? `${BLOCKS.length} components` : "New components on the way"}
+        pill={BLOCKS.length ? `${BLOCKS.length} component${BLOCKS.length === 1 ? "" : "s"}` : "New components on the way"}
         title={BRAND.tagline.replace(/!$/, "")}
         lead="Live, tunable interface components and micro-interactions. Explore them, then take them straight into your projects."
         action={

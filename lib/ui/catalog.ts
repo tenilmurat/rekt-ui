@@ -29,14 +29,14 @@ export const UI_CATEGORIES: UiCategory[] = [
   { id: "text", label: "Text" },
 ];
 
-const PUBLISHED: UiBlock[] = [];
+const PUBLISHED: UiBlock[] = [tiltCard];
 
 /**
  * Shown only in `npm run dev`, so the whole flow — card, dialog, controls,
  * Install / Usage / Code / How it works, Copy prompt — can be checked locally
  * while the live wall stays empty.
  */
-const EXAMPLES: UiBlock[] = process.env.NODE_ENV === "development" ? [tiltCard, rollingCounter] : [];
+const EXAMPLES: UiBlock[] = process.env.NODE_ENV === "development" ? [rollingCounter] : [];
 
 export const BLOCKS: UiBlock[] = [...PUBLISHED, ...EXAMPLES];
 
