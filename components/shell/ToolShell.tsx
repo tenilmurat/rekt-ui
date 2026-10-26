@@ -2,32 +2,21 @@
 
 import { useCallback, useEffect } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Icon } from "@/components/shell/Icon";
+import { Monogram } from "@/components/site/Brand";
 import { Sidebar } from "@/components/shell/Sidebar";
 import type { ToolEntry } from "@/lib/registry/tools";
 
-/** The Rekt mark, where a curated component carries its source badge. */
+/** The Rekt UI mark, where a curated component carries its source badge. */
 function RektBadge({ size = 28 }: { size?: number }) {
   return (
-    <span
-      role="img"
-      aria-label="Made by Rekt Studio"
-      title="Rekt Studio"
-      className="flex shrink-0 items-center justify-center rounded-full border"
-      style={{
-        width: size,
-        height: size,
-        backgroundColor: "var(--surface-raised)",
-        borderColor: "var(--line-soft)",
-      }}
-    >
-      <Icon name="logo" size={14} color="var(--ink)" className="h-[12px] w-[14px]" />
+    <span role="img" aria-label="Made by Rekt UI" title="Rekt UI" className="flex shrink-0">
+      <Monogram size={size} />
     </span>
   );
 }
 
 /**
- * Page frame for a Rekt tool, with the same two display states as a component
+ * Page frame for a Rekt UI tool, with the same two display states as a component
  * category: the default 912 grid, and a Full View (?full=1) that fills the
  * screen. The tool is told which one it is in through `expanded`.
  */

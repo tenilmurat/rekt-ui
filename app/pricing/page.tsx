@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import { Check } from "lucide-react";
 import { CheckoutButton } from "@/components/pricing/CheckoutButton";
+import { pageTitle } from "@/lib/brand";
 import { PLANS } from "@/lib/plans";
 
 export const metadata: Metadata = {
-  title: "Pricing — Rekt Studio",
+  title: pageTitle("Pricing"),
   description: "Free to browse. Pro unlocks every component with its full source.",
 };
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { ArrowUpRight } from "lucide-react";
+import { asset } from "@/lib/base-path";
 import { BookmarkButton } from "@/components/site/BookmarkButton";
 import { hostname, type GoodDesign } from "@/lib/good-designs";
 
@@ -16,10 +17,10 @@ export function DesignCard({ design }: { design: GoodDesign }) {
         style={{ borderColor: "var(--line)", backgroundColor: "var(--surface)" }}
         aria-label={`${design.name} — open ${hostname(design.url)} in a new tab`}
       >
-        {/* Screenshots are hosted on build.studiorekt.com and already sized. */}
+        {/* Screenshots live in public/good-designs, 960px wide WebP. */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src={design.screenshot}
+          src={asset(design.screenshot)}
           alt=""
           loading="lazy"
           decoding="async"

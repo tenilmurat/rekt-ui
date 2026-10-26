@@ -2,9 +2,8 @@ import data from "@/data/good-designs.json";
 
 /**
  * "Good designs of X": curated real-world work, grouped by what it is a good
- * design of. The first entries come from the build.studiorekt.com directory
- * (screenshots served from there). Add an X here and entries in
- * data/good-designs.json that use its id.
+ * design of. Add an X here and entries in data/good-designs.json that use its
+ * id; screenshots go in public/good-designs as 960px-wide WebP.
  */
 export type GoodDesign = {
   id: string;
@@ -13,6 +12,7 @@ export type GoodDesign = {
   url: string;
   /** Which X this is a good design of — an id from DESIGN_XS. */
   x: string;
+  /** Path under public/, e.g. "/good-designs/linear.webp". */
   screenshot: string;
   creator: string | null;
 };

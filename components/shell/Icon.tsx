@@ -11,11 +11,9 @@ export type IconName =
   | "info"
   | "maximize"
   | "minimize"
-  | "website"
   | "collapse"
   | "sun"
-  | "moon"
-  | "logo";
+  | "moon";
 
 export function Icon({
   name,

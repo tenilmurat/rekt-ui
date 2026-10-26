@@ -224,7 +224,7 @@ export function CodeDetails({
               </>
             ) : (
               <>
-                {item.sourceName ?? "Rekt Studio"}
+                {item.sourceName ?? "Rekt UI"}
                 {item.license ? ` · ${item.license}` : null}
               </>
             )}

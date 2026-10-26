@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { BRAND } from "@/lib/brand";
 import { ThemeProvider } from "next-themes";
 import { PreviewStateProvider } from "@/lib/preview-state";
 import { ToastProvider } from "@/lib/toast";
@@ -10,8 +11,8 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export const metadata: Metadata = {
-  title: "All UI components in one! — Rekt Studio",
-  description: "A curated library of UI motion and interface components, by Rekt Studio.",
+  title: `${BRAND.tagline} — ${BRAND.name}`,
+  description: BRAND.description,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

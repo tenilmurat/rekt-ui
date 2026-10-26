@@ -95,7 +95,7 @@ export function Sidebar({
                 All UI components in one!
               </h1>
               <p className="text-[12px] tracking-[-0.12px]" style={{ color: "var(--ink-3)" }}>
-                by Rekt Studio
+                by Rekt UI
               </p>
             </div>
           )}
@@ -141,7 +141,7 @@ export function Sidebar({
               keepFullView={compact}
             />
             <NavGroup
-              label="Rekt"
+              label="Tools"
               items={tools.map((t) => ({ id: t.id, name: t.name, fullParam: "1" }))}
               basePath="/create"
               activePath={pathname}
@@ -163,19 +163,7 @@ export function Sidebar({
         </div>
       </div>
 
-      <div className="pb-[40px] pt-[24px]">
-        <a
-          href="https://studiorekt.com"
-          target="_blank"
-          rel="noreferrer noopener"
-          aria-label="Rekt Studio website (opens in a new tab)"
-          title="studiorekt.com"
-          className="control flex w-fit items-center rounded-[8px] border p-[6px] active:scale-[0.96]"
-          style={{ backgroundColor: "var(--control-bg)", borderColor: "var(--control-line)" }}
-        >
-          <Icon name="website" />
-        </a>
-      </div>
+      <div className="pb-[40px]" />
     </aside>
   );
 }

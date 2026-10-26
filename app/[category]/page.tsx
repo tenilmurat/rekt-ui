@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import { pageTitle } from "@/lib/brand";
 import { LibraryShell } from "@/components/shell/LibraryShell";
 import { categories, getCategory } from "@/lib/registry";
 
@@ -10,7 +11,7 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ category: string }> }) {
   const { category } = await params;
   const found = getCategory(category);
-  return { title: found ? `${found.name} — Rekt Studio` : "Rekt Studio" };
+  return { title: pageTitle(found?.name) };
 }
 
 export default async function CategoryPage({ params }: { params: Promise<{ category: string }> }) {

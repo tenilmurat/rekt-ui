@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 import { MailCheck, X } from "lucide-react";
-import { Icon } from "@/components/shell/Icon";
+import { Monogram } from "@/components/site/Brand";
 import { BASE_PATH } from "@/lib/base-path";
 import { getSupabase } from "@/lib/supabase/client";
 
@@ -108,13 +108,11 @@ export function SignInDialog({
           <X size={16} strokeWidth={1.875} />
         </button>
 
-        <span className="flex size-[44px] items-center justify-center rounded-full border" style={{ borderColor: "var(--line)" }}>
-          <Icon name="logo" size={20} color="var(--ink)" className="h-[17px] w-[20px]" />
-        </span>
+        <Monogram size={44} />
 
         <div className="flex flex-col items-center gap-[6px] text-center">
           <h2 id={titleId} className="text-[18px] font-medium tracking-[-0.18px]" style={{ color: "var(--ink-title)" }}>
-            {state === "sent" ? "Check your inbox" : "Join Rekt Studio"}
+            {state === "sent" ? "Check your inbox" : "Join Rekt UI"}
           </h2>
           <p className="text-[13px]" style={{ color: "var(--ink-2)" }}>
             {state === "sent"

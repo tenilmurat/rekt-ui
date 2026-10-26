@@ -6,7 +6,7 @@ import type { ComponentItem } from "@/lib/registry/types";
  * otherwise its initial — never someone else's logo we don't have.
  */
 export function SourceBadge({ item, size = 28 }: { item: ComponentItem; size?: number }) {
-  const name = item.sourceName ?? "Rekt Studio";
+  const name = item.sourceName ?? "Rekt UI";
   const label = item.sourceUrl ? `Source: ${name} (opens in a new tab)` : `Source: ${name}`;
   const inner = item.sourceLogo ? (
     <img src={asset(item.sourceLogo)} alt="" width={size / 2} height={size / 2} />

@@ -1,5 +1,10 @@
 # Rekt UI — frontend (rektui-frontend)
 
+Rekt UI is its own product, sold on its own — not part of Rekt Studio or studiorekt.com.
+Don't bring Rekt Studio branding, logos or links in. The name lives in `lib/brand.ts`;
+the marks (`Wordmark`, `Monogram` in `components/site/Brand.tsx`) are text placeholders
+until there is a drawn logo.
+
 Curated UI motion / component library, sold with Pro accounts. Next.js 16, Tailwind v4,
 own `Dockerfile`, deploys as its own Coolify resource. The API is the separate
 **rektui-backend** repo (NestJS); this app has no server code of its own.
@@ -41,8 +46,8 @@ New category: add a `ComponentCategory` to `lib/registry/index.ts`. Categories w
 items are filtered out — they are not listed and their route 404s, so a page only exists
 once it has something to show.
 
-## Adding a Rekt tool
-Rekt's own tools are the second sidebar group and live in `lib/registry/tools.ts`: add a
+## Adding a tool
+Rekt UI's own tools are the second sidebar group ("Tools") and live in `lib/registry/tools.ts`: add a
 `ToolEntry` (id, sidebar name, page title, description, component) and `/create/<id>`,
 the nav row and the page appear. `ToolShell` supplies the frame; the tool itself owns its
 controls. REKT / CODE is the worked example — `components/create/code/` for the UI,
@@ -60,8 +65,8 @@ The library is a product now: a header (`components/site/SiteHeader.tsx`) with *
 (Saved, Account & billing, Sign out).
 
 - **Good designs of X** (`/good-designs?x=<id>`): the X list is `DESIGN_XS` in
-  `lib/good-designs.ts`; entries are `data/good-designs.json`, seeded from the
-  build.studiorekt.com directory with screenshots served from there.
+  `lib/good-designs.ts`; entries are `data/good-designs.json`, screenshots in
+  `public/good-designs` (960px-wide WebP).
 - **Accounts:** Supabase handles sign-in only — Google or an emailed link, no passwords
   (`components/site/SignInDialog.tsx`, PKCE, `app/auth/callback` swaps the code in the
   browser). Everything else goes to rektui-backend through `api()` in `lib/api.ts`, which

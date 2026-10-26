@@ -142,7 +142,7 @@ export function RektAscii({ expanded = false }: { expanded?: boolean }) {
               {TOOL_NAME}
             </p>
             <p className="text-[12px] tracking-[-0.12px]" style={{ color: "var(--ink-3)" }}>
-              by Rekt Studio
+              by Rekt UI
             </p>
           </div>
 

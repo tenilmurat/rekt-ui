@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { Bookmark, CreditCard, LogOut, Sparkles } from "lucide-react";
-import { Icon } from "@/components/shell/Icon";
+import { Wordmark } from "@/components/site/Brand";
 import { ThemeToggle } from "@/components/shell/ThemeToggle";
 import { getPlan } from "@/lib/plans";
 import { useSession } from "@/lib/session";
@@ -30,8 +30,8 @@ export function SiteHeader() {
       style={{ height: HEADER_HEIGHT, backgroundColor: "var(--bg)", borderColor: "var(--line)" }}
     >
       <div className="flex items-center gap-[12px] sm:gap-[24px]">
-        <Link href="/" aria-label="Rekt Studio library, home" className="flex items-center">
-          <Icon name="logo" size={23} color="var(--ink)" className="h-[20px] w-[23px]" />
+        <Link href="/" aria-label="Rekt UI, home" className="flex items-center whitespace-nowrap">
+          <Wordmark />
         </Link>
         <nav aria-label="Main" className="flex items-center gap-[2px]">
           <NavLink href="/" label="UI" active={isUi} />
