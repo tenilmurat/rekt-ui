@@ -40,8 +40,8 @@ const PLATE_W = 260;
  * hinged at its seam into ON and OFF halves. The pressed half lies flat;
  * the other is raised from the seam on a wedge of coloured wall. Click it
  * and they swap on a springy seesaw, a row of dots beside it lights up in
- * turn with the word RE…KT round it, and when it's on the whole frame goes
- * dark and the switch glows.
+ * turn with the word RE…KT round it, and when it's on the ground goes dark
+ * and the switch glows.
  */
 export function RockerSwitch({
   checked,
@@ -83,6 +83,8 @@ export function RockerSwitch({
     <div
       className="rk-rocker"
       data-on={on || undefined}
+      // The ground goes dark with the switch: a parent can follow this flag (the wall's cards do, with :has()).
+      data-rk-dark={on || undefined}
       style={
         {
           "--rk-rocker-accent": accent,
@@ -108,7 +110,9 @@ export function RockerSwitch({
         ) : null}
 
         <button type="button" role="switch" aria-checked={on} aria-label={label} className="rk-rocker__switch" onClick={toggle}>
-          <span className="rk-rocker__shadow" aria-hidden="true" />
+          {/* The shadow each raised half throws on the ground beyond its end. */}
+          <span className="rk-rocker__shade rk-rocker__shade--on" aria-hidden="true" />
+          <span className="rk-rocker__shade rk-rocker__shade--off" aria-hidden="true" />
           <span className="rk-rocker__body" aria-hidden="true">
             {/* The flat base: the whole pill, as thick as Base. */}
             {Array.from({ length: base }, (_, i) => (

@@ -84,8 +84,7 @@ export function BlockDialog({ block, onClose }: { block: UiBlock; onClose: () =>
         {/* Stage */}
         <section
           aria-label={`${block.title} ${view}`}
-          className="relative flex min-h-[320px] flex-1 flex-col overflow-hidden rounded-[28px]"
-          style={{ backgroundColor: "var(--surface)" }}
+          className="relative flex min-h-[320px] flex-1 flex-col overflow-hidden rounded-[28px] bg-[var(--surface)] transition-colors duration-700 has-[[data-rk-dark]]:bg-[#0b0a0b]"
         >
           <div className="flex items-center justify-between gap-[8px] p-[12px]">
             <div className="flex rounded-full p-[3px]" role="tablist" aria-label="View" style={{ backgroundColor: "var(--hover-2)" }}>

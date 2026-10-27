@@ -37,19 +37,26 @@
   --rk-rocker-a-on: var(--rk-rocker-tilt);
   --rk-rocker-a-off: 0deg;
 
-  /* Light: a grey ground, a pale plate, a solid coloured wall. */
-  --rk-rocker-bg: #ececea;
+  /*
+    Light: the pressed half is flush with the ground, the same grey, with a
+    faint rim; the raised half is paler; the wall is solid colour. --rk-rocker-bg
+    is the ground's colour: set it to whatever the switch sits on.
+  */
+  --rk-rocker-bg: #f5f5f5;
   --rk-rocker-ink: #141210;
   --rk-rocker-muted: #8a857f;
-  --rk-rocker-face-flat: #d9d7d4;
-  --rk-rocker-face-up: #f1f0ee;
+  --rk-rocker-pressed-ink: #ffffff;
+  --rk-rocker-face-flat: var(--rk-rocker-bg);
+  --rk-rocker-face-up: #fbfbfa;
+  --rk-rocker-rim: rgb(255 255 255 / 0.9);
+  --rk-rocker-rim-edge: rgb(20 18 16 / 0.1);
   --rk-rocker-dot: #bdb9b4;
   --rk-rocker-dot-lit: var(--rk-rocker-accent);
   --rk-rocker-wall-lit: color-mix(in oklab, var(--rk-rocker-accent) 74%, white);
   --rk-rocker-wall: var(--rk-rocker-accent);
   --rk-rocker-wall-dark: color-mix(in oklab, var(--rk-rocker-accent) 70%, black);
-  --rk-rocker-shadow: rgb(20 18 16 / 0.2);
-  --rk-rocker-shadow-blur: 12px;
+  --rk-rocker-shadow: rgb(20 18 16 / 0.28);
+  --rk-rocker-shadow-blur: 10px;
   --rk-rocker-outline: transparent;
   --rk-rocker-outline-glow: transparent;
   --rk-rocker-focus: rgb(20 18 16 / 0.6);
@@ -60,25 +67,25 @@
 
   display: inline-block;
   padding: 64px 48px 52px;
-  border-radius: 24px;
-  background: var(--rk-rocker-bg);
   color: var(--rk-rocker-ink);
   font-family: inherit;
   transition:
-    background-color var(--rk-rocker-speed) ease,
     --rk-rocker-a-on var(--rk-rocker-speed) var(--rk-rocker-spring),
     --rk-rocker-a-off var(--rk-rocker-speed) var(--rk-rocker-spring);
 }
 
-/* On: the frame goes dark, the plate turns near-black with a glowing outline, the wall lights up. */
+/* On: the ground goes dark (the parent follows data-rk-dark), the plate turns near-black with a glowing outline, the wall lights up. */
 .rk-rocker[data-on] {
   --rk-rocker-a-on: 0deg;
   --rk-rocker-a-off: var(--rk-rocker-tilt);
   --rk-rocker-bg: #0b0a0b;
   --rk-rocker-ink: #f7f5fb;
   --rk-rocker-muted: #a9a2b8;
-  --rk-rocker-face-flat: #0f0e11;
-  --rk-rocker-face-up: #1d1a22;
+  --rk-rocker-pressed-ink: #ffffff;
+  --rk-rocker-face-flat: var(--rk-rocker-bg);
+  --rk-rocker-face-up: #1a171e;
+  --rk-rocker-rim: color-mix(in oklab, var(--rk-rocker-accent) 80%, white);
+  --rk-rocker-rim-edge: transparent;
   --rk-rocker-dot: rgb(255 255 255 / 0.22);
   --rk-rocker-dot-lit: #ffffff;
   --rk-rocker-wall-lit: #fbf6ff;
@@ -117,22 +124,46 @@
   outline-offset: 3px;
 }
 
-/* On the ground under the plate: a soft shadow by day, the glow by night, thrown toward the raised end. */
-.rk-rocker__shadow {
+/*
+  The shadow a raised half throws on the ground: only under that half, past
+  its end and to the near side, and only as strong as it is raised (its
+  angle over the full tilt). The pressed half is flush, so it throws none.
+  By night the same shape is the glow.
+*/
+.rk-rocker__shade {
   position: absolute;
-  inset: 0;
+  /* Roomy, so the blur's halo isn't cut off; the pill itself is drawn inside, at the plate's size. */
+  inset: -120px;
+  pointer-events: none;
+}
+
+.rk-rocker__shade::before {
+  position: absolute;
+  inset: 120px;
   border-radius: 999px;
   background: var(--rk-rocker-shadow);
   filter: blur(var(--rk-rocker-shadow-blur));
-  transform: translateZ(-1px) translate(-14px, 10px) scale(1.02, 1.08);
+  content: "";
   transition:
-    transform var(--rk-rocker-speed) var(--rk-rocker-spring),
     background-color var(--rk-rocker-speed) ease,
     filter var(--rk-rocker-speed) ease;
 }
 
-.rk-rocker[data-on] .rk-rocker__shadow {
-  transform: translateZ(-1px) translate(14px, 10px) scale(1.02, 1.08);
+/* Each shade fades out softly toward the seam, so it belongs to its half alone. */
+.rk-rocker__shade--on {
+  --rk-rocker-raised: calc(var(--rk-rocker-a-on) / var(--rk-rocker-tilt));
+  -webkit-mask-image: linear-gradient(to left, transparent 47%, #000 56%);
+  mask-image: linear-gradient(to left, transparent 47%, #000 56%);
+  opacity: var(--rk-rocker-raised);
+  transform: translateZ(-1px) translate(calc(var(--rk-rocker-raised) * -18px), calc(var(--rk-rocker-raised) * 12px)) scale(1.04, 1.1);
+}
+
+.rk-rocker__shade--off {
+  --rk-rocker-raised: calc(var(--rk-rocker-a-off) / var(--rk-rocker-tilt));
+  -webkit-mask-image: linear-gradient(to right, transparent 47%, #000 56%);
+  mask-image: linear-gradient(to right, transparent 47%, #000 56%);
+  opacity: var(--rk-rocker-raised);
+  transform: translateZ(-1px) translate(calc(var(--rk-rocker-raised) * 18px), calc(var(--rk-rocker-raised) * 12px)) scale(1.04, 1.1);
 }
 
 .rk-rocker__body {
@@ -184,7 +215,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(115deg, var(--rk-rocker-face-up), var(--rk-rocker-face-flat) 120%);
+  background: var(--rk-rocker-face-up);
   backface-visibility: hidden;
   box-shadow:
     0 0 0 1.5px var(--rk-rocker-outline),
@@ -208,10 +239,15 @@
   transform: translateZ(var(--rk-rocker-base)) rotateY(calc(var(--rk-rocker-a-off) * -1));
 }
 
-/* The pressed half lies in shade; the raised one catches the light. */
+/* The pressed half is flush with the ground: the same colour, with a faint rim to mark its edge. */
 .rk-rocker:not([data-on]) .rk-rocker__cap--off,
 .rk-rocker[data-on] .rk-rocker__cap--on {
-  background: linear-gradient(115deg, var(--rk-rocker-face-flat), var(--rk-rocker-face-up) 160%);
+  background: var(--rk-rocker-face-flat);
+  box-shadow:
+    inset 0 0 0 1px var(--rk-rocker-rim),
+    0 0 0 1px var(--rk-rocker-rim-edge),
+    0 0 0 1.5px var(--rk-rocker-outline),
+    0 0 16px var(--rk-rocker-outline-glow);
 }
 
 /* The seam, on the OFF half's inner edge. */
@@ -237,10 +273,10 @@
   transition: color var(--rk-rocker-speed) ease;
 }
 
-/* The pressed half's label is the state: it goes to ink. */
+/* The pressed half's label is the state: it lights up white. */
 .rk-rocker:not([data-on]) .rk-rocker__cap--off .rk-rocker__label,
 .rk-rocker[data-on] .rk-rocker__cap--on .rk-rocker__label {
-  color: var(--rk-rocker-ink);
+  color: var(--rk-rocker-pressed-ink);
 }
 
 /*
@@ -294,7 +330,7 @@
   .rk-rocker,
   .rk-rocker__layer,
   .rk-rocker__cap,
-  .rk-rocker__shadow,
+  .rk-rocker__shade,
   .rk-rocker__label,
   .rk-rocker__word,
   .rk-rocker__dot {

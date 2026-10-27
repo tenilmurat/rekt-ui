@@ -22,8 +22,9 @@ export function BlockCard({ block, onOpen }: { block: UiBlock; onOpen: () => voi
   return (
     <article
       ref={ref}
-      className="relative overflow-hidden rounded-[28px]"
-      style={{ height: block.cardHeight ?? DEFAULT_CARD_HEIGHT, backgroundColor: "var(--surface)" }}
+      // A block that sets data-rk-dark on itself (the rocker switch, when on) turns its whole card dark.
+      className="relative overflow-hidden rounded-[28px] bg-[var(--surface)] transition-colors duration-700 has-[[data-rk-dark]]:bg-[#0b0a0b]"
+      style={{ height: block.cardHeight ?? DEFAULT_CARD_HEIGHT }}
     >
       {/* Clicks on the component work it; clicks on the card around it open the
           dialog. Keyboard users open it with the two buttons below. */}
