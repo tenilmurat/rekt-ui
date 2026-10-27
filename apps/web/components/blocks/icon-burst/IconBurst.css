@@ -1,0 +1,60 @@
+/*
+  Icon burst. Every colour is a variable with a fallback, so it works as is;
+  point the --rk-burst-* variables at your own tokens to theme it. Light
+  theme; a dark theme can be added by redefining the same variables. The
+  dust is drawn in the icon's own colour.
+*/
+.rk-burst {
+  --rk-burst-ink: #7d8699;
+  --rk-burst-ink-hover: #5f687c;
+  --rk-burst-ring: #141210;
+  --rk-burst-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 16px;
+  background: none;
+  color: var(--rk-burst-ink);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.rk-burst:focus-visible {
+  outline: 2px solid var(--rk-burst-ring);
+  outline-offset: 2px;
+}
+
+/* Grows back from a point with a little spring once the dust has drifted off. */
+.rk-burst__icon {
+  display: block;
+  transition:
+    transform 560ms var(--rk-burst-spring),
+    opacity 220ms ease;
+}
+
+.rk-burst__icon[data-gone="true"] {
+  opacity: 0;
+  transform: scale(0.15);
+  transition: none;
+}
+
+.rk-burst__dust {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  color: var(--rk-burst-ink);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+/* Reduced motion: no dust; the icon fades out and back in place. */
+@media (prefers-reduced-motion: reduce) {
+  .rk-burst__icon,
+  .rk-burst__icon[data-gone="true"] {
+    transform: none;
+    transition: opacity 240ms ease;
+  }
+}
