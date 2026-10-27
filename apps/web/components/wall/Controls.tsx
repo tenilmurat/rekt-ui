@@ -1,10 +1,11 @@
 "use client";
 
+import { DynamicIcon, type IconName } from "lucide-react/dynamic";
 import { useId } from "react";
 import type { ControlValues, UiControl } from "@/lib/ui/types";
 
 /**
- * The knobs in the component dialog: segmented choices, switches and sliders.
+ * The knobs in the component dialog: segmented choices, icon grids, switches and sliders.
  * Each one sets one prop, which the preview and the Usage snippet both read.
  */
 export function Controls({
@@ -22,6 +23,8 @@ export function Controls({
         const value = values[control.prop];
         if (control.type === "segmented")
           return <Segmented key={control.prop} control={control} value={String(value)} onChange={(v) => onChange(control.prop, v)} />;
+        if (control.type === "icons")
+          return <Icons key={control.prop} control={control} value={String(value)} onChange={(v) => onChange(control.prop, v)} />;
         if (control.type === "toggle")
           return <Toggle key={control.prop} control={control} value={Boolean(value)} onChange={(v) => onChange(control.prop, v)} />;
         return <Slider key={control.prop} control={control} value={Number(value)} onChange={(v) => onChange(control.prop, v)} />;
@@ -76,6 +79,50 @@ function Segmented({
         })}
       </div>
     </Row>
+  );
+}
+
+/** A wrapping grid of icon swatches, for picking which icon a component shows. */
+function Icons({
+  control,
+  value,
+  onChange,
+}: {
+  control: Extract<UiControl, { type: "icons" }>;
+  value: string;
+  onChange: (value: string) => void;
+}) {
+  const labelId = useId();
+  return (
+    <div className="flex flex-col gap-[8px]">
+      <span id={labelId} className="text-[13.5px]" style={{ color: "var(--ink-2)" }}>
+        {control.label}
+      </span>
+      <div role="radiogroup" aria-labelledby={labelId} className="grid grid-cols-6 gap-[6px]">
+        {control.options.map((option) => {
+          const active = option.value === value;
+          return (
+            <button
+              key={option.value}
+              type="button"
+              role="radio"
+              aria-checked={active}
+              aria-label={option.label}
+              title={option.label}
+              onClick={() => onChange(option.value)}
+              className="grid aspect-square place-items-center rounded-[12px] transition-colors active:scale-[0.96]"
+              style={{
+                backgroundColor: active ? "var(--surface-raised)" : "var(--hover-2)",
+                color: active ? "var(--ink)" : "var(--ink-3)",
+                boxShadow: active ? "var(--shadow-raised)" : "none",
+              }}
+            >
+              <DynamicIcon name={option.value as IconName} size={18} aria-hidden="true" />
+            </button>
+          );
+        })}
+      </div>
+    </div>
   );
 }
 

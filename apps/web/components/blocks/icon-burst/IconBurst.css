@@ -1,12 +1,12 @@
 /*
   Icon burst. Every colour is a variable with a fallback, so it works as is;
   point the --rk-burst-* variables at your own tokens to theme it. Light
-  theme; a dark theme can be added by redefining the same variables. The
-  dust is drawn in the icon's own colour.
+  theme; a dark theme can be added by redefining the same variables. Plain
+  dust is drawn in the icon's own colour; the colourful dust's ramp lives in
+  the component.
 */
 .rk-burst {
-  --rk-burst-ink: #7d8699;
-  --rk-burst-ink-hover: #5f687c;
+  --rk-burst-ink: #141210;
   --rk-burst-ring: #141210;
   --rk-burst-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 
@@ -27,7 +27,7 @@
   outline-offset: 2px;
 }
 
-/* Grows back from a point with a little spring once the dust has drifted off. */
+/* Grows back from a point with a little spring once the dust has flown off. */
 .rk-burst__icon {
   display: block;
   transition:
@@ -35,7 +35,18 @@
     opacity 220ms ease;
 }
 
-.rk-burst__icon[data-gone="true"] {
+/* A small lift on hover and a press on click, so it reads as something to tap. */
+.rk-burst:hover .rk-burst__icon {
+  transform: scale(1.06);
+}
+
+.rk-burst:active .rk-burst__icon {
+  transform: scale(0.92);
+  transition-duration: 120ms;
+}
+
+/* Gone while the dust flies; it wins over hover and press, which share its weight but come first. */
+.rk-burst .rk-burst__icon[data-gone="true"] {
   opacity: 0;
   transform: scale(0.15);
   transition: none;
@@ -52,8 +63,8 @@
 
 /* Reduced motion: no dust; the icon fades out and back in place. */
 @media (prefers-reduced-motion: reduce) {
-  .rk-burst__icon,
-  .rk-burst__icon[data-gone="true"] {
+  .rk-burst .rk-burst__icon,
+  .rk-burst .rk-burst__icon[data-gone="true"] {
     transform: none;
     transition: opacity 240ms ease;
   }

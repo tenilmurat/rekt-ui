@@ -7,6 +7,8 @@ import type { ComponentType } from "react";
 export type UiControl =
   | { type: "segmented"; prop: string; label: string; options: { value: string; label: string }[]; default: string }
   | { type: "toggle"; prop: string; label: string; default: boolean }
+  /** A grid of Lucide icons; each option's value is the icon's Lucide name (kebab-case). */
+  | { type: "icons"; prop: string; label: string; options: { value: string; label: string }[]; default: string }
   | { type: "slider"; prop: string; label: string; min: number; max: number; step: number; unit?: string; default: number };
 
 export type ControlValues = Record<string, string | number | boolean>;
