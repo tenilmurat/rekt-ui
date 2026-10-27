@@ -20,9 +20,8 @@ const PALETTES: Record<NonNullable<MorphLoaderProps["palette"]>, string[]> = {
   lagoon: ["#9be15d", "#3fd68a", "#1fc98f", "#19b5c8", "#5fd4c4"],
 };
 
-/** Points around the outline, and how much of each step the shape holds still before morphing. */
+/** Points around the outline. */
 const POINTS = 144;
-const HOLD = 0.12;
 
 const TAU = Math.PI * 2;
 const angles = Array.from({ length: POINTS }, (_, i) => (i / POINTS) * TAU);
@@ -93,8 +92,11 @@ const SHAPES: number[][] = [
   .map(equalArea)
   .reduce<number[][]>((chain, shape) => [...chain, chain.length ? alignTo(chain[chain.length - 1], shape) : shape], []);
 
-/** A sine ease: gentle at both ends, with no steep middle. */
-const easeInOut = (t: number) => (1 - Math.cos(Math.PI * t)) / 2;
+/**
+ * Half linear, half sine: soft through each shape but never quite still, so
+ * the morph keeps flowing from one shape into the next without a pause.
+ */
+const flow = (t: number) => t / 2 + (1 - Math.cos(Math.PI * t)) / 4;
 
 const mixHex = (a: string, b: string, t: number) => {
   const pa = parseInt(a.slice(1), 16);
@@ -132,7 +134,7 @@ const outline = (radii: number[], turn = 0) =>
  * round. Its two-tone gradient walks up and back down a colour ramp, one
  * colour per shape, so it reads as one living thing.
  */
-export function MorphLoader({ size = 56, speed = 1000, palette = "spectrum", label = "Loading" }: MorphLoaderProps) {
+export function MorphLoader({ size = 56, speed = 800, palette = "spectrum", label = "Loading" }: MorphLoaderProps) {
   const pathRef = useRef<SVGPathElement | null>(null);
   const highlightRef = useRef<SVGPathElement | null>(null);
   const fillRef = useRef<SVGLinearGradientElement | null>(null);
@@ -152,8 +154,8 @@ export function MorphLoader({ size = 56, speed = 1000, palette = "spectrum", lab
       const t = reduced ? 0 : Math.max(0, now - start) / step;
       const index = Math.floor(t);
       const within = t - index;
-      // Hold the shape, then morph to the next one on an ease-in-out.
-      const p = easeInOut(Math.max(0, (within - HOLD) / (1 - HOLD)));
+      // Always on the way to the next shape; there's no hold.
+      const p = flow(within);
       const from = SHAPES[index % SHAPES.length];
       const to = SHAPES[(index + 1) % SHAPES.length];
       // A steady turn, plus a gentle extra eighth of a turn eased through each morph.
@@ -164,11 +166,14 @@ export function MorphLoader({ size = 56, speed = 1000, palette = "spectrum", lab
       );
       pathRef.current?.setAttribute("d", d);
       highlightRef.current?.setAttribute("d", d);
-      // The colours turn with the shape; the sheen stays put, like light from one side.
-      fillRef.current?.setAttribute("gradientTransform", `rotate(${turn.toFixed(2)})`);
+      // The colours turn a little faster than the shape, so they visibly flow even on the
+      // circle, where a turn alone can't be seen. The sheen stays put, like light from one side.
+      const sweep = (turn + t * 40) % 360;
+      fillRef.current?.setAttribute("gradientTransform", `rotate(${sweep.toFixed(2)})`);
 
-      const a = mixHex(colorAt(colors, index), colorAt(colors, index + 1), p);
-      const b = mixHex(colorAt(colors, index + 1), colorAt(colors, index + 2), p);
+      // Colours drift at a constant pace, so they never pause either.
+      const a = mixHex(colorAt(colors, index), colorAt(colors, index + 1), within);
+      const b = mixHex(colorAt(colors, index + 1), colorAt(colors, index + 2), within);
       stopA.current?.setAttribute("stop-color", a);
       stopB.current?.setAttribute("stop-color", b);
 
