@@ -17,7 +17,7 @@
   position: relative;
   width: 360px;
   max-width: 100%;
-  padding-top: 20px;
+  padding-top: 56px;
   color: var(--rk-gallery-ink);
   font-family: inherit;
 }
@@ -75,10 +75,11 @@
 }
 
 /*
-  Forward: the front card tips toward you and sinks slowly past the floor,
-  fading as it goes, then waits hidden at the back. Back: the same, reversed,
-  so a hidden card rises up into the front. A little longer than the step,
-  on an ease-in-out, so the fall starts softly and settles.
+  Forward: a card in front tips toward you and sinks slowly past the floor,
+  fading as it goes, starting from wherever it was (--rk-gallery-from, set by
+  the component), so a run of drops flows on. Back: the same,
+  reversed, so a hidden card rises up into the front. A little longer than
+  the step, on an ease-in-out, so the fall starts softly and settles.
 */
 .rk-gallery__card[data-motion="drop"],
 .rk-gallery__card[data-motion="rise"] {
@@ -89,11 +90,16 @@
   animation-direction: reverse;
 }
 
+/* A card that dropped back into view fades in at its place, without sliding there. */
+.rk-gallery__card[data-motion="enter"] {
+  animation: rk-gallery-enter var(--rk-gallery-speed) ease both;
+  transition-property: opacity;
+}
+
 @keyframes rk-gallery-drop {
   0% {
-    z-index: 100;
     opacity: 1;
-    transform: translate3d(0, 0, 0);
+    transform: var(--rk-gallery-from, translate3d(0, 0, 0));
     animation-timing-function: cubic-bezier(0.4, 0, 0.25, 1);
   }
   30% {
@@ -101,9 +107,14 @@
     animation-timing-function: ease-in-out;
   }
   100% {
-    z-index: 100;
     opacity: 0;
     transform: translate3d(0, 72px, 30px) rotateX(-22deg);
+  }
+}
+
+@keyframes rk-gallery-enter {
+  from {
+    opacity: 0;
   }
 }
 

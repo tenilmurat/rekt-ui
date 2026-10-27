@@ -56,15 +56,26 @@ const ITEMS: StackGalleryItem[] = [
 const WHEEL_STEP = 60;
 const WHEEL_GAP_MS = 180;
 
-type Motion = { kind: "drop" | "rise"; id: number };
+/**
+ * A card's motion: dropping away from the front, rising back into it, or
+ * fading in at its place after a drop that landed it in view. from is where a
+ * dropping card was on screen when it set off.
+ */
+type Motion = { kind: "drop" | "rise" | "enter"; id: number; from?: string };
+
+const ANIMATION: Record<Motion["kind"], string> = {
+  drop: "rk-gallery-drop",
+  rise: "rk-gallery-drop",
+  enter: "rk-gallery-enter",
+};
 
 /**
  * A gallery of cards stacked in depth: each card further back stands a
  * little higher and smaller, so you see the top edge of every one. Scroll,
- * press the arrow keys or click a card to bring it forward; the front card
- * tips forward and drops gently away, the rest of the stack moves up a place,
- * and the next waiting card fades in at the back. It loops. Hovering a card
- * in the stack lifts it.
+ * press the arrow keys or click a card to bring it forward; the cards in
+ * front of it tip forward and drop gently away one after another, the stack
+ * moves up a place each time, and the next waiting card fades in at the
+ * back. It loops. Hovering a card in the stack lifts it.
  */
 export function StackGallery({
   visible = 8,
@@ -76,11 +87,12 @@ export function StackGallery({
   onOpen,
 }: StackGalleryProps) {
   const n = items.length;
-  // Always keep at least one card hidden, so the dropped card never has to reappear in view.
+  // Always keep at least one card hidden, so a single drop never has to reappear in view.
   const shown = Math.max(1, Math.min(Math.round(visible), n - 1));
   const [front, setFront] = useState(0);
   const [motions, setMotions] = useState<Record<number, Motion>>({});
   const stageRef = useRef<HTMLDivElement | null>(null);
+  const cardRefs = useRef<(HTMLButtonElement | null)[]>([]);
   /** Steps still to take (forward is positive), taken one at a time so each card drops in turn. */
   const pending = useRef(0);
   const timer = useRef(0);
@@ -88,8 +100,14 @@ export function StackGallery({
   const frontRef = useRef(0);
   frontRef.current = front;
 
-  const stepGap = Math.max(60, speed * 0.22);
+  const stepGap = Math.max(60, speed * 0.2);
 
+  /*
+    One place at a time, a short gap apart, so a long jump is a quick run of
+    single steps: each card drops from wherever it is on screen right then
+    (still gliding forward from the last step, say), and the stack's
+    transitions pick up from where they are, so the run flows without jumps.
+  */
   const takeStep = () => {
     timer.current = 0;
     if (pending.current === 0 || n < 2) return;
@@ -97,10 +115,16 @@ export function StackGallery({
     pending.current -= dir;
     const current = frontRef.current;
     const next = (current + dir + n) % n;
-    // Forward: the front card drops away and waits, hidden. Back: a hidden card rises to the front.
-    const moving = dir > 0 ? current : next;
-    const id = ++motionId.current;
-    setMotions((m) => ({ ...m, [moving]: { kind: dir > 0 ? "drop" : "rise", id } }));
+    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      // Forward: the front card drops away. Back: a hidden card rises to the front.
+      const moving = dir > 0 ? current : next;
+      const el = cardRefs.current[moving];
+      const from = dir > 0 && el ? getComputedStyle(el).transform : "none";
+      const motion: Motion = { kind: dir > 0 ? "drop" : "rise", id: ++motionId.current };
+      if (from !== "none") motion.from = from;
+      setMotions((m) => ({ ...m, [moving]: motion }));
+    }
+    frontRef.current = next;
     setFront(next);
     onChange?.(items[next], next);
     if (pending.current !== 0) timer.current = window.setTimeout(takeStep, stepGap);
@@ -162,6 +186,9 @@ export function StackGallery({
           return (
             <button
               key={index}
+              ref={(el) => {
+                cardRefs.current[index] = el;
+              }}
               type="button"
               className="rk-gallery__card"
               data-front={d === 0}
@@ -175,19 +202,26 @@ export function StackGallery({
                 {
                   // Hidden cards wait in the last place, so the next one fades in where it belongs.
                   "--d": Math.min(d, shown - 1),
-                  zIndex: n - d,
+                  "--rk-gallery-from": motion?.from,
+                  // Moving cards ride above the stack, and an earlier drop stays in front of a later one.
+                  zIndex: motion && motion.kind !== "enter" ? 1_000_000 - motion.id : n - d,
                   background: item.image ? `center / cover no-repeat url("${item.image}")` : item.background,
                 } as React.CSSProperties
               }
               onClick={() => (d === 0 ? onOpen?.(item, index) : go(d))}
-              onAnimationEnd={() =>
+              onAnimationEnd={(event) => {
+                const name = event.animationName;
                 setMotions((m) => {
-                  if (m[index]?.id !== motion?.id) return m;
+                  const done = m[index];
+                  if (!done || ANIMATION[done.kind] !== name) return m;
                   const rest = { ...m };
                   delete rest[index];
+                  // A drop that landed the card back in view (a long jump) fades it in at its place.
+                  const place = (index - frontRef.current + n) % n;
+                  if (done.kind === "drop" && place < shown) rest[index] = { kind: "enter", id: done.id };
                   return rest;
-                })
-              }
+                });
+              }}
             />
           );
         })}
