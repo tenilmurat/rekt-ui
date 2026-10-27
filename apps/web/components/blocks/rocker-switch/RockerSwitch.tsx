@@ -6,11 +6,11 @@ export type RockerSwitchProps = {
   /** Controlled state; leave out to let it keep its own. */
   checked?: boolean;
   defaultChecked?: boolean;
-  /** The colour of the plate's side and the lit dots. */
+  /** The colour of the body's side and the lit dots. */
   color?: "purple" | "coral" | "mint";
-  /** How far the plate rocks, in degrees. */
+  /** How far the top tilts, in degrees: the lifted end rises by the plate's length × sin(tilt). */
   tilt?: number;
-  /** The plate's thickness, in px: the coloured edge you see when a half lifts. */
+  /** The plate's thickness at the pressed end, in px. */
   depth?: number;
   /** How long the rock takes, in milliseconds. */
   speed?: number;
@@ -36,18 +36,18 @@ const DOTS = 14;
 const PLATE_W = 260;
 
 /**
- * A rocker switch seen from above in 3D: a pill-shaped plate split into ON
- * and OFF halves that rocks about its seam like a seesaw. Click it and the
- * pressed half drops while the other lifts, showing the plate's coloured
- * side, on a springy rock; a row of dots beside it lights up in turn, from
- * OFF to ON, with the word RE…KT spelled round it.
+ * A rocker switch seen from above in 3D: a pill-shaped wedge on the ground,
+ * split into ON and OFF halves, that rocks like a seesaw. Click it and the
+ * pressed end sinks to the floor while the other end rises on a tall
+ * coloured wall, on a springy rock; a row of dots beside it lights up in
+ * turn, from OFF to ON, with the word RE…KT spelled round it.
  */
 export function RockerSwitch({
   checked,
   defaultChecked = false,
   color = "purple",
   tilt = 12,
-  depth = 34,
+  depth = 4,
   speed = 650,
   word = ["RE", "KT"],
   labels = ["ON", "OFF"],
@@ -70,10 +70,13 @@ export function RockerSwitch({
   };
 
   const accent = COLORS[color] ?? COLORS.purple;
-  const slices = Math.max(2, Math.min(48, Math.round(depth)));
-  const angle = Math.max(0, tilt);
-  // Raised so the pressed end's bottom edge rests on the ground, like a seesaw.
-  const lift = slices + (PLATE_W / 2) * Math.sin((angle * Math.PI) / 180);
+  const angle = Math.max(1, Math.min(30, tilt));
+  const base = Math.max(1, Math.min(24, Math.round(depth)));
+  // The wall's height at the lifted end: the plate's far end swung up by the tilt.
+  const rise = Math.round(PLATE_W * Math.sin((angle * Math.PI) / 180));
+  // The body is the pill stacked one px at a time: the base goes the whole
+  // length; above it each layer stops short, so the stack makes a wedge.
+  const layers = Array.from({ length: base + rise }, (_, i) => Math.max(0, i + 1 - base) / rise);
 
   return (
     <div
@@ -83,14 +86,13 @@ export function RockerSwitch({
         {
           "--rk-rocker-accent": accent,
           "--rk-rocker-tilt": `${angle}deg`,
-          "--rk-rocker-depth": `${slices}px`,
-          "--rk-rocker-lift": `${lift.toFixed(1)}px`,
+          "--rk-rocker-top": `${base + rise / 2}px`,
           "--rk-rocker-speed": `${Math.max(0, speed)}ms`,
         } as React.CSSProperties
       }
     >
       <div className="rk-rocker__scene">
-        {/* The word and the dots lie flat on the ground, along the plate's far side. */}
+        {/* The word and the dots lie flat on the ground, along the plate's near side. */}
         {word ? (
           <div className="rk-rocker__word" aria-hidden="true">
             <span className="rk-rocker__half">{word[0]}</span>
@@ -105,13 +107,12 @@ export function RockerSwitch({
 
         <button type="button" role="switch" aria-checked={on} aria-label={label} className="rk-rocker__switch" onClick={toggle}>
           <span className="rk-rocker__shadow" aria-hidden="true" />
-          <span className="rk-rocker__plate" aria-hidden="true">
-            {/* The side: the pill again and again, one step lower each time, shaded as it goes down. */}
-            {Array.from({ length: slices }, (_, i) => (
+          <span className="rk-rocker__body" aria-hidden="true">
+            {layers.map((cut, i) => (
               <span
                 key={i}
-                className="rk-rocker__side"
-                style={{ "--rk-rocker-z": `${-(i + 1)}px`, "--rk-rocker-down": (i + 1) / slices } as React.CSSProperties}
+                className="rk-rocker__layer"
+                style={{ "--rk-rocker-z": `${i}px`, "--rk-rocker-cut": cut, "--rk-rocker-up": (i + 1) / layers.length } as React.CSSProperties}
               />
             ))}
             <span className="rk-rocker__face">
