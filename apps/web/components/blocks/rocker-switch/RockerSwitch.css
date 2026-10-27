@@ -1,25 +1,19 @@
 /*
   Rocker switch. Every colour is a variable with a fallback, so it works as
   is; point the --rk-rocker-* variables at your own tokens to theme it.
-  Off, the frame is light; on, the same variables take their dark values
-  and the switch glows. The component writes --rk-rocker-accent, -tilt,
-  -base, -half (half the length) and -speed, and on each layer of the
-  wedge its height (-z, and -height as a plain number) and how high up the
-  wedge it sits (-up).
+  Off, the ground is a mid grey; on, the same variables take their dark
+  values and the switch glows. The component writes --rk-rocker-accent,
+  -tilt, -length and -speed, and on each layer of the wedge its height
+  (-z, and -height as a plain number) and how high up the wedge it sits (-up).
 */
 
 /*
-  The two halves' angles are registered, so they animate as numbers: the
-  halves turn on them, and every wedge layer works out where it starts from
-  the same angle, so the body always fits the top, mid-rock included.
+  The plate's angle is registered, so it animates as a number: the plate
+  turns on it, and every wedge layer works out where it starts from the
+  same angle, so the body always fits the plate, mid-rock included.
+  Positive: the ON end is up. Negative: the OFF end is up.
 */
-@property --rk-rocker-a-on {
-  syntax: "<angle>";
-  inherits: true;
-  initial-value: 0deg;
-}
-
-@property --rk-rocker-a-off {
+@property --rk-rocker-angle {
   syntax: "<angle>";
   inherits: true;
   initial-value: 0deg;
@@ -27,65 +21,60 @@
 
 .rk-rocker {
   --rk-rocker-accent: #a66cff;
-  --rk-rocker-tilt: 14deg;
-  --rk-rocker-base: 4px;
-  --rk-rocker-half: 130px;
+  --rk-rocker-tilt: 9deg;
+  --rk-rocker-length: 260px;
   --rk-rocker-speed: 700ms;
-  /* A quick start and a long settle; no overshoot, since the halves end on the ground. */
+  /* A quick start and a long settle; no overshoot, since the plate ends on the ground. */
   --rk-rocker-spring: cubic-bezier(0.2, 0.9, 0.3, 1);
-  /* Off: the ON half is up. On: the OFF half is up. */
-  --rk-rocker-a-on: var(--rk-rocker-tilt);
-  --rk-rocker-a-off: 0deg;
+  /* Off: the ON end is up. */
+  --rk-rocker-angle: var(--rk-rocker-tilt);
 
   /*
-    Light: the pressed half is flush with the ground, the same grey, with a
-    faint rim; the raised half is paler; the wall is solid colour. --rk-rocker-bg
-    is the ground's colour: set it to whatever the switch sits on.
+    Light: a mid-grey ground (the same grey the component reports in
+    data-rk-ground), a paler plate with a faint rim, white on the pressed
+    half, and a solid coloured wedge.
   */
-  --rk-rocker-bg: #f5f5f5;
+  --rk-rocker-bg: #cbcbcd;
   --rk-rocker-ink: #141210;
-  --rk-rocker-muted: #8a857f;
+  --rk-rocker-muted: #6f6c70;
   --rk-rocker-pressed-ink: #ffffff;
-  --rk-rocker-face-flat: var(--rk-rocker-bg);
-  --rk-rocker-face-up: #fbfbfa;
-  --rk-rocker-rim: rgb(255 255 255 / 0.9);
-  --rk-rocker-rim-edge: rgb(20 18 16 / 0.1);
-  --rk-rocker-dot: #bdb9b4;
+  --rk-rocker-face: #dededf;
+  --rk-rocker-face-lit: #e9e9ea;
+  --rk-rocker-rim: rgb(255 255 255 / 0.7);
+  --rk-rocker-seam: rgb(20 18 16 / 0.12);
+  --rk-rocker-dot: #a9a8ab;
   --rk-rocker-dot-lit: var(--rk-rocker-accent);
   --rk-rocker-wall-lit: color-mix(in oklab, var(--rk-rocker-accent) 74%, white);
   --rk-rocker-wall: var(--rk-rocker-accent);
   --rk-rocker-wall-dark: color-mix(in oklab, var(--rk-rocker-accent) 70%, black);
-  --rk-rocker-shadow: rgb(20 18 16 / 0.28);
+  --rk-rocker-shadow: rgb(20 18 16 / 0.3);
   --rk-rocker-shadow-blur: 10px;
   --rk-rocker-outline: transparent;
   --rk-rocker-outline-glow: transparent;
   --rk-rocker-focus: rgb(20 18 16 / 0.6);
 
   /* The plate's size on the ground; the length matches PLATE_W in the component. */
-  --rk-rocker-w: 260px;
+  --rk-rocker-w: var(--rk-rocker-length);
   --rk-rocker-h: 96px;
 
   display: inline-block;
   padding: 64px 48px 52px;
   color: var(--rk-rocker-ink);
   font-family: inherit;
-  transition:
-    --rk-rocker-a-on var(--rk-rocker-speed) var(--rk-rocker-spring),
-    --rk-rocker-a-off var(--rk-rocker-speed) var(--rk-rocker-spring);
+  transition: --rk-rocker-angle var(--rk-rocker-speed) var(--rk-rocker-spring);
 }
 
-/* On: the ground goes dark (the parent follows data-rk-dark), the plate turns near-black with a glowing outline, the wall lights up. */
+/* On: the OFF end is up; the ground goes dark (a parent paints it from data-rk-ground), the plate near-black with a glowing outline, the wedge pale and lit. */
 .rk-rocker[data-on] {
-  --rk-rocker-a-on: 0deg;
-  --rk-rocker-a-off: var(--rk-rocker-tilt);
+  --rk-rocker-angle: calc(var(--rk-rocker-tilt) * -1);
   --rk-rocker-bg: #0b0a0b;
   --rk-rocker-ink: #f7f5fb;
   --rk-rocker-muted: #a9a2b8;
   --rk-rocker-pressed-ink: #ffffff;
-  --rk-rocker-face-flat: var(--rk-rocker-bg);
-  --rk-rocker-face-up: #1a171e;
-  --rk-rocker-rim: color-mix(in oklab, var(--rk-rocker-accent) 80%, white);
-  --rk-rocker-rim-edge: transparent;
+  --rk-rocker-face: #121014;
+  --rk-rocker-face-lit: #1b1820;
+  --rk-rocker-rim: rgb(255 255 255 / 0.08);
+  --rk-rocker-seam: rgb(255 255 255 / 0.1);
   --rk-rocker-dot: rgb(255 255 255 / 0.22);
   --rk-rocker-dot-lit: #ffffff;
   --rk-rocker-wall-lit: #fbf6ff;
@@ -119,20 +108,21 @@
   outline: none;
 }
 
-.rk-rocker__switch:focus-visible .rk-rocker__cap {
+.rk-rocker__switch:focus-visible .rk-rocker__face {
   outline: 2px solid var(--rk-rocker-focus);
-  outline-offset: 3px;
+  outline-offset: 4px;
 }
 
 /*
-  The shadow a raised half throws on the ground: only under that half, past
-  its end and to the near side, and only as strong as it is raised (its
-  angle over the full tilt). The pressed half is flush, so it throws none.
-  By night the same shape is the glow.
+  The shadow the raised end throws on the ground: under that half only,
+  past its end and to the near side, and only as strong as it is raised.
+  The pressed end lies on the ground, so it throws none. By night the same
+  shape is the glow. Each shade is a roomy box, so the blur's halo isn't cut
+  off, with the pill drawn inside at the plate's size and a soft mask toward
+  the middle.
 */
 .rk-rocker__shade {
   position: absolute;
-  /* Roomy, so the blur's halo isn't cut off; the pill itself is drawn inside, at the plate's size. */
   inset: -120px;
   pointer-events: none;
 }
@@ -149,9 +139,8 @@
     filter var(--rk-rocker-speed) ease;
 }
 
-/* Each shade fades out softly toward the seam, so it belongs to its half alone. */
 .rk-rocker__shade--on {
-  --rk-rocker-raised: calc(var(--rk-rocker-a-on) / var(--rk-rocker-tilt));
+  --rk-rocker-raised: calc(max(var(--rk-rocker-angle), 0deg) / var(--rk-rocker-tilt));
   -webkit-mask-image: linear-gradient(to left, transparent 47%, #000 56%);
   mask-image: linear-gradient(to left, transparent 47%, #000 56%);
   opacity: var(--rk-rocker-raised);
@@ -159,7 +148,7 @@
 }
 
 .rk-rocker__shade--off {
-  --rk-rocker-raised: calc(var(--rk-rocker-a-off) / var(--rk-rocker-tilt));
+  --rk-rocker-raised: calc(max(calc(var(--rk-rocker-angle) * -1), 0deg) / var(--rk-rocker-tilt));
   -webkit-mask-image: linear-gradient(to right, transparent 47%, #000 56%);
   mask-image: linear-gradient(to right, transparent 47%, #000 56%);
   opacity: var(--rk-rocker-raised);
@@ -173,14 +162,14 @@
 }
 
 /*
-  The body is the pill stacked one px at a time. The base layers run the
-  whole length. Above them, each half has its own wedge: a layer per px of
-  height, each starting where the raised top passes its height, which is
-  height ÷ tan(angle) out from the seam. So the stack slopes up from the
-  seam to the raised end, and as the half comes down (the angle shrinks)
-  every layer slides out past the end: the body always fits the top. Each
-  layer is shaded across from the lit corner to the far one, so the wall's
-  colour runs round the rounded end, and darkens toward the ground.
+  The wedge: the pill stacked one px at a time, each layer starting where
+  the tilted plate passes its height, which is height ÷ tan(angle) in from
+  the pressed end. So it's a knife edge on the ground at the pressed end
+  and as tall as the rise at the other, and as the plate rocks (the angle
+  passes through 0) every layer slides out past the end and the other set
+  slides in: the body always fits the plate. Each layer is shaded across
+  from the lit corner to the far one, so the wall's colour runs round the
+  rounded end, and darkens toward the ground.
 */
 .rk-rocker__layer {
   position: absolute;
@@ -192,77 +181,64 @@
   backface-visibility: hidden;
 }
 
-/* The ON half's wedge (left), cut from the seam outward by its height ÷ tan(the ON half's angle). */
+/* While the ON end is up, the wedge is cut in from the OFF end (right). */
 .rk-rocker__layer--on {
-  clip-path: inset(0 calc(var(--rk-rocker-half) + var(--rk-rocker-height) * 1px / max(tan(var(--rk-rocker-a-on)), 0.001)) 0 0);
+  clip-path: inset(0 calc(var(--rk-rocker-height) * 1px / max(tan(var(--rk-rocker-angle)), 0.001)) 0 0);
 }
 
-/* The OFF half's wedge (right), the same from the OFF half's angle. */
+/* While the OFF end is up, from the ON end (left). */
 .rk-rocker__layer--off {
-  clip-path: inset(0 0 0 calc(var(--rk-rocker-half) + var(--rk-rocker-height) * 1px / max(tan(var(--rk-rocker-a-off)), 0.001)));
+  clip-path: inset(0 0 0 calc(var(--rk-rocker-height) * 1px / max(tan(calc(var(--rk-rocker-angle) * -1)), 0.001)));
 }
 
 /*
-  The two halves of the top, hinged at the seam: each one's transform-origin
-  is its seam edge. The pressed half lies flat on the base; the other turns
-  up from the seam by the tilt, so its far end stands on top of the wedge.
+  The plate: one piece, turned about its middle by the angle and held up
+  so that its low end rests on the ground: half the length × sin(angle),
+  whichever way it leans.
 */
-.rk-rocker__cap {
+.rk-rocker__face {
   position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 50%;
+  inset: 0;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--rk-rocker-face-up);
-  backface-visibility: hidden;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--rk-rocker-face);
   box-shadow:
+    inset 0 0 0 1px var(--rk-rocker-rim),
     0 0 0 1.5px var(--rk-rocker-outline),
     0 0 16px var(--rk-rocker-outline-glow);
+  transform-origin: 50% 50%;
+  transform: translateZ(calc(var(--rk-rocker-length) / 2 * max(sin(var(--rk-rocker-angle)), sin(calc(var(--rk-rocker-angle) * -1))))) rotateY(var(--rk-rocker-angle));
+  backface-visibility: hidden;
   transition:
     background-color var(--rk-rocker-speed) ease,
     box-shadow var(--rk-rocker-speed) ease;
 }
 
-.rk-rocker__cap--on {
-  left: 0;
-  border-radius: 999px 0 0 999px;
-  transform-origin: 100% 50%;
-  transform: translateZ(var(--rk-rocker-base)) rotateY(var(--rk-rocker-a-on));
+.rk-rocker__cap {
+  position: relative;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  transition: background-color var(--rk-rocker-speed) ease;
 }
 
-.rk-rocker__cap--off {
-  left: 50%;
-  border-radius: 0 999px 999px 0;
-  transform-origin: 0% 50%;
-  transform: translateZ(var(--rk-rocker-base)) rotateY(calc(var(--rk-rocker-a-off) * -1));
+/* The raised half catches a little more light. */
+.rk-rocker:not([data-on]) .rk-rocker__cap--on,
+.rk-rocker[data-on] .rk-rocker__cap--off {
+  background: var(--rk-rocker-face-lit);
 }
 
-/* The pressed half is flush with the ground: the same colour, with a faint rim to mark its edge. */
-.rk-rocker:not([data-on]) .rk-rocker__cap--off,
-.rk-rocker[data-on] .rk-rocker__cap--on {
-  background: var(--rk-rocker-face-flat);
-  box-shadow:
-    inset 0 0 0 1px var(--rk-rocker-rim),
-    0 0 0 1px var(--rk-rocker-rim-edge),
-    0 0 0 1.5px var(--rk-rocker-outline),
-    0 0 16px var(--rk-rocker-outline-glow);
-}
-
-/* The seam, on the OFF half's inner edge. */
+/* The seam between the halves. */
 .rk-rocker__cap--off::before {
   position: absolute;
   top: 0;
   bottom: 0;
   left: 0;
   width: 1px;
-  background: rgb(20 18 16 / 0.14);
+  background: var(--rk-rocker-seam);
   content: "";
-}
-
-.rk-rocker[data-on] .rk-rocker__cap--off::before {
-  background: rgb(255 255 255 / 0.1);
 }
 
 .rk-rocker__label {
@@ -328,9 +304,9 @@
 /* Reduced motion: it switches without rocking, and the dots change together. */
 @media (prefers-reduced-motion: reduce) {
   .rk-rocker,
-  .rk-rocker__layer,
+  .rk-rocker__face,
   .rk-rocker__cap,
-  .rk-rocker__shade,
+  .rk-rocker__shade::before,
   .rk-rocker__label,
   .rk-rocker__word,
   .rk-rocker__dot {

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useId, useRef, useState } from "react";
 import { Bookmark, Box, Code2, Link2, Lock, RotateCcw, X } from "lucide-react";
+import { useBlockGround } from "@/components/wall/BlockCard";
 import { CodeBlock, CodeSection, PillTabs } from "@/components/wall/CodeView";
 import { Controls } from "@/components/wall/Controls";
 import { useSession } from "@/lib/session";
@@ -20,6 +21,9 @@ import { useBlockValues } from "@/lib/ui/use-block-values";
  */
 export function BlockDialog({ block, onClose }: { block: UiBlock; onClose: () => void }) {
   const [view, setView] = useState<"preview" | "code">("preview");
+  // The stage paints whatever ground the block asks for (data-rk-ground), like a card on the wall.
+  const stageRef = useRef<HTMLElement | null>(null);
+  const ground = useBlockGround(stageRef);
   const { values, startedAt, restart, setValue } = useBlockValues(block);
   const source = useBlockSource(block, view === "code");
   const { isBookmarked, toggleBookmark } = useSession();
@@ -84,7 +88,9 @@ export function BlockDialog({ block, onClose }: { block: UiBlock; onClose: () =>
         {/* Stage */}
         <section
           aria-label={`${block.title} ${view}`}
-          className="relative flex min-h-[320px] flex-1 flex-col overflow-hidden rounded-[28px] bg-[var(--surface)] transition-colors duration-700 has-[[data-rk-dark]]:bg-[#0b0a0b]"
+          ref={stageRef}
+          className="relative flex min-h-[320px] flex-1 flex-col overflow-hidden rounded-[28px] transition-colors duration-700"
+          style={{ backgroundColor: ground ?? "var(--surface)" }}
         >
           <div className="flex items-center justify-between gap-[8px] p-[12px]">
             <div className="flex rounded-full p-[3px]" role="tablist" aria-label="View" style={{ backgroundColor: "var(--hover-2)" }}>

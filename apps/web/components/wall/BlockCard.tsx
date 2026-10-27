@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Lock, Maximize2 } from "lucide-react";
 import type { UiBlock } from "@/lib/ui/types";
 import { useBlockValues } from "@/lib/ui/use-block-values";
@@ -9,12 +9,33 @@ import { useInView } from "@/lib/use-in-view";
 export const DEFAULT_CARD_HEIGHT = 380;
 
 /**
+ * The ground a block asks for: a block may put data-rk-ground="<colour>" on
+ * its root (the rocker switch does, mid grey off and near-black on), and the
+ * surface it sits in paints itself that colour. Watches the subtree, so it
+ * follows the block as it changes.
+ */
+export function useBlockGround<T extends HTMLElement>(ref: React.RefObject<T | null>) {
+  const [ground, setGround] = useState<string | null>(null);
+  useEffect(() => {
+    const node = ref.current;
+    if (!node) return;
+    const read = () => setGround(node.querySelector<HTMLElement>("[data-rk-ground]")?.dataset.rkGround ?? null);
+    read();
+    const observer = new MutationObserver(read);
+    observer.observe(node, { subtree: true, childList: true, attributes: true, attributeFilter: ["data-rk-ground"] });
+    return () => observer.disconnect();
+  }, [ref]);
+  return ground;
+}
+
+/**
  * One component on the wall, live and usable in place. Clicking the card around
  * it, its name (bottom left) or the round button (bottom right) opens it with
  * its controls and code.
  */
 export function BlockCard({ block, onOpen }: { block: UiBlock; onOpen: () => void }) {
   const { ref, active } = useInView<HTMLElement>();
+  const ground = useBlockGround(ref);
   const { values, startedAt } = useBlockValues(block);
   const Component = block.component;
   const componentRef = useRef<HTMLDivElement | null>(null);
@@ -22,9 +43,8 @@ export function BlockCard({ block, onOpen }: { block: UiBlock; onOpen: () => voi
   return (
     <article
       ref={ref}
-      // A block that sets data-rk-dark on itself (the rocker switch, when on) turns its whole card dark.
-      className="relative overflow-hidden rounded-[28px] bg-[var(--surface)] transition-colors duration-700 has-[[data-rk-dark]]:bg-[#0b0a0b]"
-      style={{ height: block.cardHeight ?? DEFAULT_CARD_HEIGHT }}
+      className="relative overflow-hidden rounded-[28px] transition-colors duration-700"
+      style={{ height: block.cardHeight ?? DEFAULT_CARD_HEIGHT, backgroundColor: ground ?? "var(--surface)" }}
     >
       {/* Clicks on the component work it; clicks on the card around it open the
           dialog. Keyboard users open it with the two buttons below. */}
