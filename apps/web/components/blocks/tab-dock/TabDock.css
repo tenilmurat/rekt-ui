@@ -1,0 +1,199 @@
+/*
+  Tab dock. Every colour is a variable with a fallback, so it works as is;
+  point the --rk-dock-* variables at your own tokens to theme it.
+  Light theme; a dark theme can be added by redefining the same variables.
+  Every size is multiplied by --rk-dock-scale, which the resize line changes.
+*/
+.rk-dock {
+  --rk-dock-bg: #ffffff;
+  --rk-dock-ink: #141210;
+  --rk-dock-muted: #77726d;
+  --rk-dock-pill: #f2f1f0;
+  --rk-dock-edge: rgb(20 18 16 / 0.1);
+  --rk-dock-line: rgb(20 18 16 / 0.14);
+  --rk-dock-ring: rgb(20 18 16 / 0.6);
+  --rk-dock-scale: 1;
+  --rk-dock-speed: 420ms;
+  --rk-dock-ease: cubic-bezier(0.33, 1, 0.68, 1);
+  /* Lucide's chevrons-up-down, ink on a white halo so it reads on any colour. */
+  --rk-dock-cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m7 15 5 5 5-5M7 9l5-5 5 5' stroke='white' stroke-width='5'/%3E%3Cpath d='m7 15 5 5 5-5M7 9l5-5 5 5' stroke='%23141210' stroke-width='2'/%3E%3C/svg%3E")
+      12 12,
+    ns-resize;
+
+  --s: var(--rk-dock-scale);
+  position: relative;
+  display: inline-flex;
+  /* Never narrower than its tabs, even in a tight spot. */
+  width: max-content;
+  padding: calc(5px * var(--s));
+  border-radius: calc(20px * var(--s));
+  background: var(--rk-dock-bg);
+  box-shadow:
+    0 0 0 1px var(--rk-dock-edge),
+    0 calc(6px * var(--s)) calc(18px * var(--s)) rgb(20 18 16 / 0.06);
+  color: var(--rk-dock-muted);
+  font-family: inherit;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.rk-dock[data-dragging] {
+  cursor: var(--rk-dock-cursor);
+}
+
+/* While the line is dragged the menu follows the pointer directly, without easing behind it. */
+.rk-dock[data-dragging] .rk-dock__tab,
+.rk-dock[data-dragging] .rk-dock__label {
+  transition: none;
+}
+
+/* The soft pill behind the selected tab; the component moves and sizes it. */
+.rk-dock__pill {
+  position: absolute;
+  top: calc(5px * var(--s));
+  left: 0;
+  width: 0;
+  height: calc(40px * var(--s));
+  border-radius: calc(15px * var(--s));
+  background: var(--rk-dock-pill);
+  pointer-events: none;
+}
+
+.rk-dock__tabs {
+  display: flex;
+  align-items: center;
+  gap: calc(2px * var(--s));
+}
+
+.rk-dock__slot {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: calc(2px * var(--s));
+}
+
+.rk-dock__tab {
+  position: relative;
+  display: inline-flex;
+  height: calc(40px * var(--s));
+  flex: none;
+  align-items: center;
+  padding: 0 calc(10px * var(--s));
+  border: 0;
+  border-radius: calc(15px * var(--s));
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: calc(14px * var(--s));
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  transition:
+    color 200ms ease,
+    padding var(--rk-dock-speed) var(--rk-dock-ease);
+}
+
+.rk-dock__tab:hover {
+  color: var(--rk-dock-ink);
+}
+
+.rk-dock__tab[aria-selected="true"] {
+  padding: 0 calc(14px * var(--s)) 0 calc(12px * var(--s));
+  color: var(--rk-dock-ink);
+  cursor: default;
+}
+
+.rk-dock__tab:focus-visible {
+  outline: 2px solid var(--rk-dock-ring);
+  outline-offset: 2px;
+}
+
+.rk-dock__icon {
+  width: calc(20px * var(--s));
+  height: calc(20px * var(--s));
+  flex: none;
+  transition: transform 200ms ease;
+}
+
+.rk-dock__tab:not([aria-selected="true"]):active .rk-dock__icon {
+  transform: scale(0.9);
+}
+
+/*
+  The name opens out from nothing: its column grows from 0fr to 1fr, so it
+  takes exactly the width of the text, and fades in once there's room.
+*/
+.rk-dock__label {
+  display: grid;
+  /* The 0 minimum lets the track close fully, the name's left padding included. */
+  grid-template-columns: minmax(0, 0fr);
+  overflow: hidden;
+  opacity: 0;
+  transition:
+    grid-template-columns var(--rk-dock-speed) var(--rk-dock-ease),
+    opacity calc(var(--rk-dock-speed) * 0.4) ease;
+}
+
+.rk-dock__tab[aria-selected="true"] .rk-dock__label {
+  grid-template-columns: minmax(0, 1fr);
+  opacity: 1;
+  transition:
+    grid-template-columns var(--rk-dock-speed) var(--rk-dock-ease),
+    opacity calc(var(--rk-dock-speed) * 0.6) ease calc(var(--rk-dock-speed) * 0.25);
+}
+
+.rk-dock__text {
+  min-width: 0;
+  padding-left: calc(8px * var(--s));
+  white-space: nowrap;
+}
+
+/*
+  The resize line. Its hit area is wider than the line, and hovering it shows
+  the up-and-down chevrons, like the separator in the macOS Dock.
+*/
+.rk-dock__line {
+  position: relative;
+  width: calc(12px * var(--s));
+  height: calc(40px * var(--s));
+  flex: none;
+  border-radius: 6px;
+  cursor: var(--rk-dock-cursor);
+  touch-action: none;
+  outline: none;
+}
+
+.rk-dock__line::before {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1.5px;
+  height: calc(24px * var(--s));
+  border-radius: 1px;
+  background: var(--rk-dock-line);
+  content: "";
+  transform: translate(-50%, -50%);
+  transition:
+    background-color 200ms ease,
+    height 200ms ease;
+}
+
+.rk-dock__line:hover::before,
+.rk-dock[data-dragging] .rk-dock__line::before {
+  height: calc(28px * var(--s));
+  background: var(--rk-dock-muted);
+}
+
+.rk-dock__line:focus-visible {
+  box-shadow: 0 0 0 2px var(--rk-dock-ring);
+}
+
+/* Reduced motion: the name and the pill change without moving. */
+@media (prefers-reduced-motion: reduce) {
+  .rk-dock__tab,
+  .rk-dock__label,
+  .rk-dock__tab[aria-selected="true"] .rk-dock__label,
+  .rk-dock__line::before {
+    transition: none;
+  }
+}

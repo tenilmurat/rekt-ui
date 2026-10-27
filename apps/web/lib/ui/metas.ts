@@ -6,6 +6,7 @@ import { stackGalleryMeta } from "@/components/blocks/stack-gallery/meta";
 import { surpriseButtonMeta } from "@/components/blocks/surprise-button/meta";
 import { morphLoaderMeta } from "@/components/blocks/morph-loader/meta";
 import { iconBurstMeta } from "@/components/blocks/icon-burst/meta";
+import { tabDockMeta } from "@/components/blocks/tab-dock/meta";
 import { tiltCardMeta } from "@/components/blocks/tilt-card/meta";
 import type { UiBlockMeta } from "@/lib/ui/types";
 
@@ -24,6 +25,7 @@ export const BLOCK_METAS: UiBlockMeta[] = [
   morphLoaderMeta,
   iconBurstMeta,
   stackGalleryMeta,
+  tabDockMeta,
 ];
 
 export const getMeta = (id: string) => BLOCK_METAS.find((m) => m.id === id);
