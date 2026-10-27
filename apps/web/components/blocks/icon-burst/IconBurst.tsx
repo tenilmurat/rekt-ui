@@ -58,6 +58,9 @@ export type IconBurstProps = {
 /** The colourful dust: a warm-to-cool ramp, handed out round the icon so neighbours share a colour. */
 const DUST = ["#ff5e5b", "#ff6f91", "#ff9b3d", "#ffd23f", "#9be15d", "#1fc98f", "#19b5c8"];
 
+/** How often a point gets a second grain. */
+const EXTRA = 0.25;
+
 type Point = { x: number; y: number; alpha: number };
 type Grain = { x: number; y: number; tx: number; ty: number; alpha: number; size: number; delay: number; life: number };
 type Burst = { start: number; layers: { color: string; grains: Grain[] }[] };
@@ -209,13 +212,15 @@ export function IconBurst({
     }
     context.setTransform(dpr, 0, 0, dpr, side / 2, side / 2);
 
-    // Two grains per point, one a hair off, so the cloud is dense. Each flies to a random
+    // One grain per point, and now and then a second a hair off it, so the cloud is full
+    // without being heavy. Each flies to a random
     // spot in a soft disc round the icon, leaning outward from where it started.
     const reach = size / 2 + spread;
     const ink = getComputedStyle(canvas).color;
     const layers = colorful ? DUST.map((color) => ({ color, grains: [] as Grain[] })) : [{ color: ink, grains: [] as Grain[] }];
     for (const p of points.current) {
-      for (let copy = 0; copy < 2; copy++) {
+      const copies = Math.random() < EXTRA ? 2 : 1;
+      for (let copy = 0; copy < copies; copy++) {
         const x = p.x + (copy ? (Math.random() - 0.5) * 1.2 : 0);
         const y = p.y + (copy ? (Math.random() - 0.5) * 1.2 : 0);
         const angle = Math.random() * Math.PI * 2;
@@ -232,7 +237,8 @@ export function IconBurst({
           y,
           tx,
           ty,
-          alpha: p.alpha * (0.6 + Math.random() * 0.4),
+          // Mostly light, a few strong, so the cloud has depth instead of reading as a solid mass.
+          alpha: p.alpha * (0.15 + 0.85 * Math.random() ** 1.8),
           size: 0.8 + Math.random() * 0.9,
           delay: Math.random() * 0.06,
           life: 0.7 + Math.random() * 0.3,
