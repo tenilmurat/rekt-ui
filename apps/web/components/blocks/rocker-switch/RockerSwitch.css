@@ -14,29 +14,29 @@
   --rk-rocker-dot: #c9c6c2;
   --rk-rocker-accent: #a66cff;
   --rk-rocker-tilt: 10deg;
-  --rk-rocker-depth: 12px;
+  --rk-rocker-depth: 20px;
   --rk-rocker-speed: 650ms;
   --rk-rocker-spring: cubic-bezier(0.34, 1.45, 0.64, 1);
   --rk-rocker-focus: rgb(20 18 16 / 0.6);
 
   /* The plate's size on the ground. */
-  --rk-rocker-w: 220px;
+  --rk-rocker-w: 250px;
   --rk-rocker-h: 84px;
 
   display: inline-block;
-  padding: 24px 32px;
+  padding: 36px 40px 44px;
   font-family: inherit;
   color: var(--rk-rocker-ink);
 }
 
-/* The ground, seen from above and to the left, like the render. */
+/* The ground, seen from above with the plate turned 45°, like the render. */
 .rk-rocker__scene {
   position: relative;
   width: var(--rk-rocker-w);
   height: var(--rk-rocker-h);
   perspective: 900px;
   transform-style: preserve-3d;
-  transform: rotateX(56deg) rotateZ(-34deg);
+  transform: rotateX(58deg) rotateZ(-45deg);
 }
 
 .rk-rocker__switch {

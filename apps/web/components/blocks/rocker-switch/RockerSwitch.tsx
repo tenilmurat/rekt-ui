@@ -44,7 +44,7 @@ export function RockerSwitch({
   defaultChecked = false,
   color = "purple",
   tilt = 10,
-  depth = 12,
+  depth = 20,
   speed = 650,
   word = ["RE", "KT"],
   labels = ["ON", "OFF"],
@@ -67,7 +67,7 @@ export function RockerSwitch({
   };
 
   const accent = COLORS[color] ?? COLORS.purple;
-  const slices = Math.max(2, Math.min(24, Math.round(depth)));
+  const slices = Math.max(2, Math.min(36, Math.round(depth)));
 
   return (
     <div
