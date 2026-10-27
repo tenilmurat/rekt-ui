@@ -21,6 +21,8 @@ export type GlitchSwitchProps = {
   slices?: number;
   /** Colour fringes on some slices, from the band below. */
   fringes?: boolean;
+  /** The button's fill: plain white, or a soft tint of the state's colour. */
+  fill?: "white" | "tint";
   /** A small line under the button; empty hides it. */
   hint?: string;
   onChange?: (state: GlitchSwitchState, index: number) => void;
@@ -76,6 +78,7 @@ export function GlitchSwitch({
   duration = 340,
   slices = 10,
   fringes = true,
+  fill = "white",
   hint = "Click me",
   onChange,
 }: GlitchSwitchProps) {
@@ -126,7 +129,7 @@ export function GlitchSwitch({
   const current = states[index];
 
   return (
-    <div className="rk-glitch" data-glitching={glitch ? "true" : undefined}>
+    <div className="rk-glitch" data-fill={fill} data-glitching={glitch ? "true" : undefined}>
       <button
         type="button"
         className="rk-glitch__button"
