@@ -22,7 +22,7 @@ const PALETTES: Record<NonNullable<MorphLoaderProps["palette"]>, string[]> = {
 
 /** Points around the outline, and how much of each step the shape holds still before morphing. */
 const POINTS = 144;
-const HOLD = 0.32;
+const HOLD = 0.12;
 
 const TAU = Math.PI * 2;
 const angles = Array.from({ length: POINTS }, (_, i) => (i / POINTS) * TAU);
@@ -48,29 +48,53 @@ const polygon = (sides: number) =>
     return Math.cos(sector / 2) / Math.cos(local);
   });
 
-/** Each shape is a radius per angle, so any two morph by blending their radii. */
+/**
+ * Turns a shape so its corners and lobes sit as close as they can to the
+ * previous shape's, so the morph between them travels the shortest way.
+ */
+const alignTo = (previous: number[], next: number[]) => {
+  let best = 0;
+  let bestCost = Infinity;
+  for (let shift = 0; shift < POINTS; shift++) {
+    let cost = 0;
+    for (let i = 0; i < POINTS; i++) cost += (previous[i] - next[(i + shift) % POINTS]) ** 2;
+    if (cost < bestCost) [best, bestCost] = [shift, cost];
+  }
+  return next.map((_, i) => next[(i + best) % POINTS]);
+};
+
+/**
+ * Each shape is a radius per angle, so any two morph by blending their radii.
+ * The order counts up: two sides, three, four, five, eight petals, then the
+ * four-lobed clover eases back into the circle.
+ */
 const SHAPES: number[][] = [
   // Circle
   angles.map(() => 1),
   // Oval
   angles.map((a) => (1.16 * 0.8) / Math.hypot(0.8 * Math.cos(a), 1.16 * Math.sin(a))),
+  // Triangle with rounded corners
+  smooth(smooth(polygon(3), 9), 6),
+  // Square with rounded corners
+  smooth(smooth(polygon(4), 7), 5),
+  // Pentagon with rounded corners
+  smooth(smooth(polygon(5), 5), 3),
   // Bloom: eight soft petals
   smooth(
     angles.map((a) => 1 + 0.17 * Math.cos(8 * a)),
     2,
   ),
-  // Pentagon with rounded corners
-  smooth(smooth(polygon(5), 5), 3),
   // Clover: four overlapping lobes
   smooth(
     angles.map((a) => 0.72 + 0.34 * Math.abs(Math.cos(2 * a)) ** 0.7),
     3,
   ),
-  // Cookie: twelve shallow scallops
-  angles.map((a) => 1 + 0.06 * Math.cos(12 * a)),
-].map(equalArea);
+]
+  .map(equalArea)
+  .reduce<number[][]>((chain, shape) => [...chain, chain.length ? alignTo(chain[chain.length - 1], shape) : shape], []);
 
-const easeInOut = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
+/** A sine ease: gentle at both ends, with no steep middle. */
+const easeInOut = (t: number) => (1 - Math.cos(Math.PI * t)) / 2;
 
 const mixHex = (a: string, b: string, t: number) => {
   const pa = parseInt(a.slice(1), 16);
@@ -83,7 +107,6 @@ const mixHex = (a: string, b: string, t: number) => {
   return `rgb(${channel(16)} ${channel(8)} ${channel(0)})`;
 };
 
-/** The outline as a path, turned by the given angle in radians. */
 /**
  * The ramp walks up and back down rather than wrapping, so the gradient only
  * ever blends neighbours and never crosses the wheel through grey.
@@ -94,6 +117,7 @@ const colorAt = (colors: string[], k: number) => {
   return colors[at < colors.length ? at : period - at];
 };
 
+/** The outline as a path, turned by the given angle in radians. */
 const outline = (radii: number[], turn = 0) =>
   radii
     .map((r, i) => {
@@ -104,9 +128,9 @@ const outline = (radii: number[], turn = 0) =>
 
 /**
  * A loading mark: one soft shape that keeps turning while it morphs from
- * circle to oval, petals, pentagon, clover and cookie, and back round. Its
- * two-tone gradient walks up and back down a colour ramp, one colour per shape, and
- * the turn speeds up through each morph, so it reads as one living thing.
+ * circle to oval, triangle, square, pentagon, petals and clover, and back
+ * round. Its two-tone gradient walks up and back down a colour ramp, one
+ * colour per shape, so it reads as one living thing.
  */
 export function MorphLoader({ size = 56, speed = 1000, palette = "spectrum", label = "Loading" }: MorphLoaderProps) {
   const pathRef = useRef<SVGPathElement | null>(null);
@@ -132,8 +156,8 @@ export function MorphLoader({ size = 56, speed = 1000, palette = "spectrum", lab
       const p = easeInOut(Math.max(0, (within - HOLD) / (1 - HOLD)));
       const from = SHAPES[index % SHAPES.length];
       const to = SHAPES[(index + 1) % SHAPES.length];
-      // A steady turn, plus a quarter turn taken through each morph.
-      const turn = (t * 50 + (index + p) * 90) % 360;
+      // A steady turn, plus a gentle extra eighth of a turn eased through each morph.
+      const turn = (t * 60 + (index + p) * 45) % 360;
       const d = outline(
         from.map((r, i) => r + (to[i] - r) * p),
         (turn * Math.PI) / 180,
