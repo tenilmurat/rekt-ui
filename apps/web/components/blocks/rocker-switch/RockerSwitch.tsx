@@ -10,7 +10,7 @@ export type RockerSwitchProps = {
   color?: "purple" | "coral" | "mint";
   /** How far the raised half tilts up from the seam, in degrees. */
   tilt?: number;
-  /** The plate's thickness where it lies flat, in px. */
+  /** The plate's thickness where it lies flat, in px; 0 lays the pressed half right on the ground. */
   depth?: number;
   /** How long the rock takes, in milliseconds. */
   speed?: number;
@@ -48,7 +48,7 @@ export function RockerSwitch({
   defaultChecked = false,
   color = "purple",
   tilt = 14,
-  depth = 4,
+  depth = 0,
   speed = 700,
   word = ["RE", "KT"],
   labels = ["ON", "OFF"],
@@ -72,7 +72,7 @@ export function RockerSwitch({
 
   const accent = COLORS[color] ?? COLORS.purple;
   const angle = Math.max(2, Math.min(30, tilt));
-  const base = Math.max(1, Math.min(24, Math.round(depth)));
+  const base = Math.max(0, Math.min(24, Math.round(depth)));
   // How high the raised half's far end stands: half the length swung up by the tilt.
   const rise = Math.max(1, Math.round((PLATE_W / 2) * Math.sin((angle * Math.PI) / 180)));
   // The wedge under a raised half: one layer per px of height. The CSS works
@@ -114,7 +114,7 @@ export function RockerSwitch({
           <span className="rk-rocker__shade rk-rocker__shade--on" aria-hidden="true" />
           <span className="rk-rocker__shade rk-rocker__shade--off" aria-hidden="true" />
           <span className="rk-rocker__body" aria-hidden="true">
-            {/* The flat base: the whole pill, as thick as Base. */}
+            {/* The flat base: the whole pill, as thick as Base (none by default, so the pressed half lies on the ground). */}
             {Array.from({ length: base }, (_, i) => (
               <span key={`b${i}`} className="rk-rocker__layer rk-rocker__layer--base" style={{ "--rk-rocker-z": `${i}px` } as React.CSSProperties} />
             ))}

@@ -28,7 +28,7 @@
 .rk-rocker {
   --rk-rocker-accent: #a66cff;
   --rk-rocker-tilt: 14deg;
-  --rk-rocker-base: 4px;
+  --rk-rocker-base: 0px;
   --rk-rocker-half: 130px;
   --rk-rocker-speed: 700ms;
   /* A quick start and a long settle; no overshoot, since the halves end on the ground. */
@@ -45,7 +45,7 @@
   --rk-rocker-bg: #f5f5f5;
   --rk-rocker-ink: #141210;
   --rk-rocker-muted: #8a857f;
-  --rk-rocker-pressed-ink: #ffffff;
+  --rk-rocker-pressed-ink: var(--rk-rocker-ink);
   --rk-rocker-face-flat: var(--rk-rocker-bg);
   --rk-rocker-face-up: #fbfbfa;
   --rk-rocker-rim: rgb(255 255 255 / 0.9);
@@ -273,7 +273,7 @@
   transition: color var(--rk-rocker-speed) ease;
 }
 
-/* The pressed half's label is the state: it lights up white. */
+/* The pressed half's label is the state: ink on the light ground, white on the dark one. */
 .rk-rocker:not([data-on]) .rk-rocker__cap--off .rk-rocker__label,
 .rk-rocker[data-on] .rk-rocker__cap--on .rk-rocker__label {
   color: var(--rk-rocker-pressed-ink);
