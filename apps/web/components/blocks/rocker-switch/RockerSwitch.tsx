@@ -6,11 +6,11 @@ export type RockerSwitchProps = {
   /** Controlled state; leave out to let it keep its own. */
   checked?: boolean;
   defaultChecked?: boolean;
-  /** The colour of the body's side and the lit dots. */
+  /** The colour of the raised wall, the glow and the lit dots. */
   color?: "purple" | "coral" | "mint";
-  /** How far the top tilts, in degrees: the lifted end rises by the plate's length × sin(tilt). */
+  /** How far the raised half tilts up from the seam, in degrees. */
   tilt?: number;
-  /** The plate's thickness at the pressed end, in px. */
+  /** The plate's thickness where it lies flat, in px. */
   depth?: number;
   /** How long the rock takes, in milliseconds. */
   speed?: number;
@@ -36,19 +36,20 @@ const DOTS = 14;
 const PLATE_W = 260;
 
 /**
- * A rocker switch seen from above in 3D: a pill-shaped wedge on the ground,
- * split into ON and OFF halves, that rocks like a seesaw. Click it and the
- * pressed end sinks to the floor while the other end rises on a tall
- * coloured wall, on a springy rock; a row of dots beside it lights up in
- * turn, from OFF to ON, with the word RE…KT spelled round it.
+ * A rocker switch seen from above in 3D: a pill-shaped plate on the ground,
+ * hinged at its seam into ON and OFF halves. The pressed half lies flat;
+ * the other is raised from the seam on a wedge of coloured wall. Click it
+ * and they swap on a springy seesaw, a row of dots beside it lights up in
+ * turn with the word RE…KT round it, and when it's on the whole frame goes
+ * dark and the switch glows.
  */
 export function RockerSwitch({
   checked,
   defaultChecked = false,
   color = "purple",
-  tilt = 12,
+  tilt = 14,
   depth = 4,
-  speed = 650,
+  speed = 700,
   word = ["RE", "KT"],
   labels = ["ON", "OFF"],
   label = "Power",
@@ -70,13 +71,13 @@ export function RockerSwitch({
   };
 
   const accent = COLORS[color] ?? COLORS.purple;
-  const angle = Math.max(1, Math.min(30, tilt));
+  const angle = Math.max(2, Math.min(30, tilt));
   const base = Math.max(1, Math.min(24, Math.round(depth)));
-  // The wall's height at the lifted end: the plate's far end swung up by the tilt.
-  const rise = Math.round(PLATE_W * Math.sin((angle * Math.PI) / 180));
-  // The body is the pill stacked one px at a time: the base goes the whole
-  // length; above it each layer stops short, so the stack makes a wedge.
-  const layers = Array.from({ length: base + rise }, (_, i) => Math.max(0, i + 1 - base) / rise);
+  // How high the raised half's far end stands: half the length swung up by the tilt.
+  const rise = Math.max(1, Math.round((PLATE_W / 2) * Math.sin((angle * Math.PI) / 180)));
+  // The wedge under a raised half: one layer per px of height. The CSS works
+  // out where each one starts from the seam, from its height and the angle.
+  const wedge = Array.from({ length: rise }, (_, j) => j + 1);
 
   return (
     <div
@@ -86,7 +87,8 @@ export function RockerSwitch({
         {
           "--rk-rocker-accent": accent,
           "--rk-rocker-tilt": `${angle}deg`,
-          "--rk-rocker-top": `${base + rise / 2}px`,
+          "--rk-rocker-base": `${base}px`,
+          "--rk-rocker-half": `${PLATE_W / 2}px`,
           "--rk-rocker-speed": `${Math.max(0, speed)}ms`,
         } as React.CSSProperties
       }
@@ -108,20 +110,31 @@ export function RockerSwitch({
         <button type="button" role="switch" aria-checked={on} aria-label={label} className="rk-rocker__switch" onClick={toggle}>
           <span className="rk-rocker__shadow" aria-hidden="true" />
           <span className="rk-rocker__body" aria-hidden="true">
-            {layers.map((cut, i) => (
+            {/* The flat base: the whole pill, as thick as Base. */}
+            {Array.from({ length: base }, (_, i) => (
+              <span key={`b${i}`} className="rk-rocker__layer rk-rocker__layer--base" style={{ "--rk-rocker-z": `${i}px` } as React.CSSProperties} />
+            ))}
+            {/* The wedge under each half, there only while that half is raised. */}
+            {wedge.map((h, j) => (
               <span
-                key={i}
-                className="rk-rocker__layer"
-                style={{ "--rk-rocker-z": `${i}px`, "--rk-rocker-cut": cut, "--rk-rocker-up": (i + 1) / layers.length } as React.CSSProperties}
+                key={`l${j}`}
+                className="rk-rocker__layer rk-rocker__layer--on"
+                style={{ "--rk-rocker-z": `${base + j}px`, "--rk-rocker-height": h, "--rk-rocker-up": h / rise } as React.CSSProperties}
               />
             ))}
-            <span className="rk-rocker__face">
-              <span className="rk-rocker__cap rk-rocker__cap--on">
-                <span className="rk-rocker__label">{labels[0]}</span>
-              </span>
-              <span className="rk-rocker__cap rk-rocker__cap--off">
-                <span className="rk-rocker__label">{labels[1]}</span>
-              </span>
+            {wedge.map((h, j) => (
+              <span
+                key={`r${j}`}
+                className="rk-rocker__layer rk-rocker__layer--off"
+                style={{ "--rk-rocker-z": `${base + j}px`, "--rk-rocker-height": h, "--rk-rocker-up": h / rise } as React.CSSProperties}
+              />
+            ))}
+            {/* The two halves of the top, each hinged at the seam. */}
+            <span className="rk-rocker__cap rk-rocker__cap--on">
+              <span className="rk-rocker__label">{labels[0]}</span>
+            </span>
+            <span className="rk-rocker__cap rk-rocker__cap--off">
+              <span className="rk-rocker__label">{labels[1]}</span>
             </span>
           </span>
         </button>
