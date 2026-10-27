@@ -3,8 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 
 export type StackGalleryItem = {
-  /** The small line above the title. */
-  eyebrow: string;
+  /** Names the card for screen readers. */
   title: string;
   /** Any CSS background, used when there's no image. */
   background?: string;
@@ -13,6 +12,8 @@ export type StackGalleryItem = {
 };
 
 export type StackGalleryProps = {
+  /** How many cards show in the stack at once; the rest wait, hidden, behind the last one. */
+  visible?: number;
   /** How far apart the cards stand in depth, in px. */
   depth?: number;
   /** How long a card takes to move, in milliseconds. */
@@ -27,29 +28,28 @@ export type StackGalleryProps = {
 };
 
 const ITEMS: StackGalleryItem[] = [
-  { eyebrow: "Warm tone", title: "Ember", background: "radial-gradient(120% 90% at 20% 15%, #ffb36b, #ff5a1f 45%, #a8230d)" },
-  { eyebrow: "Ocean study", title: "Tide", background: "linear-gradient(160deg, #08202e, #0f6b78 55%, #8fe0d6)" },
+  { title: "Ember", background: "radial-gradient(120% 90% at 20% 15%, #ffb36b, #ff5a1f 45%, #a8230d)" },
+  { title: "Tide", background: "linear-gradient(160deg, #08202e, #0f6b78 55%, #8fe0d6)" },
   {
-    eyebrow: "Pastel wave",
     title: "Bloom",
     background:
       "radial-gradient(60% 70% at 25% 75%, #f7a8cf, transparent 70%), radial-gradient(55% 65% at 78% 28%, #a9dcff, transparent 70%), #e7d6ff",
   },
-  { eyebrow: "Golden hour", title: "Dune", background: "linear-gradient(170deg, #ffd47e, #f2a048 50%, #8f421f)" },
+  { title: "Dune", background: "linear-gradient(170deg, #ffd47e, #f2a048 50%, #8f421f)" },
   {
-    eyebrow: "Night sky",
     title: "Aurora",
     background:
       "radial-gradient(70% 55% at 30% 62%, rgb(29 233 182 / 0.75), transparent 70%), radial-gradient(60% 60% at 80% 25%, #7c4dff, transparent 70%), #080d28",
   },
-  { eyebrow: "Alpine", title: "Frost", background: "linear-gradient(180deg, #f1f5f9, #c8d5e3 60%, #8ea2b8)" },
+  { title: "Frost", background: "linear-gradient(180deg, #f1f5f9, #c8d5e3 60%, #8ea2b8)" },
   {
-    eyebrow: "Chromatic",
     title: "Velvet",
     background:
       "radial-gradient(55% 60% at 72% 18%, #ffd166, transparent 70%), radial-gradient(60% 65% at 25% 92%, #7b2ff7, transparent 70%), #ff3d81",
   },
-  { eyebrow: "Violet hour", title: "Dusk", background: "linear-gradient(160deg, #170f3b, #4a2a98 52%, #e07ac0)" },
+  { title: "Moss", background: "linear-gradient(165deg, #0f2a1d, #2f6b45 55%, #b8e0a2)" },
+  { title: "Dusk", background: "linear-gradient(160deg, #170f3b, #4a2a98 52%, #e07ac0)" },
+  { title: "Coral", background: "linear-gradient(160deg, #ffe1d6, #ff8a7a 55%, #d2405a)" },
 ];
 
 /** How much wheel movement makes one step, and the shortest gap between steps it can make. */
@@ -62,10 +62,12 @@ type Motion = { kind: "drop" | "rise"; id: number };
  * A gallery of cards stacked in depth: each card further back stands a
  * little higher and smaller, so you see the top edge of every one. Scroll,
  * press the arrow keys or click a card to bring it forward; the front card
- * tips forward and drops away, and the rest of the stack moves up a place.
- * It loops. Hovering a card in the stack lifts it.
+ * tips forward and drops gently away, the rest of the stack moves up a place,
+ * and the next waiting card fades in at the back. It loops. Hovering a card
+ * in the stack lifts it.
  */
 export function StackGallery({
+  visible = 8,
   depth = 46,
   speed = 650,
   wheel = true,
@@ -74,6 +76,8 @@ export function StackGallery({
   onOpen,
 }: StackGalleryProps) {
   const n = items.length;
+  // Always keep at least one card hidden, so the dropped card never has to reappear in view.
+  const shown = Math.max(1, Math.min(Math.round(visible), n - 1));
   const [front, setFront] = useState(0);
   const [motions, setMotions] = useState<Record<number, Motion>>({});
   const stageRef = useRef<HTMLDivElement | null>(null);
@@ -93,7 +97,7 @@ export function StackGallery({
     pending.current -= dir;
     const current = frontRef.current;
     const next = (current + dir + n) % n;
-    // Forward: the front card drops away to the back. Back: the last card rises to the front.
+    // Forward: the front card drops away and waits, hidden. Back: a hidden card rises to the front.
     const moving = dir > 0 ? current : next;
     const id = ++motionId.current;
     setMotions((m) => ({ ...m, [moving]: { kind: dir > 0 ? "drop" : "rise", id } }));
@@ -129,8 +133,6 @@ export function StackGallery({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [wheel, n, stepGap]);
 
-  const current = items[front];
-
   return (
     <section
       className="rk-gallery"
@@ -140,16 +142,9 @@ export function StackGallery({
         {
           "--rk-gallery-depth": `${Math.max(0, depth)}px`,
           "--rk-gallery-speed": `${Math.max(0, speed)}ms`,
-          "--rk-gallery-last": n - 1,
         } as React.CSSProperties
       }
     >
-      {/* Keyed on the front card, so the caption fades in afresh each time it changes. */}
-      <header key={front} className="rk-gallery__caption" aria-live="polite">
-        <span className="rk-gallery__eyebrow">{current?.eyebrow}</span>
-        <span className="rk-gallery__title">{current?.title}</span>
-      </header>
-
       <div
         ref={stageRef}
         className="rk-gallery__stage"
@@ -162,6 +157,7 @@ export function StackGallery({
       >
         {items.map((item, index) => {
           const d = (index - front + n) % n;
+          const hidden = d >= shown;
           const motion = motions[index];
           return (
             <button
@@ -169,13 +165,16 @@ export function StackGallery({
               type="button"
               className="rk-gallery__card"
               data-front={d === 0}
+              data-hidden={hidden}
               data-motion={motion?.kind}
               tabIndex={d === 0 ? 0 : -1}
+              aria-hidden={hidden || undefined}
               aria-label={d === 0 ? `${item.title}, ${index + 1} of ${n}` : `Show ${item.title}`}
               aria-current={d === 0 ? "true" : undefined}
               style={
                 {
-                  "--d": d,
+                  // Hidden cards wait in the last place, so the next one fades in where it belongs.
+                  "--d": Math.min(d, shown - 1),
                   zIndex: n - d,
                   background: item.image ? `center / cover no-repeat url("${item.image}")` : item.background,
                 } as React.CSSProperties
@@ -194,6 +193,9 @@ export function StackGallery({
         })}
         <span className="rk-gallery__shadow" aria-hidden="true" />
       </div>
+      <p className="rk-gallery__status" aria-live="polite">
+        {items[front]?.title}
+      </p>
     </section>
   );
 }

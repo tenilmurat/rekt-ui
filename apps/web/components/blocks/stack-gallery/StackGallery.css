@@ -5,11 +5,7 @@
   Each card's --d (0 = front) is written by the component.
 */
 .rk-gallery {
-  --rk-gallery-bg: #faf9f7;
   --rk-gallery-ink: #141210;
-  --rk-gallery-muted: #9a958f;
-  --rk-gallery-floor: rgb(20 18 16 / 0.07);
-  --rk-gallery-edge: rgb(20 18 16 / 0.06);
   --rk-gallery-depth: 46px;
   --rk-gallery-speed: 650ms;
   --rk-gallery-ease: cubic-bezier(0.32, 0.72, 0, 1);
@@ -19,55 +15,17 @@
   --rk-gallery-rise: calc(var(--rk-gallery-depth) * 0.35);
 
   position: relative;
-  display: flex;
   width: 360px;
   max-width: 100%;
-  flex-direction: column;
-  align-items: center;
-  overflow: hidden;
-  padding-top: 26px;
-  border-radius: 24px;
-  background: var(--rk-gallery-bg);
+  padding-top: 20px;
   color: var(--rk-gallery-ink);
-  box-shadow: 0 0 0 1px var(--rk-gallery-edge);
   font-family: inherit;
-}
-
-/* A soft floor the cards stand on and drop past. */
-.rk-gallery::after {
-  position: absolute;
-  inset: auto 0 0;
-  height: 96px;
-  background: linear-gradient(to bottom, transparent, var(--rk-gallery-floor));
-  content: "";
-  pointer-events: none;
-}
-
-.rk-gallery__caption {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 5px;
-  animation: rk-gallery-caption 420ms ease both;
-}
-
-.rk-gallery__eyebrow {
-  color: var(--rk-gallery-muted);
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-}
-
-.rk-gallery__title {
-  font-size: 14px;
-  font-weight: 600;
 }
 
 .rk-gallery__stage {
   position: relative;
   width: 100%;
-  height: 380px;
+  height: 340px;
   perspective: 520px;
   perspective-origin: 50% 0%;
   outline: none;
@@ -77,7 +35,7 @@
   --lift: 0px;
 
   position: absolute;
-  bottom: 76px;
+  bottom: 60px;
   left: calc(50% - var(--rk-gallery-width) / 2);
   width: var(--rk-gallery-width);
   height: var(--rk-gallery-height);
@@ -94,13 +52,21 @@
   );
   transform-origin: 50% 100%;
   cursor: pointer;
-  transition: transform var(--rk-gallery-speed) var(--rk-gallery-ease);
+  transition:
+    transform var(--rk-gallery-speed) var(--rk-gallery-ease),
+    opacity var(--rk-gallery-speed) ease;
+}
+
+/* Cards past the visible few wait, transparent, in the last place; the next one fades in right there. */
+.rk-gallery__card[data-hidden="true"] {
+  opacity: 0;
+  pointer-events: none;
 }
 
 /* Cards in the stack lift a little under the pointer. */
 .rk-gallery__card[data-front="false"]:hover {
   --lift: -12px;
-  transition-duration: 320ms;
+  transition-duration: 320ms, var(--rk-gallery-speed);
 }
 
 .rk-gallery__card:focus-visible {
@@ -109,13 +75,14 @@
 }
 
 /*
-  Forward: the front card tips toward you and drops past the floor, fading,
-  then reappears at the back. Back: the same, reversed — the last card leaves
-  the back and rises up into the front.
+  Forward: the front card tips toward you and sinks slowly past the floor,
+  fading as it goes, then waits hidden at the back. Back: the same, reversed,
+  so a hidden card rises up into the front. A little longer than the step,
+  on an ease-in-out, so the fall starts softly and settles.
 */
 .rk-gallery__card[data-motion="drop"],
 .rk-gallery__card[data-motion="rise"] {
-  animation: rk-gallery-drop var(--rk-gallery-speed) linear both;
+  animation: rk-gallery-drop calc(var(--rk-gallery-speed) * 1.4) both;
 }
 
 .rk-gallery__card[data-motion="rise"] {
@@ -127,38 +94,23 @@
     z-index: 100;
     opacity: 1;
     transform: translate3d(0, 0, 0);
-    animation-timing-function: cubic-bezier(0.45, 0, 0.8, 0.4);
+    animation-timing-function: cubic-bezier(0.4, 0, 0.25, 1);
   }
-  48% {
-    z-index: 100;
-    opacity: 0;
-    transform: translate3d(0, 130px, 70px) rotateX(-34deg);
-  }
-  49% {
-    z-index: 0;
-    opacity: 0;
-    transform: translate3d(
-      0,
-      calc(var(--rk-gallery-last) * var(--rk-gallery-rise) * -1),
-      calc(var(--rk-gallery-last) * var(--rk-gallery-depth) * -1)
-    );
-    animation-timing-function: ease-out;
+  30% {
+    opacity: 1;
+    animation-timing-function: ease-in-out;
   }
   100% {
-    z-index: 0;
-    opacity: 1;
-    transform: translate3d(
-      0,
-      calc(var(--rk-gallery-last) * var(--rk-gallery-rise) * -1),
-      calc(var(--rk-gallery-last) * var(--rk-gallery-depth) * -1)
-    );
+    z-index: 100;
+    opacity: 0;
+    transform: translate3d(0, 72px, 30px) rotateX(-22deg);
   }
 }
 
 /* The front card's soft shadow on the floor. */
 .rk-gallery__shadow {
   position: absolute;
-  bottom: 52px;
+  bottom: 36px;
   left: calc(50% - var(--rk-gallery-width) * 0.45);
   width: calc(var(--rk-gallery-width) * 0.9);
   height: 26px;
@@ -168,18 +120,19 @@
   pointer-events: none;
 }
 
-@keyframes rk-gallery-caption {
-  from {
-    opacity: 0;
-    filter: blur(4px);
-    transform: translateY(4px);
-  }
+/* The front card's name, for screen readers only. */
+.rk-gallery__status {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 /* Reduced motion: cards swap places without moving. */
 @media (prefers-reduced-motion: reduce) {
-  .rk-gallery__card,
-  .rk-gallery__caption {
+  .rk-gallery__card {
     transition: none;
     animation: none;
   }
