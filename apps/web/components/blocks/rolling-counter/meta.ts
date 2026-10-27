@@ -23,7 +23,7 @@ export const rollingCounterMeta: UiBlockMeta = {
         { value: "light", label: "Light" },
         { value: "dark", label: "Dark" },
       ],
-      default: "dark",
+      default: "light",
     },
     { type: "toggle", prop: "auto", label: "Auto", default: false },
     { type: "slider", prop: "every", label: "Every", min: 0.5, max: 6, step: 0.5, unit: "s", default: 2 },
