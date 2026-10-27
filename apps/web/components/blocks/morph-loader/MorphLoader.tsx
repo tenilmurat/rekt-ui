@@ -1,0 +1,178 @@
+"use client";
+
+import { useEffect, useId, useRef } from "react";
+
+export type MorphLoaderProps = {
+  /** Width and height, in px. */
+  size?: number;
+  /** How long each shape lasts, morph included, in milliseconds. */
+  speed?: number;
+  /** The colours it travels through. */
+  palette?: "spectrum" | "sunset" | "lagoon";
+  /** What screen readers hear. */
+  label?: string;
+};
+
+/** Colour ramps, in order; the gradient blends two neighbours and slides to the next pair with each shape. */
+const PALETTES: Record<NonNullable<MorphLoaderProps["palette"]>, string[]> = {
+  spectrum: ["#ff5e5b", "#ff9b3d", "#ffd23f", "#9be15d", "#1fc98f", "#19b5c8"],
+  sunset: ["#ff5e5b", "#ff6f91", "#ff9b3d", "#ffc94d", "#ff8a5c"],
+  lagoon: ["#9be15d", "#3fd68a", "#1fc98f", "#19b5c8", "#5fd4c4"],
+};
+
+/** Points around the outline, and how much of each step the shape holds still before morphing. */
+const POINTS = 144;
+const HOLD = 0.32;
+
+const TAU = Math.PI * 2;
+const angles = Array.from({ length: POINTS }, (_, i) => (i / POINTS) * TAU);
+
+/** Softens a radius list by averaging each point with its neighbours, wrapping round. */
+const smooth = (radii: number[], reach: number) =>
+  radii.map((_, i) => {
+    let sum = 0;
+    for (let k = -reach; k <= reach; k++) sum += radii[(i + k + POINTS) % POINTS];
+    return sum / (reach * 2 + 1);
+  });
+
+/** Scales a shape so they all cover the same area, so none looks bigger than the rest. */
+const equalArea = (radii: number[]) => {
+  const mean = Math.sqrt(radii.reduce((sum, r) => sum + r * r, 0) / POINTS);
+  return radii.map((r) => r / mean);
+};
+
+const polygon = (sides: number) =>
+  angles.map((a) => {
+    const sector = TAU / sides;
+    const local = ((a + Math.PI / 2) % sector) - sector / 2;
+    return Math.cos(sector / 2) / Math.cos(local);
+  });
+
+/** Each shape is a radius per angle, so any two morph by blending their radii. */
+const SHAPES: number[][] = [
+  // Circle
+  angles.map(() => 1),
+  // Oval
+  angles.map((a) => (1.16 * 0.8) / Math.hypot(0.8 * Math.cos(a), 1.16 * Math.sin(a))),
+  // Bloom: eight soft petals
+  smooth(
+    angles.map((a) => 1 + 0.17 * Math.cos(8 * a)),
+    2,
+  ),
+  // Pentagon with rounded corners
+  smooth(smooth(polygon(5), 5), 3),
+  // Clover: four overlapping lobes
+  smooth(
+    angles.map((a) => 0.72 + 0.34 * Math.abs(Math.cos(2 * a)) ** 0.7),
+    3,
+  ),
+  // Cookie: twelve shallow scallops
+  angles.map((a) => 1 + 0.06 * Math.cos(12 * a)),
+].map(equalArea);
+
+const easeInOut = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
+
+const mixHex = (a: string, b: string, t: number) => {
+  const pa = parseInt(a.slice(1), 16);
+  const pb = parseInt(b.slice(1), 16);
+  const channel = (shift: number) => {
+    const ca = (pa >> shift) & 255;
+    const cb = (pb >> shift) & 255;
+    return Math.round(ca + (cb - ca) * t);
+  };
+  return `rgb(${channel(16)} ${channel(8)} ${channel(0)})`;
+};
+
+/** The outline as a path, turned by the given angle in radians. */
+/**
+ * The ramp walks up and back down rather than wrapping, so the gradient only
+ * ever blends neighbours and never crosses the wheel through grey.
+ */
+const colorAt = (colors: string[], k: number) => {
+  const period = Math.max(1, (colors.length - 1) * 2);
+  const at = k % period;
+  return colors[at < colors.length ? at : period - at];
+};
+
+const outline = (radii: number[], turn = 0) =>
+  radii
+    .map((r, i) => {
+      const a = angles[i] + turn;
+      return `${i ? "L" : "M"}${(Math.cos(a) * r).toFixed(3)} ${(Math.sin(a) * r).toFixed(3)}`;
+    })
+    .join("") + "Z";
+
+/**
+ * A loading mark: one soft shape that keeps turning while it morphs from
+ * circle to oval, petals, pentagon, clover and cookie, and back round. Its
+ * two-tone gradient walks up and back down a colour ramp, one colour per shape, and
+ * the turn speeds up through each morph, so it reads as one living thing.
+ */
+export function MorphLoader({ size = 56, speed = 1000, palette = "spectrum", label = "Loading" }: MorphLoaderProps) {
+  const pathRef = useRef<SVGPathElement | null>(null);
+  const highlightRef = useRef<SVGPathElement | null>(null);
+  const fillRef = useRef<SVGLinearGradientElement | null>(null);
+  const stopA = useRef<SVGStopElement | null>(null);
+  const stopB = useRef<SVGStopElement | null>(null);
+  const id = useId().replace(/:/g, "");
+  const colors = PALETTES[palette] ?? PALETTES.spectrum;
+
+  useEffect(() => {
+    const step = Math.max(200, speed);
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let frame = 0;
+    const start = performance.now();
+
+    const paint = (now: number) => {
+      // A frame's timestamp can be a little earlier than the start.
+      const t = reduced ? 0 : Math.max(0, now - start) / step;
+      const index = Math.floor(t);
+      const within = t - index;
+      // Hold the shape, then morph to the next one on an ease-in-out.
+      const p = easeInOut(Math.max(0, (within - HOLD) / (1 - HOLD)));
+      const from = SHAPES[index % SHAPES.length];
+      const to = SHAPES[(index + 1) % SHAPES.length];
+      // A steady turn, plus a quarter turn taken through each morph.
+      const turn = (t * 50 + (index + p) * 90) % 360;
+      const d = outline(
+        from.map((r, i) => r + (to[i] - r) * p),
+        (turn * Math.PI) / 180,
+      );
+      pathRef.current?.setAttribute("d", d);
+      highlightRef.current?.setAttribute("d", d);
+      // The colours turn with the shape; the sheen stays put, like light from one side.
+      fillRef.current?.setAttribute("gradientTransform", `rotate(${turn.toFixed(2)})`);
+
+      const a = mixHex(colorAt(colors, index), colorAt(colors, index + 1), p);
+      const b = mixHex(colorAt(colors, index + 1), colorAt(colors, index + 2), p);
+      stopA.current?.setAttribute("stop-color", a);
+      stopB.current?.setAttribute("stop-color", b);
+
+      if (!reduced) frame = requestAnimationFrame(paint);
+    };
+
+    frame = requestAnimationFrame(paint);
+    return () => cancelAnimationFrame(frame);
+  }, [speed, colors]);
+
+  return (
+    <span className="rk-morph" role="status" style={{ width: size, height: size }}>
+      <svg className="rk-morph__mark" viewBox="-1.5 -1.5 3 3" aria-hidden="true">
+        <defs>
+          <linearGradient ref={fillRef} id={`${id}-fill`} x1="-1" y1="-1" x2="1" y2="1" gradientUnits="userSpaceOnUse">
+            <stop ref={stopA} offset="0" stopColor={colors[0]} />
+            <stop ref={stopB} offset="1" stopColor={colors[1]} />
+          </linearGradient>
+          {/* A soft sheen on one side, so the shape has a little body. */}
+          <radialGradient id={`${id}-sheen`} cx="-0.5" cy="-0.6" r="1.1" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stopColor="#fff" stopOpacity="0.26" />
+            <stop offset="1" stopColor="#fff" stopOpacity="0" />
+          </radialGradient>
+        </defs>
+        <path ref={pathRef} d={outline(SHAPES[0])} fill={`url(#${id}-fill)`} />
+        <path ref={highlightRef} d={outline(SHAPES[0])} fill={`url(#${id}-sheen)`} />
+      </svg>
+      <span className="rk-morph__label">{label}</span>
+    </span>
+  );
+}
