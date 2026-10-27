@@ -57,6 +57,11 @@
   --rk-rocker-wall-dark: color-mix(in oklab, var(--rk-rocker-accent) 70%, black);
   --rk-rocker-shadow: rgb(20 18 16 / 0.28);
   --rk-rocker-shadow-blur: 10px;
+  /* How much the wall brightens toward its top edge, and how strong the ground glow is. */
+  --rk-rocker-wall-boost: 0.22;
+  --rk-rocker-glow: 0;
+  --rk-rocker-outline-wide: transparent;
+  --rk-rocker-dot-glow: transparent;
   --rk-rocker-outline: transparent;
   --rk-rocker-outline-glow: transparent;
   --rk-rocker-focus: rgb(20 18 16 / 0.6);
@@ -88,11 +93,15 @@
   --rk-rocker-rim-edge: transparent;
   --rk-rocker-dot: rgb(255 255 255 / 0.22);
   --rk-rocker-dot-lit: #ffffff;
-  --rk-rocker-wall-lit: #fbf6ff;
-  --rk-rocker-wall: color-mix(in oklab, var(--rk-rocker-accent) 35%, white);
-  --rk-rocker-wall-dark: color-mix(in oklab, var(--rk-rocker-accent) 85%, white);
+  --rk-rocker-wall-lit: #ffffff;
+  --rk-rocker-wall: color-mix(in oklab, var(--rk-rocker-accent) 18%, white);
+  --rk-rocker-wall-dark: color-mix(in oklab, var(--rk-rocker-accent) 60%, white);
   --rk-rocker-shadow: var(--rk-rocker-accent);
-  --rk-rocker-shadow-blur: 26px;
+  --rk-rocker-shadow-blur: 34px;
+  --rk-rocker-wall-boost: 0.7;
+  --rk-rocker-glow: 1;
+  --rk-rocker-outline-wide: color-mix(in oklab, var(--rk-rocker-accent) 45%, transparent);
+  --rk-rocker-dot-glow: color-mix(in oklab, var(--rk-rocker-accent) 70%, white);
   --rk-rocker-outline: color-mix(in oklab, var(--rk-rocker-accent) 80%, white);
   --rk-rocker-outline-glow: var(--rk-rocker-accent);
   --rk-rocker-focus: rgb(255 255 255 / 0.7);
@@ -166,6 +175,24 @@
   transform: translateZ(-1px) translate(calc(var(--rk-rocker-raised) * 18px), calc(var(--rk-rocker-raised) * 12px)) scale(1.04, 1.1);
 }
 
+/*
+  By night, the light the raised OFF end spills on the ground: a wide, soft
+  pool in the accent, brightest just past the end and fading out across the
+  ground. It's as strong as the end is raised, so it swells as the plate
+  rocks up and is gone by day. (No blend mode: one would flatten the 3D
+  scene and hide the wall.)
+*/
+.rk-rocker__glow {
+  position: absolute;
+  inset: -150px -170px -150px -60px;
+  background:
+    radial-gradient(closest-side at 72% 52%, color-mix(in oklab, var(--rk-rocker-accent) 70%, transparent) 0%, transparent 40%),
+    radial-gradient(closest-side at 70% 52%, color-mix(in oklab, var(--rk-rocker-accent) 55%, transparent) 0%, transparent 100%);
+  opacity: calc(var(--rk-rocker-glow) * var(--rk-rocker-a-off) / var(--rk-rocker-tilt));
+  pointer-events: none;
+  transform: translateZ(-2px);
+}
+
 .rk-rocker__body {
   position: absolute;
   inset: 0;
@@ -187,7 +214,9 @@
   inset: 0;
   border-radius: 999px;
   background: linear-gradient(125deg, var(--rk-rocker-wall-lit) 0%, var(--rk-rocker-wall) 45%, var(--rk-rocker-wall-dark) 100%);
-  filter: brightness(calc(0.8 + var(--rk-rocker-up, 1) * 0.22));
+  /* Brighter toward the top edge; by night bright enough that the rim burns nearly white. */
+  filter: brightness(calc(0.8 + var(--rk-rocker-up, 1) * var(--rk-rocker-wall-boost)));
+  transition: filter var(--rk-rocker-speed) ease;
   transform: translateZ(var(--rk-rocker-z));
   backface-visibility: hidden;
 }
@@ -219,7 +248,8 @@
   backface-visibility: hidden;
   box-shadow:
     0 0 0 1.5px var(--rk-rocker-outline),
-    0 0 16px var(--rk-rocker-outline-glow);
+    0 0 18px var(--rk-rocker-outline-glow),
+    0 0 48px var(--rk-rocker-outline-wide);
   transition:
     background-color var(--rk-rocker-speed) ease,
     box-shadow var(--rk-rocker-speed) ease;
@@ -247,7 +277,8 @@
     inset 0 0 0 1px var(--rk-rocker-rim),
     0 0 0 1px var(--rk-rocker-rim-edge),
     0 0 0 1.5px var(--rk-rocker-outline),
-    0 0 16px var(--rk-rocker-outline-glow);
+    0 0 18px var(--rk-rocker-outline-glow),
+    0 0 48px var(--rk-rocker-outline-wide);
 }
 
 /* The seam, on the OFF half's inner edge. */
@@ -280,9 +311,8 @@
 }
 
 /*
-  The word and the dots: flat on the ground along the plate's near edge,
-  so they read as a track the switch sits on, RE at the ON end and KT at
-  the OFF end.
+  The dots: flat on the ground along the plate's near edge, so they read as
+  a track the switch sits on; a word, if given, sits at the two ends.
 */
 .rk-rocker__word {
   position: absolute;
@@ -318,11 +348,17 @@
   border-radius: 50%;
   background: var(--rk-rocker-dot);
   /* Each dot waits its turn, so the light runs along the row. */
-  transition: background-color 180ms ease calc(var(--rk-rocker-wait) * 28ms);
+  transition:
+    background-color 180ms ease calc(var(--rk-rocker-wait) * 28ms),
+    box-shadow 180ms ease calc(var(--rk-rocker-wait) * 28ms);
 }
 
+/* Lit dots glow by night. */
 .rk-rocker[data-on] .rk-rocker__dot {
   background: var(--rk-rocker-dot-lit);
+  box-shadow:
+    0 0 4px var(--rk-rocker-dot-lit),
+    0 0 10px var(--rk-rocker-dot-glow);
 }
 
 /* Reduced motion: it switches without rocking, and the dots change together. */

@@ -14,7 +14,7 @@ export type RockerSwitchProps = {
   depth?: number;
   /** How long the rock takes, in milliseconds. */
   speed?: number;
-  /** The word spelled round the switch: its first and second halves. Empty hides it. */
+  /** A word spelled round the dots, its first and second halves; none by default, just the dots. */
   word?: [string, string] | null;
   /** The labels on the two halves. */
   labels?: [string, string];
@@ -40,7 +40,7 @@ const PLATE_W = 260;
  * hinged at its seam into ON and OFF halves. The pressed half lies flat;
  * the other is raised from the seam on a wedge of coloured wall. Click it
  * and they swap on a springy seesaw, a row of dots beside it lights up in
- * turn with the word RE…KT round it, and when it's on the ground goes dark
+ * turn, and when it's on the ground goes dark
  * and the switch glows.
  */
 export function RockerSwitch({
@@ -50,7 +50,7 @@ export function RockerSwitch({
   tilt = 14,
   depth = 0,
   speed = 700,
-  word = ["RE", "KT"],
+  word = null,
   labels = ["ON", "OFF"],
   label = "Power",
   onChange,
@@ -96,23 +96,23 @@ export function RockerSwitch({
       }
     >
       <div className="rk-rocker__scene">
-        {/* The word and the dots lie flat on the ground, along the plate's near side. */}
-        {word ? (
-          <div className="rk-rocker__word" aria-hidden="true">
-            <span className="rk-rocker__half">{word[0]}</span>
-            <span className="rk-rocker__dots">
-              {Array.from({ length: DOTS }, (_, i) => (
-                <span key={i} className="rk-rocker__dot" style={{ "--rk-rocker-wait": wait[i] ?? i } as React.CSSProperties} />
-              ))}
-            </span>
-            <span className="rk-rocker__half">{word[1]}</span>
-          </div>
-        ) : null}
+        {/* The dots (and a word round them, if given) lie flat on the ground, along the plate's near side. */}
+        <div className="rk-rocker__word" aria-hidden="true">
+          {word ? <span className="rk-rocker__half">{word[0]}</span> : null}
+          <span className="rk-rocker__dots">
+            {Array.from({ length: DOTS }, (_, i) => (
+              <span key={i} className="rk-rocker__dot" style={{ "--rk-rocker-wait": wait[i] ?? i } as React.CSSProperties} />
+            ))}
+          </span>
+          {word ? <span className="rk-rocker__half">{word[1]}</span> : null}
+        </div>
 
         <button type="button" role="switch" aria-checked={on} aria-label={label} className="rk-rocker__switch" onClick={toggle}>
           {/* The shadow each raised half throws on the ground beyond its end. */}
           <span className="rk-rocker__shade rk-rocker__shade--on" aria-hidden="true" />
           <span className="rk-rocker__shade rk-rocker__shade--off" aria-hidden="true" />
+          {/* By night, the light the raised OFF end spills across the ground. */}
+          <span className="rk-rocker__glow" aria-hidden="true" />
           <span className="rk-rocker__body" aria-hidden="true">
             {/* The flat base: the whole pill, as thick as Base (none by default, so the pressed half lies on the ground). */}
             {Array.from({ length: base }, (_, i) => (
