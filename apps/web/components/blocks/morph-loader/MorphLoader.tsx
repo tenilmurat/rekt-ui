@@ -93,10 +93,11 @@ const SHAPES: number[][] = [
   .reduce<number[][]>((chain, shape) => [...chain, chain.length ? alignTo(chain[chain.length - 1], shape) : shape], []);
 
 /**
- * Half linear, half sine: soft through each shape but never quite still, so
- * the morph keeps flowing from one shape into the next without a pause.
+ * Mostly smootherstep, which lingers near each shape so you can see what it
+ * is, plus a little linear, so it's never quite still and keeps flowing into
+ * the next shape without a pause.
  */
-const flow = (t: number) => t / 2 + (1 - Math.cos(Math.PI * t)) / 4;
+const flow = (t: number) => 0.15 * t + 0.85 * t * t * t * (t * (6 * t - 15) + 10);
 
 const mixHex = (a: string, b: string, t: number) => {
   const pa = parseInt(a.slice(1), 16);
@@ -134,7 +135,7 @@ const outline = (radii: number[], turn = 0) =>
  * round. Its two-tone gradient walks up and back down a colour ramp, one
  * colour per shape, so it reads as one living thing.
  */
-export function MorphLoader({ size = 56, speed = 800, palette = "spectrum", label = "Loading" }: MorphLoaderProps) {
+export function MorphLoader({ size = 56, speed = 1300, palette = "spectrum", label = "Loading" }: MorphLoaderProps) {
   const pathRef = useRef<SVGPathElement | null>(null);
   const highlightRef = useRef<SVGPathElement | null>(null);
   const fillRef = useRef<SVGLinearGradientElement | null>(null);
