@@ -7,6 +7,7 @@ import { surpriseButton } from "@/components/blocks/surprise-button";
 import { morphLoader } from "@/components/blocks/morph-loader";
 import { iconBurst } from "@/components/blocks/icon-burst";
 import { tabDock } from "@/components/blocks/tab-dock";
+import { glitchSwitch } from "@/components/blocks/glitch-switch";
 import { tiltCard } from "@/components/blocks/tilt-card";
 import type { UiBlock } from "@/lib/ui/types";
 
@@ -46,7 +47,7 @@ const PUBLISHED: UiBlock[] = [tiltCard];
  * while the live wall stays empty.
  */
 const EXAMPLES: UiBlock[] =
-  process.env.NODE_ENV === "development" ? [tabDock, iconBurst, morphLoader, stackGallery, surpriseButton, contentsMarker, contentsHook, magnifyRuler, rollingCounter] : [];
+  process.env.NODE_ENV === "development" ? [glitchSwitch, tabDock, iconBurst, morphLoader, stackGallery, surpriseButton, contentsMarker, contentsHook, magnifyRuler, rollingCounter] : [];
 
 export const BLOCKS: UiBlock[] = [...PUBLISHED, ...EXAMPLES];
 
