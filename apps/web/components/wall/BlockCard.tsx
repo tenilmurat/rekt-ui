@@ -31,7 +31,8 @@ export function BlockCard({ block, onOpen }: { block: UiBlock; onOpen: () => voi
         onClick={(e) => {
           if (!componentRef.current?.contains(e.target as Node)) onOpen();
         }}
-        className="flex h-full w-full cursor-pointer items-center justify-center px-[24px] pb-[40px]"
+        // Room on every side: 32px above, 24px beside, and 72px below, which clears the 52px name row with 20px to spare.
+        className="flex h-full w-full cursor-pointer items-center justify-center px-[24px] pb-[72px] pt-[32px]"
       >
         <div ref={componentRef} className="cursor-auto">
           {/* Off screen, the card drops its preview so nothing runs unseen. */}
