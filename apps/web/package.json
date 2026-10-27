@@ -9,6 +9,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@lucasmarkes/hairline": "^0.5.1",
     "@paddle/paddle-js": "^1.6.5",
     "@supabase/supabase-js": "^2.118.0",
     "clsx": "^2.1.1",

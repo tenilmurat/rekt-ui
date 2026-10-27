@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Minus, Plus } from "lucide-react";
 
 export type RollingCounterProps = {
   /** Surface of the card. */
@@ -19,7 +20,8 @@ const DIGITS = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
 
 /**
  * A number whose digits roll to their new value, like a mechanical counter.
- * Press +1 to step it, or switch `auto` on to have it count by itself.
+ * Press plus or minus to step it (it stops at 0), or switch `auto` on to have
+ * it count up by itself.
  */
 export function RollingCounter({
   fill = "dark",
@@ -62,9 +64,20 @@ export function RollingCounter({
           })}
         </span>
         <span className="rk-counter__sr">{text}</span>
-        <button type="button" className="rk-counter__button" onClick={() => setValue((v) => v + 1)} aria-label="Add one">
-          +1
-        </button>
+        <div className="rk-counter__controls">
+          <button
+            type="button"
+            className="rk-counter__button"
+            onClick={() => setValue((v) => Math.max(0, v - 1))}
+            disabled={value <= 0}
+            aria-label="Subtract one"
+          >
+            <Minus size={16} strokeWidth={2} aria-hidden="true" />
+          </button>
+          <button type="button" className="rk-counter__button" onClick={() => setValue((v) => v + 1)} aria-label="Add one">
+            <Plus size={16} strokeWidth={2} aria-hidden="true" />
+          </button>
+        </div>
       </div>
     </div>
   );

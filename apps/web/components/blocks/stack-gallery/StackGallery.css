@@ -1,0 +1,154 @@
+/*
+  Stack gallery. Every colour is a variable with a fallback, so it works as
+  is; point the --rk-gallery-* variables at your own tokens to theme it.
+  Light theme; a dark theme can be added by redefining the same variables.
+  Each card's --d (0 = front) is written by the component.
+*/
+.rk-gallery {
+  --rk-gallery-ink: #141210;
+  --rk-gallery-depth: 46px;
+  --rk-gallery-speed: 650ms;
+  --rk-gallery-ease: cubic-bezier(0.32, 0.72, 0, 1);
+  --rk-gallery-width: 248px;
+  --rk-gallery-height: 156px;
+  /* Each card further back also stands this much higher. */
+  --rk-gallery-rise: calc(var(--rk-gallery-depth) * 0.35);
+
+  position: relative;
+  width: 360px;
+  max-width: 100%;
+  padding-top: 56px;
+  color: var(--rk-gallery-ink);
+  font-family: inherit;
+}
+
+.rk-gallery__stage {
+  position: relative;
+  width: 100%;
+  height: 340px;
+  perspective: 520px;
+  perspective-origin: 50% 0%;
+  outline: none;
+}
+
+.rk-gallery__card {
+  --lift: 0px;
+
+  position: absolute;
+  bottom: 60px;
+  left: calc(50% - var(--rk-gallery-width) / 2);
+  width: var(--rk-gallery-width);
+  height: var(--rk-gallery-height);
+  padding: 0;
+  border: 0;
+  border-radius: 18px;
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 0.12),
+    0 10px 28px rgb(20 18 16 / 0.14);
+  transform: translate3d(
+    0,
+    calc(var(--d) * var(--rk-gallery-rise) * -1 + var(--lift)),
+    calc(var(--d) * var(--rk-gallery-depth) * -1)
+  );
+  transform-origin: 50% 100%;
+  cursor: pointer;
+  transition:
+    transform var(--rk-gallery-speed) var(--rk-gallery-ease),
+    opacity var(--rk-gallery-speed) ease;
+}
+
+/* Cards past the visible few wait, transparent, in the last place; the next one fades in right there. */
+.rk-gallery__card[data-hidden="true"] {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Cards in the stack lift a little under the pointer. */
+.rk-gallery__card[data-front="false"]:hover {
+  --lift: -12px;
+  transition-duration: 320ms, var(--rk-gallery-speed);
+}
+
+.rk-gallery__card:focus-visible {
+  outline: 2px solid var(--rk-gallery-ink);
+  outline-offset: 4px;
+}
+
+/*
+  Forward: a card in front tips toward you and sinks slowly past the floor,
+  fading as it goes, starting from wherever it was (--rk-gallery-from, set by
+  the component), so a run of drops flows on. Back: the same,
+  reversed, so a hidden card rises up into the front. A little longer than
+  the step, on an ease-in-out, so the fall starts softly and settles.
+*/
+.rk-gallery__card[data-motion="drop"],
+.rk-gallery__card[data-motion="rise"] {
+  animation: rk-gallery-drop calc(var(--rk-gallery-speed) * 1.4) both;
+}
+
+.rk-gallery__card[data-motion="rise"] {
+  animation-direction: reverse;
+}
+
+/* A card that dropped back into view fades in at its place, without sliding there. */
+.rk-gallery__card[data-motion="enter"] {
+  animation: rk-gallery-enter var(--rk-gallery-speed) ease both;
+  transition-property: opacity;
+}
+
+@keyframes rk-gallery-drop {
+  0% {
+    opacity: 1;
+    transform: var(--rk-gallery-from, translate3d(0, 0, 0));
+    animation-timing-function: cubic-bezier(0.4, 0, 0.25, 1);
+  }
+  30% {
+    opacity: 1;
+    animation-timing-function: ease-in-out;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(0, 72px, 30px) rotateX(-22deg);
+  }
+}
+
+@keyframes rk-gallery-enter {
+  from {
+    opacity: 0;
+  }
+}
+
+/* The front card's soft shadow on the floor. */
+.rk-gallery__shadow {
+  position: absolute;
+  bottom: 36px;
+  left: calc(50% - var(--rk-gallery-width) * 0.45);
+  width: calc(var(--rk-gallery-width) * 0.9);
+  height: 26px;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgb(20 18 16 / 0.16), transparent);
+  filter: blur(4px);
+  pointer-events: none;
+}
+
+/* The front card's name, for screen readers only. */
+.rk-gallery__status {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Reduced motion: cards swap places without moving. */
+@media (prefers-reduced-motion: reduce) {
+  .rk-gallery__card {
+    transition: none;
+    animation: none;
+  }
+
+  .rk-gallery__card[data-motion] {
+    animation: none;
+  }
+}

@@ -1,0 +1,225 @@
+/*
+  Contents hook. Every colour is a variable with a fallback, so it works as
+  is; point the --rk-chook-* variables at your own tokens to theme it.
+  Light theme; a dark theme can be added by redefining the same variables.
+*/
+.rk-chook {
+  --rk-chook-bg: #ffffff;
+  --rk-chook-ink: #141210;
+  --rk-chook-muted: #6b6763;
+  --rk-chook-line: rgb(20 18 16 / 0.14);
+  /* The open section's colour (bar) and each section's own (hook, icon); set by the component. */
+  --rk-chook-bar: #141210;
+  --rk-chook-accent: #141210;
+  --rk-chook-edge: rgb(20 18 16 / 0.08);
+  --rk-chook-row: 32px;
+  /* Gentle by design: long, soft ease-outs rather than quick snaps. */
+  --rk-chook-duration: 700ms;
+  --rk-chook-fold: 620ms;
+  --rk-chook-ease: cubic-bezier(0.32, 0.72, 0, 1);
+  --rk-chook-draw-ease: cubic-bezier(0.65, 0, 0.35, 1);
+
+  position: relative;
+  display: inline-flex;
+  min-width: 236px;
+  flex-direction: column;
+  gap: 2px;
+  padding: 18px 24px 18px 30px;
+  border-radius: 20px;
+  background: var(--rk-chook-bg);
+  color: var(--rk-chook-ink);
+  box-shadow: 0 0 0 1px var(--rk-chook-edge);
+  font-family: inherit;
+}
+
+/* The rail down the left edge, and the bar that marks the open section. */
+.rk-chook__rail {
+  position: absolute;
+  top: 18px;
+  bottom: 18px;
+  left: 16px;
+  width: 1px;
+  background: var(--rk-chook-line);
+}
+
+.rk-chook[data-line="dashed"] .rk-chook__rail {
+  background: repeating-linear-gradient(to bottom, var(--rk-chook-line) 0 3px, transparent 3px 6px);
+}
+
+.rk-chook__bar {
+  position: absolute;
+  top: -18px;
+  left: -0.5px;
+  width: 2px;
+  border-radius: 2px;
+  background: var(--rk-chook-bar);
+  /* Same timing as the panels, so the bar and the heading arrive together. */
+  transition:
+    transform var(--rk-chook-fold) var(--rk-chook-ease),
+    height var(--rk-chook-fold) var(--rk-chook-ease),
+    background-color 400ms ease;
+}
+
+.rk-chook__heading {
+  display: block;
+  width: 100%;
+  padding: 7px 0;
+  border: 0;
+  background: none;
+  color: var(--rk-chook-muted);
+  font: inherit;
+  font-size: 14px;
+  text-align: left;
+  cursor: pointer;
+  transition: color 280ms ease;
+}
+
+.rk-chook__heading:hover,
+.rk-chook__section[data-open="true"] .rk-chook__heading {
+  color: var(--rk-chook-ink);
+}
+
+.rk-chook__section[data-open="true"] .rk-chook__heading {
+  font-weight: 600;
+}
+
+/* Unfolding: the panel's single grid row grows from 0fr to 1fr. */
+.rk-chook__panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition:
+    grid-template-rows var(--rk-chook-fold) var(--rk-chook-ease),
+    opacity 420ms ease;
+}
+
+.rk-chook__section[data-open="true"] .rk-chook__panel {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+
+.rk-chook__items {
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+  margin: 0;
+  padding: 0 0 0 2px;
+  list-style: none;
+}
+
+.rk-chook__item {
+  display: flex;
+  height: var(--rk-chook-row);
+  align-items: center;
+}
+
+/* Space under the last item lives inside the clipped list, so a closed panel is exactly 0px tall. */
+.rk-chook__item:last-child {
+  margin-bottom: 4px;
+}
+
+.rk-chook__tree {
+  flex: none;
+  overflow: visible;
+}
+
+.rk-chook__branch {
+  fill: none;
+  stroke: var(--rk-chook-line);
+  stroke-width: 1;
+}
+
+.rk-chook[data-line="dashed"] .rk-chook__branch {
+  stroke-dasharray: 2.5 2.5;
+}
+
+/*
+  The hook: one line from the top of the list, down the trunk and round the
+  corner to the chosen item, in the section's colour. It sits over the tree
+  and draws itself from the top.
+*/
+.rk-chook__hooks {
+  position: absolute;
+  top: 0;
+  left: 2px;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.rk-chook__hook {
+  fill: none;
+  stroke: var(--rk-chook-accent);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  /*
+    One dash the length of the path, then a longer gap, offset just past the
+    start. With a plain "1" dash and an offset of exactly 1, the dash edges sit
+    right on the path's ends and the round caps paint a dot there before the
+    line starts drawing.
+  */
+  stroke-dasharray: 1 2;
+  stroke-dashoffset: 1.01;
+  animation: rk-chook-draw var(--rk-chook-duration) var(--rk-chook-draw-ease) forwards;
+}
+
+@keyframes rk-chook-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.rk-chook__link {
+  display: flex;
+  height: 100%;
+  flex: 1;
+  align-items: center;
+  gap: 8px;
+  padding-left: 6px;
+  color: var(--rk-chook-muted);
+  font-size: 13.5px;
+  text-decoration: none;
+  transition: color 280ms ease;
+}
+
+.rk-chook__icon {
+  flex: none;
+  opacity: 0.8;
+  transition:
+    color 280ms ease,
+    opacity 280ms ease;
+}
+
+/* Hover only darkens the text; the hook stays on the chosen item. */
+.rk-chook__link:hover {
+  color: var(--rk-chook-ink);
+}
+
+.rk-chook__link[aria-current="location"] {
+  color: var(--rk-chook-ink);
+  font-weight: 600;
+}
+
+.rk-chook__link[aria-current="location"] .rk-chook__icon {
+  color: var(--rk-chook-accent);
+  opacity: 1;
+}
+
+.rk-chook__heading:focus-visible,
+.rk-chook__link:focus-visible {
+  outline: 2px solid var(--rk-chook-accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rk-chook__hook {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+
+  .rk-chook__bar,
+  .rk-chook__panel,
+  .rk-chook__link {
+    transition: none;
+  }
+}
