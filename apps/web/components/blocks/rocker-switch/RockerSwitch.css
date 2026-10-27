@@ -13,18 +13,19 @@
   --rk-rocker-face-up: #f3f2f0;
   --rk-rocker-dot: #c9c6c2;
   --rk-rocker-accent: #a66cff;
-  --rk-rocker-tilt: 10deg;
-  --rk-rocker-depth: 20px;
+  --rk-rocker-tilt: 12deg;
+  --rk-rocker-depth: 34px;
+  --rk-rocker-lift: 61px;
   --rk-rocker-speed: 650ms;
   --rk-rocker-spring: cubic-bezier(0.34, 1.45, 0.64, 1);
   --rk-rocker-focus: rgb(20 18 16 / 0.6);
 
   /* The plate's size on the ground. */
-  --rk-rocker-w: 250px;
-  --rk-rocker-h: 84px;
+  --rk-rocker-w: 260px;
+  --rk-rocker-h: 96px;
 
   display: inline-block;
-  padding: 36px 40px 44px;
+  padding: 56px 44px 48px;
   font-family: inherit;
   color: var(--rk-rocker-ink);
 }
@@ -34,9 +35,9 @@
   position: relative;
   width: var(--rk-rocker-w);
   height: var(--rk-rocker-h);
-  perspective: 900px;
+  perspective: 1100px;
   transform-style: preserve-3d;
-  transform: rotateX(58deg) rotateZ(-45deg);
+  transform: rotateX(52deg) rotateZ(-45deg);
 }
 
 .rk-rocker__switch {
@@ -59,14 +60,14 @@
   position: absolute;
   inset: 0;
   border-radius: 999px;
-  background: rgb(20 18 16 / 0.18);
-  filter: blur(10px);
-  transform: translateZ(-1px) translate(10px, 10px) scale(0.98);
+  background: rgb(20 18 16 / 0.22);
+  filter: blur(14px);
+  transform: translateZ(-1px) translate(-18px, 14px) scale(1.04, 1.1);
   transition: transform var(--rk-rocker-speed) var(--rk-rocker-spring);
 }
 
 .rk-rocker[data-on] .rk-rocker__shadow {
-  transform: translateZ(-1px) translate(-6px, 10px) scale(0.98);
+  transform: translateZ(-1px) translate(18px, 14px) scale(1.04, 1.1);
 }
 
 /*
@@ -79,20 +80,31 @@
   inset: 0;
   transform-style: preserve-3d;
   transform-origin: 50% 50%;
-  transform: translateZ(var(--rk-rocker-depth)) rotateY(var(--rk-rocker-tilt));
+  transform: translateZ(var(--rk-rocker-lift)) rotateY(var(--rk-rocker-tilt));
   transition: transform var(--rk-rocker-speed) var(--rk-rocker-spring);
 }
 
 .rk-rocker[data-on] .rk-rocker__plate {
-  transform: translateZ(var(--rk-rocker-depth)) rotateY(calc(var(--rk-rocker-tilt) * -1));
+  transform: translateZ(var(--rk-rocker-lift)) rotateY(calc(var(--rk-rocker-tilt) * -1));
 }
 
-/* The side: the same pill, stacked down in the accent. */
+/*
+  The side: the same pill, stacked down. Each copy is shaded across its area
+  from the lit corner to the far one, so the wall's colour changes as it runs
+  round the rounded ends, and each copy is a little darker than the one
+  above, so the wall darkens toward the ground.
+*/
 .rk-rocker__side {
   position: absolute;
   inset: 0;
   border-radius: 999px;
-  background: var(--rk-rocker-accent);
+  background: linear-gradient(
+    125deg,
+    color-mix(in oklab, var(--rk-rocker-accent) 72%, white) 0%,
+    var(--rk-rocker-accent) 42%,
+    color-mix(in oklab, var(--rk-rocker-accent) 68%, black) 100%
+  );
+  filter: brightness(calc(1 - var(--rk-rocker-down, 0) * 0.3));
   transform: translateZ(var(--rk-rocker-z));
   backface-visibility: hidden;
 }
@@ -118,21 +130,21 @@
   transition: background-color var(--rk-rocker-speed) ease;
 }
 
-/* Off: ON is up (light), OFF is down (dark). On: the other way. */
+/* Off: ON is up (lit), OFF is down (in shade). On: the other way. Each half carries a soft light across it. */
 .rk-rocker__cap--on {
-  background: var(--rk-rocker-face-up);
+  background: linear-gradient(115deg, var(--rk-rocker-face-up), var(--rk-rocker-face) 90%);
 }
 
 .rk-rocker__cap--off {
-  background: var(--rk-rocker-face-down);
+  background: linear-gradient(115deg, var(--rk-rocker-face-down), var(--rk-rocker-face) 110%);
 }
 
 .rk-rocker[data-on] .rk-rocker__cap--on {
-  background: var(--rk-rocker-face-down);
+  background: linear-gradient(115deg, var(--rk-rocker-face-down), var(--rk-rocker-face) 110%);
 }
 
 .rk-rocker[data-on] .rk-rocker__cap--off {
-  background: var(--rk-rocker-face-up);
+  background: linear-gradient(115deg, var(--rk-rocker-face-up), var(--rk-rocker-face) 90%);
 }
 
 /* The seam between the halves. */
@@ -148,7 +160,7 @@
 
 .rk-rocker__label {
   color: var(--rk-rocker-muted);
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 600;
   letter-spacing: 0.12em;
   transition: color var(--rk-rocker-speed) ease;

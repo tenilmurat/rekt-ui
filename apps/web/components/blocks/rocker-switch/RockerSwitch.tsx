@@ -32,6 +32,9 @@ const COLORS = {
 /** How many dots run along the plate. */
 const DOTS = 14;
 
+/** The plate's length on the ground, in px; the CSS uses the same number. */
+const PLATE_W = 260;
+
 /**
  * A rocker switch seen from above in 3D: a pill-shaped plate split into ON
  * and OFF halves that rocks about its seam like a seesaw. Click it and the
@@ -43,8 +46,8 @@ export function RockerSwitch({
   checked,
   defaultChecked = false,
   color = "purple",
-  tilt = 10,
-  depth = 20,
+  tilt = 12,
+  depth = 34,
   speed = 650,
   word = ["RE", "KT"],
   labels = ["ON", "OFF"],
@@ -67,7 +70,10 @@ export function RockerSwitch({
   };
 
   const accent = COLORS[color] ?? COLORS.purple;
-  const slices = Math.max(2, Math.min(36, Math.round(depth)));
+  const slices = Math.max(2, Math.min(48, Math.round(depth)));
+  const angle = Math.max(0, tilt);
+  // Raised so the pressed end's bottom edge rests on the ground, like a seesaw.
+  const lift = slices + (PLATE_W / 2) * Math.sin((angle * Math.PI) / 180);
 
   return (
     <div
@@ -76,8 +82,9 @@ export function RockerSwitch({
       style={
         {
           "--rk-rocker-accent": accent,
-          "--rk-rocker-tilt": `${Math.max(0, tilt)}deg`,
+          "--rk-rocker-tilt": `${angle}deg`,
           "--rk-rocker-depth": `${slices}px`,
+          "--rk-rocker-lift": `${lift.toFixed(1)}px`,
           "--rk-rocker-speed": `${Math.max(0, speed)}ms`,
         } as React.CSSProperties
       }
@@ -99,9 +106,13 @@ export function RockerSwitch({
         <button type="button" role="switch" aria-checked={on} aria-label={label} className="rk-rocker__switch" onClick={toggle}>
           <span className="rk-rocker__shadow" aria-hidden="true" />
           <span className="rk-rocker__plate" aria-hidden="true">
-            {/* The side: the pill again and again, one step lower each time, in the accent. */}
+            {/* The side: the pill again and again, one step lower each time, shaded as it goes down. */}
             {Array.from({ length: slices }, (_, i) => (
-              <span key={i} className="rk-rocker__side" style={{ "--rk-rocker-z": `${-(i + 1)}px` } as React.CSSProperties} />
+              <span
+                key={i}
+                className="rk-rocker__side"
+                style={{ "--rk-rocker-z": `${-(i + 1)}px`, "--rk-rocker-down": (i + 1) / slices } as React.CSSProperties}
+              />
             ))}
             <span className="rk-rocker__face">
               <span className="rk-rocker__cap rk-rocker__cap--on">
