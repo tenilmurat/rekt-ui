@@ -48,6 +48,8 @@ export type IconBurstProps = {
   grain?: number;
   /** Colourful dust instead of the icon's own colour. */
   colorful?: boolean;
+  /** A small line under the icon; empty hides it. */
+  hint?: string;
   /** What the button does, for screen readers. */
   label?: string;
   onClick?: () => void;
@@ -109,6 +111,7 @@ export function IconBurst({
   speed = 1600,
   grain = 1,
   colorful = true,
+  hint = "Click me",
   label = "Done",
   onClick,
 }: IconBurstProps) {
@@ -245,14 +248,20 @@ export function IconBurst({
       type="button"
       className="rk-burst"
       aria-label={label}
-      style={{ width: size + 32, height: size + 32 }}
       onClick={() => {
         burst();
         onClick?.();
       }}
     >
-      <Icon ref={iconRef} className="rk-burst__icon" data-gone={gone} size={size} strokeWidth={2} aria-hidden="true" />
-      <canvas ref={canvasRef} className="rk-burst__dust" style={{ width: room, height: room }} aria-hidden="true" />
+      <span className="rk-burst__mark" style={{ width: size + 32, height: size + 32 }}>
+        <Icon ref={iconRef} className="rk-burst__icon" data-gone={gone} size={size} strokeWidth={2} aria-hidden="true" />
+        <canvas ref={canvasRef} className="rk-burst__dust" style={{ width: room, height: room }} aria-hidden="true" />
+      </span>
+      {hint ? (
+        <span className="rk-burst__hint" aria-hidden="true">
+          {hint}
+        </span>
+      ) : null}
     </button>
   );
 }
