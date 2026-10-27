@@ -1,0 +1,148 @@
+/*
+  Pulse dial. Every colour is a variable with a fallback, so it works as is;
+  point the --rk-pulse-* variables at your own tokens to theme it.
+  Light theme; a dark theme can be added by redefining the same variables.
+  --rk-pulse-dust is the dust's colour, written by the component.
+*/
+.rk-pulse {
+  --rk-pulse-ink: #141210;
+  --rk-pulse-muted: #6b6763;
+  --rk-pulse-ring: rgb(20 18 16 / 0.14);
+  --rk-pulse-ring-soft: rgb(20 18 16 / 0.07);
+  --rk-pulse-arc: rgb(20 18 16 / 0.55);
+  --rk-pulse-tick: rgb(20 18 16 / 0.28);
+  --rk-pulse-face: #ffffff;
+  --rk-pulse-dust: #6f62e0;
+  --rk-pulse-focus: rgb(20 18 16 / 0.6);
+
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  font-family: inherit;
+}
+
+.rk-pulse__dial {
+  position: relative;
+  display: block;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--rk-pulse-face);
+  color: var(--rk-pulse-ink);
+  cursor: pointer;
+  /* A faint lift off the page, like a dial set in it. */
+  box-shadow:
+    0 0 0 1px rgb(20 18 16 / 0.04),
+    0 10px 30px rgb(20 18 16 / 0.06);
+}
+
+.rk-pulse__dial:focus-visible {
+  outline: 2px solid var(--rk-pulse-focus);
+  outline-offset: 4px;
+}
+
+.rk-pulse__rings,
+.rk-pulse__dust {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.rk-pulse__ring {
+  fill: none;
+  stroke: var(--rk-pulse-ring);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.rk-pulse__ring--soft {
+  stroke: var(--rk-pulse-ring-soft);
+}
+
+.rk-pulse__arc circle {
+  fill: none;
+  stroke: var(--rk-pulse-arc);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+
+/* The arcs turn on their own, slowly, in opposite directions. */
+.rk-pulse__arc {
+  transform-origin: 0 0;
+  animation: rk-pulse-turn 16s linear infinite;
+}
+
+.rk-pulse__arc--ccw {
+  animation-duration: 22s;
+  animation-direction: reverse;
+}
+
+@keyframes rk-pulse-turn {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.rk-pulse__ticks line {
+  stroke: var(--rk-pulse-tick);
+  stroke-width: 1;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+
+/* The mark in the middle; it gives a small pulse on each burst. */
+.rk-pulse__mark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 15%;
+  aspect-ratio: 23 / 20;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.rk-pulse__mark svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  fill: var(--rk-pulse-ink);
+}
+
+.rk-pulse__mark[data-pulse] {
+  animation: rk-pulse-mark 600ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes rk-pulse-mark {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  25% {
+    transform: translate(-50%, -50%) scale(1.14);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+.rk-pulse__hint {
+  color: var(--rk-pulse-muted);
+  font-size: 12px;
+  line-height: 1;
+  transition: color 200ms ease;
+}
+
+.rk-pulse:hover .rk-pulse__hint {
+  color: var(--rk-pulse-ink);
+}
+
+/* Reduced motion: the arcs stand still and the mark keeps its size; the component skips the dust. */
+@media (prefers-reduced-motion: reduce) {
+  .rk-pulse__arc,
+  .rk-pulse__mark[data-pulse] {
+    animation: none;
+  }
+}
