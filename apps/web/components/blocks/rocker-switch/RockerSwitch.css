@@ -94,8 +94,8 @@
   --rk-rocker-dot: rgb(255 255 255 / 0.22);
   --rk-rocker-dot-lit: #ffffff;
   --rk-rocker-wall-lit: #ffffff;
-  --rk-rocker-wall: color-mix(in oklab, var(--rk-rocker-accent) 18%, white);
-  --rk-rocker-wall-dark: color-mix(in oklab, var(--rk-rocker-accent) 60%, white);
+  --rk-rocker-wall: #fdf9ff;
+  --rk-rocker-wall-dark: color-mix(in oklab, var(--rk-rocker-accent) 22%, white);
   --rk-rocker-shadow: var(--rk-rocker-accent);
   --rk-rocker-shadow-blur: 34px;
   --rk-rocker-wall-boost: 0.7;
@@ -191,6 +191,38 @@
   opacity: calc(var(--rk-rocker-glow) * var(--rk-rocker-a-off) / var(--rk-rocker-tilt));
   pointer-events: none;
   transform: translateZ(-2px);
+}
+
+/*
+  By night, the bright band the glowing wall casts on the ground at its
+  foot: the OFF half's outline on the ground, a little bigger and pushed to
+  the near side and past the end, white where it meets the wall and fading
+  to the accent, masked off toward the seam. Like the glow, it's as strong
+  as the end is raised.
+*/
+.rk-rocker__spill {
+  position: absolute;
+  inset: -40px;
+  pointer-events: none;
+  /* Strongest at the raised end, fading in from the seam the way the wall grows. */
+  -webkit-mask-image: linear-gradient(to right, transparent 42%, rgb(0 0 0 / 0.55) 62%, #000 86%);
+  mask-image: linear-gradient(to right, transparent 42%, rgb(0 0 0 / 0.55) 62%, #000 86%);
+  opacity: calc(var(--rk-rocker-glow) * var(--rk-rocker-a-off) / var(--rk-rocker-tilt));
+  transform: translateZ(-1px) translate(4px, 12px);
+}
+
+.rk-rocker__spill::before {
+  position: absolute;
+  inset: 40px;
+  border-radius: 999px;
+  /* Solid white under the plate, so what shows past its near edge is a white band the length of the half. */
+  background: #ffffff;
+  box-shadow:
+    0 0 16px rgb(255 255 255 / 0.9),
+    0 0 46px color-mix(in oklab, var(--rk-rocker-accent) 85%, white);
+  filter: blur(5px);
+  transform: scale(1.03, 1.14);
+  content: "";
 }
 
 .rk-rocker__body {

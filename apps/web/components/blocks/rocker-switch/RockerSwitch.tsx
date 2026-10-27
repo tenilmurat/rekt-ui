@@ -111,8 +111,9 @@ export function RockerSwitch({
           {/* The shadow each raised half throws on the ground beyond its end. */}
           <span className="rk-rocker__shade rk-rocker__shade--on" aria-hidden="true" />
           <span className="rk-rocker__shade rk-rocker__shade--off" aria-hidden="true" />
-          {/* By night, the light the raised OFF end spills across the ground. */}
+          {/* By night, the light the raised OFF end spills across the ground, and the white band it casts at its foot. */}
           <span className="rk-rocker__glow" aria-hidden="true" />
+          <span className="rk-rocker__spill" aria-hidden="true" />
           <span className="rk-rocker__body" aria-hidden="true">
             {/* The flat base: the whole pill, as thick as Base (none by default, so the pressed half lies on the ground). */}
             {Array.from({ length: base }, (_, i) => (
