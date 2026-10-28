@@ -120,14 +120,19 @@ const colorAt = (colors: string[], k: number) => {
   return colors[at < colors.length ? at : period - at];
 };
 
-/** The outline as a path, turned by the given angle in radians. */
-const outline = (radii: number[], turn = 0) =>
-  radii
-    .map((r, i) => {
-      const a = angles[i] + turn;
-      return `${i ? "L" : "M"}${(Math.cos(a) * r).toFixed(3)} ${(Math.sin(a) * r).toFixed(3)}`;
-    })
-    .join("") + "Z";
+/** Each point's direction, worked out once; the turn is a transform on the group, so a frame does no trig. */
+const cosines = angles.map(Math.cos);
+const sines = angles.map(Math.sin);
+
+/** The outline as a path, unturned. */
+const outline = (radii: number[]) => {
+  let d = "";
+  for (let i = 0; i < POINTS; i++) {
+    const r = radii[i];
+    d += `${i ? "L" : "M"}${(cosines[i] * r).toFixed(3)} ${(sines[i] * r).toFixed(3)}`;
+  }
+  return d + "Z";
+};
 
 /**
  * A loading mark: one soft shape that keeps turning while it morphs from
@@ -136,9 +141,11 @@ const outline = (radii: number[], turn = 0) =>
  * colour per shape, so it reads as one living thing.
  */
 export function MorphLoader({ size = 56, speed = 1300, palette = "spectrum", label = "Loading" }: MorphLoaderProps) {
+  const rootRef = useRef<HTMLSpanElement | null>(null);
   const pathRef = useRef<SVGPathElement | null>(null);
-  const highlightRef = useRef<SVGPathElement | null>(null);
+  const turnRef = useRef<SVGGElement | null>(null);
   const fillRef = useRef<SVGLinearGradientElement | null>(null);
+  const sheenRef = useRef<SVGRadialGradientElement | null>(null);
   const stopA = useRef<SVGStopElement | null>(null);
   const stopB = useRef<SVGStopElement | null>(null);
   const id = useId().replace(/:/g, "");
@@ -149,6 +156,7 @@ export function MorphLoader({ size = 56, speed = 1300, palette = "spectrum", lab
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let frame = 0;
     const start = performance.now();
+    const blend = new Array<number>(POINTS);
 
     const paint = (now: number) => {
       // A frame's timestamp can be a little earlier than the start.
@@ -161,16 +169,15 @@ export function MorphLoader({ size = 56, speed = 1300, palette = "spectrum", lab
       const to = SHAPES[(index + 1) % SHAPES.length];
       // A steady turn, plus a gentle extra eighth of a turn eased through each morph.
       const turn = (t * 60 + (index + p) * 45) % 360;
-      const d = outline(
-        from.map((r, i) => r + (to[i] - r) * p),
-        (turn * Math.PI) / 180,
-      );
-      pathRef.current?.setAttribute("d", d);
-      highlightRef.current?.setAttribute("d", d);
+      for (let i = 0; i < POINTS; i++) blend[i] = from[i] + (to[i] - from[i]) * p;
+      // One outline, drawn twice through <use>: the fill and the sheen.
+      pathRef.current?.setAttribute("d", outline(blend));
+      turnRef.current?.setAttribute("transform", `rotate(${turn.toFixed(2)})`);
       // The colours turn a little faster than the shape, so they visibly flow even on the
-      // circle, where a turn alone can't be seen. The sheen stays put, like light from one side.
-      const sweep = (turn + t * 40) % 360;
-      fillRef.current?.setAttribute("gradientTransform", `rotate(${sweep.toFixed(2)})`);
+      // circle, where a turn alone can't be seen. The gradient turns with the group, so it
+      // only needs the extra. The sheen is turned back, so it stays put, like light from one side.
+      fillRef.current?.setAttribute("gradientTransform", `rotate(${((t * 40) % 360).toFixed(2)})`);
+      sheenRef.current?.setAttribute("gradientTransform", `rotate(${(-turn).toFixed(2)})`);
 
       // Colours drift at a constant pace, so they never pause either.
       const a = mixHex(colorAt(colors, index), colorAt(colors, index + 1), within);
@@ -178,15 +185,27 @@ export function MorphLoader({ size = 56, speed = 1300, palette = "spectrum", lab
       stopA.current?.setAttribute("stop-color", a);
       stopB.current?.setAttribute("stop-color", b);
 
-      if (!reduced) frame = requestAnimationFrame(paint);
+      if (!reduced && onScreen) frame = requestAnimationFrame(paint);
     };
 
+    // Only draw while it's on screen; scrolled away, it rests until it's back.
+    let onScreen = true;
+    const observer = new IntersectionObserver(([entry]) => {
+      onScreen = entry.isIntersecting;
+      cancelAnimationFrame(frame);
+      if (onScreen) frame = requestAnimationFrame(paint);
+    });
+    if (rootRef.current) observer.observe(rootRef.current);
+
     frame = requestAnimationFrame(paint);
-    return () => cancelAnimationFrame(frame);
+    return () => {
+      observer.disconnect();
+      cancelAnimationFrame(frame);
+    };
   }, [speed, colors]);
 
   return (
-    <span className="rk-morph" role="status" style={{ width: size, height: size }}>
+    <span ref={rootRef} className="rk-morph" role="status" style={{ width: size, height: size }}>
       <svg className="rk-morph__mark" viewBox="-1.5 -1.5 3 3" aria-hidden="true">
         <defs>
           <linearGradient ref={fillRef} id={`${id}-fill`} x1="-1" y1="-1" x2="1" y2="1" gradientUnits="userSpaceOnUse">
@@ -194,13 +213,16 @@ export function MorphLoader({ size = 56, speed = 1300, palette = "spectrum", lab
             <stop ref={stopB} offset="1" stopColor={colors[1]} />
           </linearGradient>
           {/* A soft sheen on one side, so the shape has a little body. */}
-          <radialGradient id={`${id}-sheen`} cx="-0.5" cy="-0.6" r="1.1" gradientUnits="userSpaceOnUse">
+          <radialGradient ref={sheenRef} id={`${id}-sheen`} cx="-0.5" cy="-0.6" r="1.1" gradientUnits="userSpaceOnUse">
             <stop offset="0" stopColor="#fff" stopOpacity="0.26" />
             <stop offset="1" stopColor="#fff" stopOpacity="0" />
           </radialGradient>
+          <path ref={pathRef} id={`${id}-shape`} d={outline(SHAPES[0])} />
         </defs>
-        <path ref={pathRef} d={outline(SHAPES[0])} fill={`url(#${id}-fill)`} />
-        <path ref={highlightRef} d={outline(SHAPES[0])} fill={`url(#${id}-sheen)`} />
+        <g ref={turnRef}>
+          <use href={`#${id}-shape`} fill={`url(#${id}-fill)`} />
+          <use href={`#${id}-shape`} fill={`url(#${id}-sheen)`} />
+        </g>
       </svg>
       <span className="rk-morph__label">{label}</span>
     </span>

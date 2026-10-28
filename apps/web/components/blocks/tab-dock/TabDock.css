@@ -47,15 +47,15 @@
   transition: none;
 }
 
-/* The soft pill behind the selected tab; the component moves and sizes it. */
+/* The soft pill behind the selected tab: as wide as the bar, clipped to the tab by the component. */
 .rk-dock__pill {
   position: absolute;
   top: calc(5px * var(--s));
   left: 0;
-  width: 0;
+  right: 0;
   height: calc(40px * var(--s));
-  border-radius: calc(15px * var(--s));
   background: var(--rk-dock-pill);
+  clip-path: inset(0 100% 0 0);
   pointer-events: none;
 }
 

@@ -81,12 +81,17 @@ export function TabDock({
   // A new Size from outside (the controls, say) replaces the dragged one.
   useEffect(() => setScale(clamp(size, minSize, maxSize)), [size, minSize, maxSize]);
 
+  /*
+    The pill spans the whole bar and is clipped down to the tab, so moving it
+    only repaints: a clip-path doesn't need a layout, where a width would
+    cost a second one every frame of the glide.
+  */
   const place = (x: number, w: number) => {
     pill.current = { x, w };
     const el = pillRef.current;
     if (!el) return;
-    el.style.transform = `translateX(${x}px)`;
-    el.style.width = `${w}px`;
+    const right = Math.max(0, el.offsetWidth - x - w);
+    el.style.clipPath = `inset(0 ${right}px 0 ${x}px round calc(15px * var(--s)))`;
   };
 
   // The tab's layout box, not its rect on screen, so a transformed parent can't skew it.
