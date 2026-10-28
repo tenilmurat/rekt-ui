@@ -95,11 +95,11 @@
   --rk-rocker-dot: rgb(255 255 255 / 0.22);
   --rk-rocker-dot-lit: #ffffff;
   --rk-rocker-wall-lit: #ffffff;
-  --rk-rocker-wall: color-mix(in oklab, var(--rk-rocker-accent) 38%, white);
-  --rk-rocker-wall-dark: color-mix(in oklab, var(--rk-rocker-accent) 62%, white);
+  --rk-rocker-wall: #ffffff;
+  --rk-rocker-wall-dark: #f4ecff;
   --rk-rocker-shadow: var(--rk-rocker-accent);
   --rk-rocker-shadow-blur: 34px;
-  --rk-rocker-wall-boost: 0.55;
+  --rk-rocker-wall-boost: 0.7;
   --rk-rocker-glow: 1;
 
   --rk-rocker-outline-wide: color-mix(in oklab, var(--rk-rocker-accent) 45%, transparent);
@@ -195,38 +195,6 @@
   transform: translateZ(-2px);
 }
 
-/*
-  By night, the bright band the glowing wall casts on the ground at its
-  foot: the OFF half's outline on the ground, a little bigger and pushed to
-  the near side and past the end, white where it meets the wall and fading
-  to the accent, masked off toward the seam. Like the glow, it's as strong
-  as the end is raised.
-*/
-.rk-rocker__spill {
-  position: absolute;
-  inset: -40px;
-  pointer-events: none;
-  /* Strongest at the raised end, fading in from the seam the way the wall grows. */
-  -webkit-mask-image: linear-gradient(to right, transparent 42%, rgb(0 0 0 / 0.55) 62%, #000 86%);
-  mask-image: linear-gradient(to right, transparent 42%, rgb(0 0 0 / 0.55) 62%, #000 86%);
-  opacity: calc(var(--rk-rocker-glow) * var(--rk-rocker-a-off) / var(--rk-rocker-tilt));
-  transform: translateZ(-1px) translate(4px, 12px);
-}
-
-.rk-rocker__spill::before {
-  position: absolute;
-  inset: 40px;
-  border-radius: 999px;
-  /* Solid white under the plate, so what shows past its near edge is a white band the length of the half. */
-  background: #ffffff;
-  box-shadow:
-    0 0 16px rgb(255 255 255 / 0.9),
-    0 0 46px color-mix(in oklab, var(--rk-rocker-accent) 85%, white);
-  filter: blur(5px);
-  transform: scale(1.03, 1.14);
-  content: "";
-}
-
 .rk-rocker__body {
   position: absolute;
   inset: 0;
@@ -263,49 +231,6 @@
 /* The OFF half's wedge (right), the same from the OFF half's angle. */
 .rk-rocker__layer--off {
   clip-path: inset(0 0 0 calc(var(--rk-rocker-half) + var(--rk-rocker-height) * 1px / max(tan(var(--rk-rocker-a-off)), 0.001)));
-}
-
-/*
-  By night, white particles in the raised OFF half's wall: small dots set
-  into its near face, each at a share of the length from the seam (--x) and
-  a share of the wall's height there (--h). Their height is worked out from
-  the same animated angle as the wedge, so they ride up and down with it;
-  each twinkles on its own beat. They sit a hair outside the face, so the
-  wall never hides them, and the group is only as strong as the end is
-  raised, so by day there are none.
-*/
-.rk-rocker__sparks {
-  position: absolute;
-  inset: 0;
-  transform-style: preserve-3d;
-  opacity: calc(var(--rk-rocker-glow) * var(--rk-rocker-a-off) / var(--rk-rocker-tilt));
-  pointer-events: none;
-}
-
-.rk-rocker__spark {
-  position: absolute;
-  top: calc(100% + 0.5px);
-  left: calc(50% + var(--x) * 50%);
-  width: var(--s);
-  height: var(--s);
-  margin: calc(var(--s) / -2) 0 0 calc(var(--s) / -2);
-  border-radius: 50%;
-  background: #ffffff;
-  box-shadow:
-    0 0 3px #ffffff,
-    0 0 7px color-mix(in oklab, var(--rk-rocker-accent) 60%, white);
-  transform: translateZ(calc(var(--rk-rocker-base) + var(--x) * var(--rk-rocker-half) * tan(var(--rk-rocker-a-off)) * var(--h)));
-  animation: rk-rocker-twinkle var(--t) ease-in-out var(--d) infinite;
-}
-
-@keyframes rk-rocker-twinkle {
-  0%,
-  100% {
-    opacity: 0.15;
-  }
-  50% {
-    opacity: 1;
-  }
 }
 
 /*
@@ -440,10 +365,6 @@
 
 /* Reduced motion: it switches without rocking, and the dots change together. */
 @media (prefers-reduced-motion: reduce) {
-  .rk-rocker__spark {
-    animation: none;
-  }
-
   .rk-rocker,
   .rk-rocker__layer,
   .rk-rocker__cap,

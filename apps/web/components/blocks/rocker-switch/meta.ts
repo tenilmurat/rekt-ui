@@ -5,7 +5,7 @@ export const rockerSwitchMeta: UiBlockMeta = {
   id: "rocker-switch",
   title: "Rocker switch",
   description:
-    "A rocker switch seen from above in 3D: a pill-shaped plate on the ground, hinged at its seam into ON and OFF halves. The pressed half lies flat; the other is raised from the seam on a wedge of coloured wall. Click it and they swap on a springy seesaw, a row of dots beside it lights up in turn, and when it's on the ground goes dark and the switch glows, its raised end glowing with drifting white particles inside it and spilling white light across the ground.",
+    "A rocker switch seen from above in 3D: a pill-shaped plate on the ground, hinged at its seam into ON and OFF halves. The pressed half lies flat; the other is raised from the seam on a wedge of coloured wall. Click it and they swap on a springy seesaw, a row of dots beside it lights up in turn, and when it's on the ground goes dark and the switch glows, its raised wall burning white and spilling purple light across the ground.",
   category: "press",
   name: "RockerSwitch",
   files: ["RockerSwitch.tsx", "RockerSwitch.css"],

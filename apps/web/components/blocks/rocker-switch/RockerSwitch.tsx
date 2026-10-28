@@ -35,27 +35,6 @@ const DOTS = 14;
 /** The plate's length on the ground, in px; the CSS uses the same number. */
 const PLATE_W = 260;
 
-/** A small seeded random, so the particles land in the same places every render (and on the server). */
-const seeded = (seed: number) => () => {
-  seed = (seed * 16807) % 2147483647;
-  return (seed - 1) / 2147483646;
-};
-
-/**
- * The particles in the raised wall by night: where each sits along the half
- * (x, from the seam, kept to the straight part of the wall and leaning
- * toward the tall end), how high up the wall (h), its size and its twinkle.
- */
-const SPARKS = (() => {
-  const rnd = seeded(7);
-  return Array.from({ length: 36 }, () => ({
-    x: 0.1 + Math.sqrt(rnd()) * 0.52,
-    h: 0.12 + rnd() * 0.76,
-    s: 1.2 + rnd() * 1.6,
-    t: 1.4 + rnd() * 1.6,
-    d: -rnd() * 3,
-  }));
-})();
 
 /**
  * A rocker switch seen from above in 3D: a pill-shaped plate on the ground,
@@ -133,9 +112,8 @@ export function RockerSwitch({
           {/* The shadow each raised half throws on the ground beyond its end. */}
           <span className="rk-rocker__shade rk-rocker__shade--on" aria-hidden="true" />
           <span className="rk-rocker__shade rk-rocker__shade--off" aria-hidden="true" />
-          {/* By night, the light the raised OFF end spills across the ground, and the white band it casts at its foot. */}
+          {/* By night, the light the raised OFF end spills across the ground. */}
           <span className="rk-rocker__glow" aria-hidden="true" />
-          <span className="rk-rocker__spill" aria-hidden="true" />
           <span className="rk-rocker__body" aria-hidden="true">
             {/* The flat base: the whole pill, as thick as Base (none by default, so the pressed half lies on the ground). */}
             {Array.from({ length: base }, (_, i) => (
@@ -156,16 +134,6 @@ export function RockerSwitch({
                 style={{ "--rk-rocker-z": `${base + j}px`, "--rk-rocker-height": h, "--rk-rocker-up": h / rise } as React.CSSProperties}
               />
             ))}
-            {/* By night, white particles twinkling in the raised OFF half's wall. */}
-            <span className="rk-rocker__sparks">
-              {SPARKS.map((p, i) => (
-                <span
-                  key={i}
-                  className="rk-rocker__spark"
-                  style={{ "--x": p.x, "--h": p.h, "--s": `${p.s.toFixed(2)}px`, "--t": `${p.t.toFixed(2)}s`, "--d": `${p.d.toFixed(2)}s` } as React.CSSProperties}
-                />
-              ))}
-            </span>
             {/* The two halves of the top, each hinged at the seam. */}
             <span className="rk-rocker__cap rk-rocker__cap--on">
               <span className="rk-rocker__label">{labels[0]}</span>
