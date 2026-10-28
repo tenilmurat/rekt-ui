@@ -60,6 +60,7 @@
   /* How much the wall brightens toward its top edge, and how strong the ground glow is. */
   --rk-rocker-wall-boost: 0.22;
   --rk-rocker-glow: 0;
+
   --rk-rocker-outline-wide: transparent;
   --rk-rocker-dot-glow: transparent;
   --rk-rocker-outline: transparent;
@@ -94,12 +95,13 @@
   --rk-rocker-dot: rgb(255 255 255 / 0.22);
   --rk-rocker-dot-lit: #ffffff;
   --rk-rocker-wall-lit: #ffffff;
-  --rk-rocker-wall: #fdf9ff;
-  --rk-rocker-wall-dark: color-mix(in oklab, var(--rk-rocker-accent) 22%, white);
+  --rk-rocker-wall: color-mix(in oklab, var(--rk-rocker-accent) 38%, white);
+  --rk-rocker-wall-dark: color-mix(in oklab, var(--rk-rocker-accent) 62%, white);
   --rk-rocker-shadow: var(--rk-rocker-accent);
   --rk-rocker-shadow-blur: 34px;
-  --rk-rocker-wall-boost: 0.7;
+  --rk-rocker-wall-boost: 0.55;
   --rk-rocker-glow: 1;
+
   --rk-rocker-outline-wide: color-mix(in oklab, var(--rk-rocker-accent) 45%, transparent);
   --rk-rocker-dot-glow: color-mix(in oklab, var(--rk-rocker-accent) 70%, white);
   --rk-rocker-outline: color-mix(in oklab, var(--rk-rocker-accent) 80%, white);
@@ -264,6 +266,49 @@
 }
 
 /*
+  By night, white particles in the raised OFF half's wall: small dots set
+  into its near face, each at a share of the length from the seam (--x) and
+  a share of the wall's height there (--h). Their height is worked out from
+  the same animated angle as the wedge, so they ride up and down with it;
+  each twinkles on its own beat. They sit a hair outside the face, so the
+  wall never hides them, and the group is only as strong as the end is
+  raised, so by day there are none.
+*/
+.rk-rocker__sparks {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  opacity: calc(var(--rk-rocker-glow) * var(--rk-rocker-a-off) / var(--rk-rocker-tilt));
+  pointer-events: none;
+}
+
+.rk-rocker__spark {
+  position: absolute;
+  top: calc(100% + 0.5px);
+  left: calc(50% + var(--x) * 50%);
+  width: var(--s);
+  height: var(--s);
+  margin: calc(var(--s) / -2) 0 0 calc(var(--s) / -2);
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow:
+    0 0 3px #ffffff,
+    0 0 7px color-mix(in oklab, var(--rk-rocker-accent) 60%, white);
+  transform: translateZ(calc(var(--rk-rocker-base) + var(--x) * var(--rk-rocker-half) * tan(var(--rk-rocker-a-off)) * var(--h)));
+  animation: rk-rocker-twinkle var(--t) ease-in-out var(--d) infinite;
+}
+
+@keyframes rk-rocker-twinkle {
+  0%,
+  100% {
+    opacity: 0.15;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/*
   The two halves of the top, hinged at the seam: each one's transform-origin
   is its seam edge. The pressed half lies flat on the base; the other turns
   up from the seam by the tilt, so its far end stands on top of the wedge.
@@ -395,6 +440,10 @@
 
 /* Reduced motion: it switches without rocking, and the dots change together. */
 @media (prefers-reduced-motion: reduce) {
+  .rk-rocker__spark {
+    animation: none;
+  }
+
   .rk-rocker,
   .rk-rocker__layer,
   .rk-rocker__cap,
