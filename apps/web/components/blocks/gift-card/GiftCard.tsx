@@ -10,7 +10,7 @@ export type GiftCardProps = {
   shape?: "rounded" | "ticket" | "stamp";
   /** The card's colours. */
   palette?: "ocean" | "dusk" | "mint";
-  /** The card's width, in px; the height follows at 1.58:1, like a bank card. */
+  /** The card's width, in px; the height follows at 1.58:1, like a bank card. Icon-sized by default, for a button or a banner. */
   width?: number;
   /** A small engraving along the right edge; empty hides it. */
   mark?: string;
@@ -157,7 +157,7 @@ export function GiftCard({
   pattern = "laurel",
   shape = "rounded",
   palette = "ocean",
-  width = 320,
+  width = 96,
   mark = "MMXX",
   tilt = true,
   label = "Gift card",

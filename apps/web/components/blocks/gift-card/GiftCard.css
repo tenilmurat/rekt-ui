@@ -1,11 +1,15 @@
 /*
   Gift card. Every colour is a variable with a fallback, so it works as is;
   point the --rk-gift-* variables at your own tokens to theme it. The card
-  carries its own colours, so it reads on a light page or a dark one. The
-  tilt variables (--rk-gift-rx, -ry, -shine) are written by the component.
+  carries its own colours, so it reads on a light page or a dark one. It's
+  icon-sized by default, for a button or a banner, and every size inside is
+  a multiple of --rk-gift-u, so it scales as a whole. The tilt variables
+  (--rk-gift-rx, -ry, -shine) are written by the component.
 */
 .rk-gift {
-  --rk-gift-w: 320px;
+  --rk-gift-w: 96px;
+  /* One design pixel at this size: the design is drawn 320 wide, so every size below is a multiple of this. */
+  --rk-gift-u: calc(var(--rk-gift-w) / 320);
   --rk-gift-ink: #ffffff;
   --rk-gift-line: rgb(255 255 255 / 0.24);
   --rk-gift-mark: rgb(255 255 255 / 0.4);
@@ -18,10 +22,11 @@
   --rk-gift-ease: cubic-bezier(0.22, 1, 0.36, 1);
 
   display: inline-block;
-  padding: 16px;
-  perspective: 900px;
+  padding: calc(var(--rk-gift-u) * 16);
+  perspective: calc(var(--rk-gift-u) * 900);
   /* The shadow follows the card's outline, notches and scallops included. */
-  filter: drop-shadow(0 18px 28px rgb(20 24 60 / 0.28)) drop-shadow(0 3px 6px rgb(20 24 60 / 0.16));
+  filter: drop-shadow(0 calc(var(--rk-gift-u) * 18) calc(var(--rk-gift-u) * 28) rgb(20 24 60 / 0.28))
+    drop-shadow(0 calc(var(--rk-gift-u) * 3) calc(var(--rk-gift-u) * 6) rgb(20 24 60 / 0.16));
 }
 
 .rk-gift[data-palette="dusk"] {
@@ -52,7 +57,7 @@
   box-shadow:
     inset 0 0 0 1px rgb(255 255 255 / 0.26),
     inset 0 1.5px 0 rgb(255 255 255 / 0.4),
-    inset 0 -24px 48px rgb(255 255 255 / 0.08);
+    inset 0 calc(var(--rk-gift-u) * -24) calc(var(--rk-gift-u) * 48) rgb(255 255 255 / 0.08);
   transform: rotateZ(-5deg) rotateX(var(--rk-gift-rx, 0deg)) rotateY(var(--rk-gift-ry, 0deg));
   transition: transform 500ms var(--rk-gift-ease);
 }
@@ -72,11 +77,11 @@
 .rk-gift[data-shape="stamp"] .rk-gift__card {
   border-radius: calc(var(--rk-gift-w) * 0.025);
   -webkit-mask:
-    radial-gradient(circle 5px at 50% 0, #0000 97%, #000) top / 14px 51% repeat-x,
-    radial-gradient(circle 5px at 50% 100%, #0000 97%, #000) bottom / 14px 51% repeat-x;
+    radial-gradient(circle calc(var(--rk-gift-u) * 5) at 50% 0, #0000 97%, #000) top / calc(var(--rk-gift-u) * 14) 51% repeat-x,
+    radial-gradient(circle calc(var(--rk-gift-u) * 5) at 50% 100%, #0000 97%, #000) bottom / calc(var(--rk-gift-u) * 14) 51% repeat-x;
   mask:
-    radial-gradient(circle 5px at 50% 0, #0000 97%, #000) top / 14px 51% repeat-x,
-    radial-gradient(circle 5px at 50% 100%, #0000 97%, #000) bottom / 14px 51% repeat-x;
+    radial-gradient(circle calc(var(--rk-gift-u) * 5) at 50% 0, #0000 97%, #000) top / calc(var(--rk-gift-u) * 14) 51% repeat-x,
+    radial-gradient(circle calc(var(--rk-gift-u) * 5) at 50% 100%, #0000 97%, #000) bottom / calc(var(--rk-gift-u) * 14) 51% repeat-x;
 }
 
 /*
@@ -94,7 +99,7 @@
 .rk-gift__glow::after {
   position: absolute;
   border-radius: 50%;
-  filter: blur(18px);
+  filter: blur(calc(var(--rk-gift-u) * 18));
   content: "";
 }
 
@@ -138,7 +143,7 @@
   height: 100%;
   fill: var(--rk-gift-line);
   /* Soft, like line art seen through frosted glass. */
-  filter: blur(0.5px);
+  filter: blur(calc(var(--rk-gift-u) * 0.5));
   pointer-events: none;
 }
 
@@ -238,7 +243,7 @@
   width: 24%;
   aspect-ratio: 1;
   color: rgb(255 255 255 / 0.9);
-  filter: drop-shadow(0 0 10px rgb(255 255 255 / 0.45));
+  filter: drop-shadow(0 0 calc(var(--rk-gift-u) * 10) rgb(255 255 255 / 0.45));
   transform: translate(-50%, -50%);
   animation: rk-gift-float 4.5s ease-in-out infinite alternate;
 }
@@ -252,7 +257,7 @@
 
 @keyframes rk-gift-float {
   to {
-    transform: translate(-50%, calc(-50% - 4px));
+    transform: translate(-50%, calc(-50% - var(--rk-gift-u) * 4));
   }
 }
 
