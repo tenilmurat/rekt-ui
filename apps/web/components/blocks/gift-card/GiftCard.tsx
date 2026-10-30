@@ -39,7 +39,7 @@ const leafPath = (length: number, width: number) =>
  * curving stem with leaves in pairs that shrink toward the tip. The inner
  * group sways on its base; the outer one places the branch.
  */
-function Branch({ x, y, angle, scale, leaves, delay }: { x: number; y: number; angle: number; scale: number; leaves: number; delay: number }) {
+function Branch({ x, y, angle, scale, leaves, delay, leaf = 1 }: { x: number; y: number; angle: number; scale: number; leaves: number; delay: number; leaf?: number }) {
   // The stem: a quadratic curve from (0,0) through (55,-8) to (110,-30).
   const point = (t: number) => {
     const u = 1 - t;
@@ -58,9 +58,9 @@ function Branch({ x, y, angle, scale, leaves, delay }: { x: number; y: number; a
       key: `${i}${side}`,
       x: p.x,
       y: p.y,
-      angle: tangent(t) + side * 42,
-      length: 28 * size,
-      width: 12 * size,
+      angle: tangent(t) + side * 48,
+      length: 28 * size * leaf,
+      width: 12 * size * leaf,
     }));
   }).flat();
   const tip = point(1);
@@ -71,20 +71,32 @@ function Branch({ x, y, angle, scale, leaves, delay }: { x: number; y: number; a
         {items.map((l) => (
           <path key={l.key} d={leafPath(l.length, l.width)} transform={`translate(${l.x.toFixed(1)} ${l.y.toFixed(1)}) rotate(${l.angle.toFixed(1)})`} />
         ))}
-        <path d={leafPath(24, 10)} transform={`translate(${tip.x} ${tip.y}) rotate(${tangent(1).toFixed(1)})`} />
+        <path d={leafPath(24 * leaf, 10 * leaf)} transform={`translate(${tip.x} ${tip.y}) rotate(${tangent(1).toFixed(1)})`} />
       </g>
     </g>
   );
 }
 
-/** The laurel pattern, as in the design: branches across the left and top, a big one down the right. */
+/**
+ * The laurel pattern, as in the design: a few big, soft shapes rather than
+ * many small ones. A branch of broad leaves up the left, a thick crescent at
+ * the top, and down the right two crossing stems with a big leaf at the top
+ * edge and a sprout of two leaves at the bottom.
+ */
 function Laurel() {
   return (
     <>
-      <Branch x={-14} y={168} angle={-34} scale={1.15} leaves={5} delay={0} />
-      <Branch x={96} y={-18} angle={-132} scale={0.95} leaves={4} delay={-1.4} />
-      <Branch x={334} y={0} angle={112} scale={1.6} leaves={6} delay={-2.6} />
-      <Branch x={274} y={222} angle={-92} scale={0.75} leaves={3} delay={-0.8} />
+      <Branch x={-12} y={194} angle={-44} scale={1.2} leaves={3} leaf={1.7} delay={0} />
+      <g className="rk-gift__sway" style={{ "--rk-gift-delay": "-1.4s", transformOrigin: "102px 34px" } as React.CSSProperties}>
+        <path className="rk-gift__stem rk-gift__stem--thick" d="M82 44A22 22 0 1 1 124 28" />
+      </g>
+      <g className="rk-gift__sway" style={{ "--rk-gift-delay": "-2.6s", transformOrigin: "252px 202px" } as React.CSSProperties}>
+        <path className="rk-gift__stem rk-gift__stem--thick" d="M306 30Q292 118 250 206" />
+        <path className="rk-gift__stem rk-gift__stem--thick" d="M224 108Q262 96 304 58" />
+        <path d={leafPath(64, 24)} transform="translate(300 54) rotate(-96)" />
+        <path d={leafPath(50, 20)} transform="translate(258 196) rotate(-150)" />
+        <path d={leafPath(44, 18)} transform="translate(258 196) rotate(-22)" />
+      </g>
     </>
   );
 }
@@ -195,13 +207,13 @@ export function GiftCard({
             <Pattern />
           </g>
           {mark ? (
-            <text className="rk-gift__mark" transform={`translate(${VB_W - 40} ${VB_H / 2 - 18}) rotate(68)`}>
+            <text className="rk-gift__mark" transform={`translate(${VB_W - 34} ${VB_H / 2 - 14}) rotate(74)`}>
               {mark}
             </text>
           ) : null}
         </svg>
         <span className="rk-gift__icon" aria-hidden="true">
-          <Gift strokeWidth={2} />
+          <Gift strokeWidth={2.5} />
         </span>
         <span className="rk-gift__sheen" aria-hidden="true" />
       </div>
