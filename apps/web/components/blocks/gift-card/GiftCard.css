@@ -30,8 +30,9 @@
   padding: calc(var(--rk-gift-u) * 16);
   perspective: calc(var(--rk-gift-u) * 900);
   /* The shadow follows the card's outline, notches and scallops included. */
-  filter: drop-shadow(0 calc(var(--rk-gift-u) * 18) calc(var(--rk-gift-u) * 28) rgb(20 24 60 / 0.28))
-    drop-shadow(0 calc(var(--rk-gift-u) * 3) calc(var(--rk-gift-u) * 6) rgb(20 24 60 / 0.16));
+  /* Soft: a wide, faint shadow well below and a light one close in. */
+  filter: drop-shadow(0 calc(var(--rk-gift-u) * 16) calc(var(--rk-gift-u) * 40) rgb(20 24 60 / 0.15))
+    drop-shadow(0 calc(var(--rk-gift-u) * 2) calc(var(--rk-gift-u) * 8) rgb(20 24 60 / 0.08));
 }
 
 .rk-gift[data-palette="dusk"] {

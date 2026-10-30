@@ -1,11 +1,12 @@
 "use client";
 
+import { RotateCcw, Shuffle as ShuffleIcon } from "lucide-react";
 import { DynamicIcon, type IconName } from "lucide-react/dynamic";
 import { useId } from "react";
 import type { ControlValues, UiControl } from "@/lib/ui/types";
 
 /**
- * The knobs in the component dialog: segmented choices, icon grids, switches and sliders.
+ * The knobs in the component dialog: segmented choices, icon grids, switches, sliders and shuffles.
  * Each one sets one prop, which the preview and the Usage snippet both read.
  */
 export function Controls({
@@ -27,6 +28,8 @@ export function Controls({
           return <Icons key={control.prop} control={control} value={String(value)} onChange={(v) => onChange(control.prop, v)} />;
         if (control.type === "toggle")
           return <Toggle key={control.prop} control={control} value={Boolean(value)} onChange={(v) => onChange(control.prop, v)} />;
+        if (control.type === "shuffle")
+          return <Shuffle key={control.prop} control={control} value={Number(value)} onChange={(v) => onChange(control.prop, v)} />;
         return <Slider key={control.prop} control={control} value={Number(value)} onChange={(v) => onChange(control.prop, v)} />;
       })}
     </div>
@@ -158,6 +161,45 @@ function Toggle({
           }}
         />
       </button>
+    </Row>
+  );
+}
+
+/** Two buttons for a random seed: Shuffle picks a new one, Reset (off while it's already the default) goes back. */
+function Shuffle({
+  control,
+  value,
+  onChange,
+}: {
+  control: Extract<UiControl, { type: "shuffle" }>;
+  value: number;
+  onChange: (value: number) => void;
+}) {
+  const labelId = useId();
+  const shuffle = () => {
+    let next = value;
+    while (next === value || next === control.default) next = 1 + Math.floor(Math.random() * 9999);
+    onChange(next);
+  };
+  const button = "flex h-[30px] items-center gap-[6px] rounded-full px-[12px] text-[13px] transition-colors active:scale-[0.96] disabled:active:scale-100";
+  return (
+    <Row label={control.label} labelId={labelId}>
+      <div role="group" aria-labelledby={labelId} className="flex gap-[6px]">
+        <button type="button" onClick={shuffle} className={button} style={{ backgroundColor: "var(--hover-2)", color: "var(--ink)" }}>
+          <ShuffleIcon size={14} strokeWidth={1.875} aria-hidden="true" />
+          Shuffle
+        </button>
+        <button
+          type="button"
+          onClick={() => onChange(control.default)}
+          disabled={value === control.default}
+          className={button}
+          style={{ backgroundColor: "var(--hover-2)", color: value === control.default ? "var(--ink-3)" : "var(--ink)" }}
+        >
+          <RotateCcw size={14} strokeWidth={1.875} aria-hidden="true" />
+          Reset
+        </button>
+      </div>
     </Row>
   );
 }

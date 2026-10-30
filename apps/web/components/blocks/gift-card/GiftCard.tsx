@@ -14,6 +14,8 @@ export type GiftCardProps = {
   width?: number;
   /** Tip toward the pointer on hover. */
   tilt?: boolean;
+  /** Where the pattern's shapes sit: 0 is the designed layout; any other number shuffles them, and the same number always lands the same. */
+  layout?: number;
   /** What screen readers hear. */
   label?: string;
 };
@@ -76,25 +78,57 @@ function Fern({ x, y, angle, length, delay }: { x: number; y: number; angle: num
 }
 
 /**
- * The fern pattern, as in the design: the same branch at a few places, sizes
- * and angles. One rises from the bottom left, one rises along the right edge,
- * one reaches down from the top and a small one lies along the bottom, all
- * clear of the gift.
+ * Where a fern can grow without crossing the gift: [x, y, angle, length],
+ * one list per side of the card, so two branches never crowd one corner.
+ * The first spot on each side is the designed layout.
  */
-function Ferns() {
+const FERN_SPOTS = [
+  [
+    [-4, 198, -48, 140], // rising from the bottom left
+    [-20, 40, 25, 110], // reaching in from the left
+  ],
+  [
+    [156, -30, 152, 96], // reaching down from the top
+    [40, -24, 70, 100], // hanging from the top left
+  ],
+  [
+    [332, 214, -112, 150], // rising along the right edge
+    [300, -20, 120, 100], // hanging from the top right
+    [340, 120, -160, 90], // reaching in from the right
+  ],
+  [
+    [136, 228, -18, 88], // lying along the bottom
+    [196, 228, -162, 88], // lying along the bottom, the other way
+  ],
+];
+
+/** The random source for a shuffled layout; the same layout number always lands the same. */
+const shuffled = (layout: number, salt: number) => seeded(layout * 7919 + salt);
+
+/**
+ * The fern pattern, as in the design: the same branch at a few places, sizes
+ * and angles, all clear of the gift. A shuffled layout picks one spot on
+ * each side of the card and turns and sizes each branch a little.
+ */
+function Ferns({ layout }: { layout: number }) {
+  const rnd = shuffled(layout, 11);
+  const spots = FERN_SPOTS.map((side) => {
+    if (!layout) return side[0];
+    const [x, y, angle, length] = side[Math.floor(rnd() * side.length)];
+    return [x, y, angle + (rnd() - 0.5) * 20, length * (0.85 + rnd() * 0.3)];
+  });
   return (
     <>
-      <Fern x={-4} y={198} angle={-48} length={140} delay={0} />
-      <Fern x={332} y={214} angle={-112} length={150} delay={-2.2} />
-      <Fern x={156} y={-30} angle={152} length={96} delay={-1.4} />
-      <Fern x={136} y={228} angle={-18} length={88} delay={-3.1} />
+      {spots.map(([x, y, angle, length], i) => (
+        <Fern key={i} x={x} y={y} angle={Math.round(angle)} length={Math.round(length)} delay={-[0, 1.4, 2.2, 3.1][i]} />
+      ))}
     </>
   );
 }
 
 /** Confetti: a handful of big, soft pieces (strips, dots and small arcs), each bobbing on its own beat. */
-function Confetti() {
-  const rnd = seeded(23);
+function Confetti({ layout }: { layout: number }) {
+  const rnd = layout ? shuffled(layout, 23) : seeded(23);
   return (
     <>
       {Array.from({ length: 14 }, (_, i) => {
@@ -121,20 +155,33 @@ function Confetti() {
   );
 }
 
-/** Rings: a few thick circles spreading from the top-right corner, breathing out in turn. */
-function Rings() {
+/** Rings: a few thick circles spreading from a corner (the top right, or any corner when shuffled), breathing out in turn. */
+function Rings({ layout }: { layout: number }) {
+  const rnd = shuffled(layout, 5);
+  const corners = [
+    [VB_W - 30, 30],
+    [30, 30],
+    [30, VB_H - 30],
+    [VB_W - 30, VB_H - 30],
+  ];
+  const [x, y] = layout ? corners[Math.floor(rnd() * 4)] : corners[0];
+  const grow = layout ? 0.85 + rnd() * 0.3 : 1;
   return (
-    <g transform={`translate(${VB_W - 30} 30)`}>
+    <g transform={`translate(${x} ${y})`}>
       {[46, 96, 150, 208].map((r, i) => (
-        <circle key={r} className="rk-gift__ring" r={r} style={{ "--rk-gift-delay": `${-i * 0.7}s` } as React.CSSProperties} />
+        <circle key={r} className="rk-gift__ring" r={Math.round(r * grow)} style={{ "--rk-gift-delay": `${-i * 0.7}s` } as React.CSSProperties} />
       ))}
     </g>
   );
 }
 
-/** Stars: a few soft four-point sparkles of different sizes that twinkle in turn. */
-function Stars() {
-  const spots = [
+/**
+ * Stars: a few soft four-point sparkles of different sizes that twinkle in
+ * turn. Shuffled, there's one in each sixth of the card, the middle two kept
+ * above and below the gift.
+ */
+function Stars({ layout }: { layout: number }) {
+  let spots = [
     [48, 50, 26],
     [96, 150, 16],
     [34, 160, 12],
@@ -142,6 +189,16 @@ function Stars() {
     [216, 168, 14],
     [154, 24, 11],
   ];
+  if (layout) {
+    const rnd = shuffled(layout, 3);
+    spots = Array.from({ length: 6 }, (_, i) => {
+      const col = i % 3;
+      const row = Math.floor(i / 3);
+      const x = (col + 0.15 + rnd() * 0.7) * (VB_W / 3);
+      const y = col === 1 ? (row ? 166 + rnd() * 24 : 14 + rnd() * 26) : (row + 0.15 + rnd() * 0.7) * (VB_H / 2);
+      return [Math.round(x), Math.round(y), Math.round(10 + rnd() * 16)];
+    });
+  }
   return (
     <>
       {spots.map(([x, y, s], i) => (
@@ -171,6 +228,7 @@ export function GiftCard({
   palette = "ocean",
   width = 96,
   tilt = true,
+  layout = 0,
   label = "Gift card",
 }: GiftCardProps) {
   const cardRef = useRef<HTMLDivElement | null>(null);
@@ -203,7 +261,7 @@ export function GiftCard({
         <span className="rk-gift__glow" aria-hidden="true" />
         <svg className="rk-gift__pattern" viewBox={`0 0 ${VB_W} ${VB_H}`} preserveAspectRatio="xMidYMid slice" aria-hidden="true">
           <g className="rk-gift__drift">
-            <Pattern />
+            <Pattern layout={Math.round(Math.abs(layout))} />
           </g>
         </svg>
         {/* A soft white bloom behind the gift, as if it gave off light. */}

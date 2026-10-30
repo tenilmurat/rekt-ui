@@ -9,7 +9,9 @@ export type UiControl =
   | { type: "toggle"; prop: string; label: string; default: boolean }
   /** A grid of Lucide icons; each option's value is the icon's Lucide name (kebab-case). */
   | { type: "icons"; prop: string; label: string; options: { value: string; label: string }[]; default: string }
-  | { type: "slider"; prop: string; label: string; min: number; max: number; step: number; unit?: string; default: number };
+  | { type: "slider"; prop: string; label: string; min: number; max: number; step: number; unit?: string; default: number }
+  /** A random seed: Shuffle picks a new number, Reset goes back to the default. */
+  | { type: "shuffle"; prop: string; label: string; default: number };
 
 export type ControlValues = Record<string, string | number | boolean>;
 
