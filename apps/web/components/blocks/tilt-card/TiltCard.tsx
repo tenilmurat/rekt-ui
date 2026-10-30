@@ -13,12 +13,8 @@ export type TiltCardProps = {
   corner?: number;
   /** A soft light that follows the pointer across the surface. */
   glare?: boolean;
-  /**
-   * "glitter" is a black card where rainbow pixels dissolve in around the
-   * pointer; "holo" is a dark card with an iridescent foil that follows it;
-   * "color" is soft colour fields.
-   */
-  finish?: "glitter" | "holo" | "color";
+  /** "holo" is a dark card with an iridescent foil that follows the pointer; "color" is soft colour fields. */
+  finish?: "holo" | "color";
   /** The small line at the top left of the front. */
   label?: string;
   /** The small mark at the top right of the front. */
@@ -55,58 +51,6 @@ function Logo({ className }: { className: string }) {
   );
 }
 
-/** The glitter's pixel size, in px. */
-const PIXEL = 4;
-
-/**
- * Draws the glitter finish: a grid of small square pixels in rainbow colours
- * around the pointer. Each pixel has its own fixed random threshold and shows
- * only while the light at its spot is stronger than that, so the patch
- * dissolves in and out pixel by pixel rather than fading as a whole. The hue
- * runs across the grid and shifts with the pointer.
- */
-function drawGlitter(canvas: HTMLCanvasElement, noise: { current: Float32Array | null }, p: Pose) {
-  const w = canvas.clientWidth;
-  const h = canvas.clientHeight;
-  const dpr = Math.min(2, window.devicePixelRatio || 1);
-  if (canvas.width !== Math.round(w * dpr) || canvas.height !== Math.round(h * dpr)) {
-    canvas.width = Math.round(w * dpr);
-    canvas.height = Math.round(h * dpr);
-  }
-  const ctx = canvas.getContext("2d");
-  if (!ctx) return;
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  ctx.clearRect(0, 0, w, h);
-  if (p.glow < 0.01) return;
-
-  const cols = Math.ceil(w / PIXEL);
-  const rows = Math.ceil(h / PIXEL);
-  if (!noise.current || noise.current.length !== cols * rows) {
-    noise.current = Float32Array.from({ length: cols * rows }, () => Math.random());
-  }
-  const x0 = (p.gx / 100) * w;
-  const y0 = (p.gy / 100) * h;
-  const reach = w * 0.5;
-  const shift = p.gx * 2.4 + p.gy * 1.6;
-  for (let r = 0; r < rows; r++) {
-    for (let c = 0; c < cols; c++) {
-      const dx = c * PIXEL + PIXEL / 2 - x0;
-      const dy = r * PIXEL + PIXEL / 2 - y0;
-      const d = Math.sqrt(dx * dx + dy * dy) / reach;
-      if (d >= 1) continue;
-      // Dense at the pointer, thinning out toward the edge of the patch.
-      const light = (1 - d) * (1 - d) * p.glow;
-      const n = noise.current[r * cols + c];
-      if (n > light) continue;
-      const hue = Math.round((c * 7 + r * 5 + shift) % 360);
-      ctx.globalAlpha = 0.5 + 0.45 * Math.min(1, (light - n) * 4);
-      ctx.fillStyle = `hsl(${hue} 90% ${60 + Math.round(n * 16)}%)`;
-      ctx.fillRect(c * PIXEL, r * PIXEL, PIXEL - 0.5, PIXEL - 0.5);
-    }
-  }
-  ctx.globalAlpha = 1;
-}
-
 /** Dot grid, the foil seen through it, and the brighter glitter on top. */
 function Holo() {
   return (
@@ -129,7 +73,7 @@ export function TiltCard({
   shade = 50,
   corner = 24,
   glare = true,
-  finish = "glitter",
+  finish = "holo",
   label = "Rekt UI",
   index = "001",
   title = "Murat Tenil",
@@ -137,8 +81,6 @@ export function TiltCard({
   caption = "Design Engineer",
 }: TiltCardProps) {
   const cardRef = useRef<HTMLDivElement | null>(null);
-  const glitterRef = useRef<HTMLCanvasElement | null>(null);
-  const noise = useRef<Float32Array | null>(null);
   const target = useRef<Pose>({ ...REST });
   const current = useRef<Pose>({ ...REST });
   const frame = useRef(0);
@@ -157,7 +99,6 @@ export function TiltCard({
     // The shadow drifts away from the raised edge.
     card.style.setProperty("--rk-tilt-sx", `${(-p.ry * 1.2).toFixed(1)}px`);
     card.style.setProperty("--rk-tilt-sy", `${(p.rx * 1.2 + 18).toFixed(1)}px`);
-    if (glitterRef.current) drawGlitter(glitterRef.current, noise, p);
   };
 
   // Ease the current pose toward the target, and stop once it has settled.
@@ -234,7 +175,6 @@ export function TiltCard({
           <span className="rk-tilt__face rk-tilt__front" data-finish={finish} aria-hidden={flipped}>
             {finish === "holo" ? <Holo /> : null}
             {finish === "color" ? <span className="rk-tilt__art" /> : null}
-            {finish === "glitter" ? <canvas ref={glitterRef} className="rk-tilt__pixels" /> : null}
             <Logo className="rk-tilt__logo--front" />
             <span className="rk-tilt__top">
               <span className="rk-tilt__label">{label}</span>

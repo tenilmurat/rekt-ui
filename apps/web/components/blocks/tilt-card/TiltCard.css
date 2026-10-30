@@ -7,10 +7,6 @@
   --rk-tilt-width: 240px;
   --rk-tilt-radius: 24px;
   --rk-tilt-shade: 0.5;
-  /* Glitter: a black card, white type, rainbow pixels around the pointer. */
-  --rk-tilt-paper-bg: #0a0a0a;
-  --rk-tilt-paper-ink: #ffffff;
-  --rk-tilt-paper-muted: #8c8c8c;
   --rk-tilt-holo-bg: #0b0b0d;
   --rk-tilt-holo-ink: #f5f5f7;
   --rk-tilt-holo-muted: #8e8e96;
@@ -163,38 +159,6 @@
   line-height: 1.2;
 }
 
-/* ── Glitter finish ─────────────────────────────────────────────────── */
-
-.rk-tilt__face[data-finish="glitter"] {
-  --rk-tilt-ink: var(--rk-tilt-paper-ink);
-  --rk-tilt-muted: var(--rk-tilt-paper-muted);
-  --rk-tilt-logo-fill: var(--rk-tilt-paper-ink);
-  background: var(--rk-tilt-paper-bg);
-  color: var(--rk-tilt-ink);
-  box-shadow:
-    0 0 0 1px rgb(255 255 255 / 0.08) inset,
-    var(--rk-tilt-sx) var(--rk-tilt-sy) 44px rgb(20 18 16 / calc(0.14 + var(--rk-tilt-shade) * 0.18));
-}
-
-/* The pixels are drawn by the component on this canvas, under the type. */
-.rk-tilt__pixels {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-}
-
-/* The mark is white at rest and turns to foil only in the light. */
-.rk-tilt__face[data-finish="glitter"] .rk-tilt__logo-foil {
-  opacity: calc(var(--rk-tilt-glow) * 0.85);
-}
-
-/* A lighter shade: the card is already dark, so it only needs a little more as it turns away. */
-.rk-tilt__face[data-finish="glitter"] .rk-tilt__shade {
-  opacity: calc(var(--rk-tilt-glow) * 0.4);
-}
-
 /* ── Holographic finish ─────────────────────────────────────────────── */
 
 .rk-tilt__front[data-finish="holo"] {
@@ -315,10 +279,6 @@
   justify-content: center;
   background: var(--rk-tilt-back-bg);
   transform: rotateY(180deg);
-}
-
-.rk-tilt__back[data-finish="glitter"] {
-  background: var(--rk-tilt-paper-bg);
 }
 
 /* Darkens the side that leans away from the light. */

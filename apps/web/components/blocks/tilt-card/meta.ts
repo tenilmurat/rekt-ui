@@ -8,7 +8,7 @@ export const tiltCardMeta: UiBlockMeta = {
   id: "tilt-card",
   title: "Tilt card",
   description:
-    "A name card that leans in 3D under your pointer while rainbow glitter dissolves in, pixel by pixel, where the light falls. Black with white type by default, with a dot-grid holographic finish and a colour one; your name, handle and role sit under a small Rekt mark. Press it and it turns over to a plain back with just the logo.",
+    "A holographic name card that leans in 3D under your pointer: a dot grid lights up in rainbow glitter where the light falls, and the small Rekt mark catches the foil. Your name, handle and role sit in white on the dark face. Press it and it turns over to a plain back with just the logo.",
   category: "hover",
   name: "TiltCard",
   files: ["TiltCard.tsx", "TiltCard.css"],
@@ -19,11 +19,10 @@ export const tiltCardMeta: UiBlockMeta = {
       prop: "finish",
       label: "Finish",
       options: [
-        { value: "glitter", label: "Glitter" },
         { value: "holo", label: "Holo" },
         { value: "color", label: "Color" },
       ],
-      default: "glitter",
+      default: "holo",
     },
     {
       type: "segmented",
@@ -41,6 +40,6 @@ export const tiltCardMeta: UiBlockMeta = {
     { type: "toggle", prop: "glare", label: "Glare", default: true },
   ],
   howItWorks:
-    "Two layers do two jobs. The outer card takes the tilt: on pointer move it works out where the pointer sits (−0.5 to 0.5 on each axis) and turns that into rotateX and rotateY, inverted for Sink. Each frame the pose eases 14% of the way to that target, so fast movements stay smooth and leaving the card lets it settle back. The pose is written as CSS variables that every effect reads. The glitter finish (the default) is a black card with white type and a <canvas> over it, under the type: it's a grid of 4 px squares, and each square has its own fixed random threshold. On every frame of the pose the light at each square is worked out from its distance to the pointer (strongest at the pointer, falling off over half the card's width, times the pose's glow) and the square is drawn only where the light beats its threshold, in a rainbow hue that runs across the grid and shifts with the pointer. So the patch dissolves in and out pixel by pixel rather than fading as a whole, and when the pointer leaves, the glow eases out and the pixels drop away. Nothing is drawn while the card is still. The holographic finish is built from masks over a near-black face: a fine dot grid; a spectrum gradient whose position follows the pointer, masked to the dot grid and to a soft spot at the pointer (two masks intersected), so the dots near the light turn to colour; and glitter, three coarser grids of bigger dots added together and cut to a tighter spot, with the spectrum running the other way, so bright specks pop in and out as you move. The Rekt mark is an SVG with its own foil, cut to its shape by an SVG mask of the same path; on the glitter card it's white at rest and turns to foil only in the light. The type is laid out like a name card: label and index in the top corners, the mark in the middle, and at the bottom the name, a muted handle and, after a gap, the role (caption); every size is a share of the card's width. The inner layer turns the card over: pressing it toggles rotateY(180deg) with a 700ms ease, and both faces hide their back side, so you only ever see the one facing you; the back is plain, just the logo on the face's colour. It acts as a button (focusable, announced as pressed or not, flipped with Enter or Space); it's a div rather than a <button> because browsers flatten 3D inside buttons. Reduced motion turns the tilt and the flip animation off.",
+    "Two layers do two jobs. The outer card takes the tilt: on pointer move it works out where the pointer sits (−0.5 to 0.5 on each axis) and turns that into rotateX and rotateY, inverted for Sink. Each frame the pose eases 14% of the way to that target, so fast movements stay smooth and leaving the card lets it settle back. The pose is written as CSS variables that every effect reads. The holographic finish is built from masks over a near-black face: a fine dot grid; a spectrum gradient whose position follows the pointer, masked to the dot grid and to a soft spot at the pointer (two masks intersected), so the dots near the light turn to colour; and glitter, three coarser grids of bigger dots added together and cut to a tighter spot, with the spectrum running the other way, so bright specks pop in and out as you move. The Rekt mark is an SVG with its own foil, cut to its shape by an SVG mask of the same path; it's always a little foiled and fully so in the light. The type is laid out like a name card: label and index in the top corners, the mark in the middle, and at the bottom the name, a muted handle and, after a gap, the role (caption); every size is a share of the card's width. The inner layer turns the card over: pressing it toggles rotateY(180deg) with a 700ms ease, and both faces hide their back side, so you only ever see the one facing you; the back is plain, just the logo on the face's colour. It acts as a button (focusable, announced as pressed or not, flipped with Enter or Space); it's a div rather than a <button> because browsers flatten 3D inside buttons. Reduced motion turns the tilt and the flip animation off.",
   cardHeight: 440,
 };
