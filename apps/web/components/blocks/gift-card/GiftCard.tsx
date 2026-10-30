@@ -29,25 +29,27 @@ const seeded = (seed: number) => () => {
 };
 
 /**
- * A fern leaf, lying along +x from the stem: plump, pointed at both ends,
+ * A fern leaf, lying along +x from the stem: pinched where it joins the stem
+ * (so the stem shows between the leaves), plump in the middle and pointed,
  * its tip curling a little toward -y.
  */
 const leafPath = (length: number) => {
   const l = length;
-  const w = length * 0.22;
-  return `M0 0C${l * 0.2} ${-w * 1.5} ${l * 0.62} ${-w * 1.6} ${l} ${-w * 0.25}C${l * 0.7} ${w * 0.9} ${l * 0.25} ${w * 0.9} 0 0Z`;
+  const w = length * 0.27;
+  return `M0 0C${l * 0.3} ${-w * 0.2} ${l * 0.42} ${-w * 1.9} ${l} ${-w * 0.25}C${l * 0.74} ${w * 0.9} ${l * 0.4} ${w * 0.6} 0 0Z`;
 };
 
 /**
- * A fern branch drawn from its base at the origin along +x: a straight stem
- * with four pairs of big leaves leaning toward the tip, the lower leaf of
- * each pair a step behind the upper, and one leaf at the tip. Each leaf's tip
+ * A fern branch drawn from its base at the origin along +x: a sturdy,
+ * straight stem, bare for its first fifth, then four pairs of big leaves
+ * leaning toward the tip, the lower leaf of each pair a step behind the
+ * upper, and one leaf at the tip. Each leaf's tip
  * curls toward the branch's tip. The inner group sways on the base; the
  * outer one places the branch.
  */
 function Fern({ x, y, angle, length, delay }: { x: number; y: number; angle: number; length: number; delay: number }) {
   const leaf = length * 0.3;
-  const leaves = [0.14, 0.36, 0.58, 0.78].flatMap((t, i) =>
+  const leaves = [0.2, 0.4, 0.6, 0.78].flatMap((t, i) =>
     [-1, 1].map((side) => ({
       key: `${i}${side}`,
       at: (t + (side > 0 ? 0.05 : 0)) * length,
@@ -58,13 +60,13 @@ function Fern({ x, y, angle, length, delay }: { x: number; y: number; angle: num
   return (
     <g transform={`translate(${x} ${y}) rotate(${angle})`}>
       <g className="rk-gift__sway" style={{ "--rk-gift-delay": `${delay}s` } as React.CSSProperties}>
-        <path className="rk-gift__stem" d={`M0 0H${length}`} style={{ strokeWidth: length * 0.04 }} />
+        <path className="rk-gift__stem" d={`M0 0H${length}`} style={{ strokeWidth: length * 0.05 }} />
         {leaves.map((l) => (
           <path
             key={l.key}
             d={leafPath(l.length)}
             // The leaf's tip curls toward -y, so the upper leaves are mirrored to curl toward the branch's tip too.
-            transform={`translate(${l.at.toFixed(1)} 0) rotate(${l.side * 42})${l.side < 0 ? " scale(1 -1)" : ""}`}
+            transform={`translate(${l.at.toFixed(1)} 0) rotate(${l.side * 48})${l.side < 0 ? " scale(1 -1)" : ""}`}
           />
         ))}
         <path d={leafPath(length * 0.34)} transform={`translate(${length * 0.97} 0)`} />
@@ -207,10 +209,14 @@ export function GiftCard({
         {/* A soft white bloom behind the gift, as if it gave off light. */}
         <span className="rk-gift__bloom" aria-hidden="true" />
         <span className="rk-gift__icon" aria-hidden="true">
-          <Gift strokeWidth={2.5} />
+          <Gift strokeWidth={3} />
+          {/* A thin bright line down the middle of each stroke, so the outline reads as a frosted glass tube. */}
+          <span className="rk-gift__core">
+            <Gift strokeWidth={1.2} />
+          </span>
           {/* The shine: the same gift at full white, seen only through a band of light that sweeps across now and then. */}
           <span className="rk-gift__glint">
-            <Gift strokeWidth={2.5} />
+            <Gift strokeWidth={3} />
           </span>
         </span>
         <span className="rk-gift__sheen" aria-hidden="true" />
