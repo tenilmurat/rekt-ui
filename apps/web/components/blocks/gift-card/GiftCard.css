@@ -56,7 +56,7 @@
   aspect-ratio: 320 / 202;
   overflow: hidden;
   border-radius: calc(var(--rk-gift-w) * 0.085);
-  background: linear-gradient(176deg, var(--rk-gift-top) 0%, var(--rk-gift-mid) 52%, var(--rk-gift-low) 100%);
+  background: linear-gradient(176deg, var(--rk-gift-top) 0%, var(--rk-gift-mid) 42%, var(--rk-gift-low) 86%);
   /* A glass edge: a thin light rim, brighter along the top. */
   /* A frosted glass rim: a light line round the edge and a soft white haze just inside it. */
   box-shadow:
@@ -109,10 +109,10 @@
 }
 
 .rk-gift__glow::before {
-  bottom: -46%;
-  left: 4%;
-  width: 96%;
-  height: 90%;
+  bottom: -40%;
+  left: -6%;
+  width: 112%;
+  height: 104%;
   background: radial-gradient(closest-side, var(--rk-gift-glow-a), transparent);
   opacity: 1;
   animation: rk-gift-drift-a 11s ease-in-out infinite alternate;
@@ -173,7 +173,7 @@
   stroke-width: 7;
 }
 
-/* Laurel: each branch sways a few degrees on its base. */
+/* Fern: each frond sways a few degrees on its base. */
 .rk-gift__sway {
   animation: rk-gift-sway 7s ease-in-out var(--rk-gift-delay, 0s) infinite alternate;
 }
@@ -243,7 +243,7 @@
   letter-spacing: 0.3em;
 }
 
-/* The gift at the centre: frosted, glowing a little, floating gently. */
+/* The gift at the centre: white, a little see-through, glowing and floating gently, with a glint passing over it. */
 .rk-gift__icon {
   position: absolute;
   top: 50%;
@@ -251,9 +251,8 @@
   display: block;
   width: 25%;
   aspect-ratio: 1;
-  /* Soft and frosted: a pale lavender stroke, a little blurred, glowing. */
-  color: rgb(236 240 255 / 0.9);
-  filter: blur(calc(var(--rk-gift-u) * 0.35)) drop-shadow(0 0 calc(var(--rk-gift-u) * 10) rgb(255 255 255 / 0.5));
+  color: #ffffff;
+  filter: blur(calc(var(--rk-gift-u) * 0.35)) drop-shadow(0 0 calc(var(--rk-gift-u) * 12) rgb(255 255 255 / 0.55));
   transform: translate(-50%, -50%);
   animation: rk-gift-float 4.5s ease-in-out infinite alternate;
 }
@@ -263,6 +262,40 @@
   width: 100%;
   height: 100%;
   fill: rgb(255 255 255 / 0.2);
+}
+
+/* The resting gift is see-through, so the glint reads brighter than it. */
+.rk-gift__icon > svg {
+  opacity: 0.52;
+}
+
+/*
+  The glint: a bright copy of the gift masked to a slanted band. The mask is
+  three widths wide, so at 100% the band waits off the left edge and at 0%
+  it has gone off the right; it sweeps across, then rests.
+*/
+.rk-gift__glint {
+  position: absolute;
+  inset: 0;
+  -webkit-mask: linear-gradient(115deg, transparent 43%, #000 50%, transparent 57%) 0% 0 / 300% 100% no-repeat;
+  mask: linear-gradient(115deg, transparent 43%, #000 50%, transparent 57%) 0% 0 / 300% 100% no-repeat;
+  animation: rk-gift-glint 4.8s ease-in-out 0.6s infinite;
+}
+
+.rk-gift__glint svg {
+  fill: rgb(255 255 255 / 0.6);
+}
+
+@keyframes rk-gift-glint {
+  0% {
+    -webkit-mask-position: 100% 0;
+    mask-position: 100% 0;
+  }
+  38%,
+  100% {
+    -webkit-mask-position: 0% 0;
+    mask-position: 0% 0;
+  }
 }
 
 @keyframes rk-gift-float {
@@ -294,7 +327,8 @@
   .rk-gift__bob,
   .rk-gift__ring,
   .rk-gift__twinkle,
-  .rk-gift__icon {
+  .rk-gift__icon,
+  .rk-gift__glint {
     animation: none;
   }
 
