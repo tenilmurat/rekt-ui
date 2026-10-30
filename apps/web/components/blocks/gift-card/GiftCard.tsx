@@ -12,8 +12,6 @@ export type GiftCardProps = {
   palette?: "ocean" | "dusk" | "mint";
   /** The card's width, in px; the height follows at 1.58:1, like a bank card. Icon-sized by default, for a button or a banner. */
   width?: number;
-  /** A small engraving along the right edge; empty hides it. */
-  mark?: string;
   /** Tip toward the pointer on hover. */
   tilt?: boolean;
   /** What screen readers hear. */
@@ -31,89 +29,63 @@ const seeded = (seed: number) => () => {
 };
 
 /**
- * A fern pinna, lying along +x from the rachis: long and narrow, fuller near
- * the base, drawn to a point.
+ * A fern leaf, lying along +x from the stem: plump, pointed at both ends,
+ * its tip curling a little toward -y.
  */
-const pinnaPath = (length: number) => {
-  const w = length * 0.2;
+const leafPath = (length: number) => {
   const l = length;
-  return `M0 0C${l * 0.15} ${-w * 1.6} ${l * 0.65} ${-w * 1.2} ${l} 0C${l * 0.65} ${w * 1.0} ${l * 0.15} ${w * 1.4} 0 0Z`;
+  const w = length * 0.22;
+  return `M0 0C${l * 0.2} ${-w * 1.5} ${l * 0.62} ${-w * 1.6} ${l} ${-w * 0.25}C${l * 0.7} ${w * 0.9} ${l * 0.25} ${w * 0.9} 0 0Z`;
 };
 
 /**
- * A fern frond drawn from its base at the origin along +x: a thin rachis
- * bending gently toward the tip, with pinnae on both sides, the two sides
- * offset by half a step as on a real frond, longest just above the base and
- * tapering to the tip. mirror bends it the other way. The inner group sways
- * on the base; the outer one places the frond.
+ * A fern branch drawn from its base at the origin along +x: a straight stem
+ * with four pairs of big leaves leaning toward the tip, the lower leaf of
+ * each pair a step behind the upper, and one leaf at the tip. Each leaf's tip
+ * curls toward the branch's tip. The inner group sways on the base; the
+ * outer one places the branch.
  */
-function Frond({
-  x,
-  y,
-  angle,
-  length,
-  pairs,
-  size,
-  mirror = false,
-  delay,
-}: {
-  x: number;
-  y: number;
-  angle: number;
-  length: number;
-  pairs: number;
-  size: number;
-  mirror?: boolean;
-  delay: number;
-}) {
-  // The rachis: a quadratic curve from (0,0) through (cx,cy) to (ex,ey).
-  const cx = length * 0.5;
-  const cy = -length * 0.02;
-  const ex = length;
-  const ey = -length * 0.3;
-  const point = (t: number) => {
-    const u = 1 - t;
-    return { x: 2 * u * t * cx + t * t * ex, y: 2 * u * t * cy + t * t * ey };
-  };
-  const tangent = (t: number) => {
-    const dx = 2 * (1 - t) * cx + 2 * t * (ex - cx);
-    const dy = 2 * (1 - t) * cy + 2 * t * (ey - cy);
-    return (Math.atan2(dy, dx) * 180) / Math.PI;
-  };
-  const pinnae = Array.from({ length: pairs * 2 }, (_, k) => {
-    const i = k >> 1;
-    const side = k % 2 ? 1 : -1;
-    const t = 0.05 + ((i + (side > 0 ? 0.5 : 0)) / pairs) * 0.86;
-    const p = point(t);
-    const len = size * Math.min(1, 0.7 + t * 1.5) * (1 - t * 0.78);
-    return { key: k, x: p.x, y: p.y, angle: tangent(t) + side * 58, len };
-  });
+function Fern({ x, y, angle, length, delay }: { x: number; y: number; angle: number; length: number; delay: number }) {
+  const leaf = length * 0.3;
+  const leaves = [0.14, 0.36, 0.58, 0.78].flatMap((t, i) =>
+    [-1, 1].map((side) => ({
+      key: `${i}${side}`,
+      at: (t + (side > 0 ? 0.05 : 0)) * length,
+      side,
+      length: leaf * (i === 3 ? 0.9 : 1),
+    })),
+  );
   return (
-    <g transform={`translate(${x} ${y}) rotate(${angle})${mirror ? " scale(1 -1)" : ""}`}>
+    <g transform={`translate(${x} ${y}) rotate(${angle})`}>
       <g className="rk-gift__sway" style={{ "--rk-gift-delay": `${delay}s` } as React.CSSProperties}>
-        <path className="rk-gift__stem" d={`M0 0Q${cx} ${cy} ${ex} ${ey}`} />
-        {pinnae.map((p) => (
-          <path key={p.key} d={pinnaPath(p.len)} transform={`translate(${p.x.toFixed(1)} ${p.y.toFixed(1)}) rotate(${p.angle.toFixed(1)})`} />
+        <path className="rk-gift__stem" d={`M0 0H${length}`} style={{ strokeWidth: length * 0.04 }} />
+        {leaves.map((l) => (
+          <path
+            key={l.key}
+            d={leafPath(l.length)}
+            // The leaf's tip curls toward -y, so the upper leaves are mirrored to curl toward the branch's tip too.
+            transform={`translate(${l.at.toFixed(1)} 0) rotate(${l.side * 42})${l.side < 0 ? " scale(1 -1)" : ""}`}
+          />
         ))}
-        <path d={pinnaPath(size * 0.3)} transform={`translate(${ex} ${ey}) rotate(${tangent(1).toFixed(1)})`} />
+        <path d={leafPath(length * 0.34)} transform={`translate(${length * 0.97} 0)`} />
       </g>
     </g>
   );
 }
 
 /**
- * The fern pattern, as in the design: one frond, drawn a few times at
- * different places, sizes and angles. A big one rises up the left, one
- * hangs from the top, one comes up from the bottom right and a small one
- * reaches in from the top-right corner, all clear of the gift and the mark.
+ * The fern pattern, as in the design: the same branch at a few places, sizes
+ * and angles. One rises from the bottom left, one rises along the right edge,
+ * one reaches down from the top and a small one lies along the bottom, all
+ * clear of the gift.
  */
-function Fern() {
+function Ferns() {
   return (
     <>
-      <Frond x={14} y={218} angle={-68} length={190} pairs={9} size={40} delay={0} />
-      <Frond x={70} y={-14} angle={30} length={140} pairs={7} size={32} delay={-1.6} />
-      <Frond x={214} y={222} angle={-84} length={96} pairs={5} size={28} mirror delay={-0.9} />
-      <Frond x={334} y={-12} angle={135} length={80} pairs={4} size={24} mirror delay={-2.8} />
+      <Fern x={-4} y={198} angle={-48} length={140} delay={0} />
+      <Fern x={332} y={214} angle={-112} length={150} delay={-2.2} />
+      <Fern x={156} y={-30} angle={152} length={96} delay={-1.4} />
+      <Fern x={136} y={228} angle={-18} length={88} delay={-3.1} />
     </>
   );
 }
@@ -183,25 +155,24 @@ function Stars() {
   );
 }
 
-const PATTERNS = { fern: Fern, confetti: Confetti, rings: Rings, stars: Stars };
+const PATTERNS = { fern: Ferns, confetti: Confetti, rings: Rings, stars: Stars };
 
 /**
  * A glassy gift card: a soft glow drifts slowly behind a pattern of white
- * line art (fern fronds that sway, or confetti, rings or stars), with a
- * gift at the centre and a small engraving along the edge. On hover it tips
- * toward the pointer and a sheen slides across.
+ * line art (fern branches that sway, or confetti, rings or stars), with a
+ * softly glowing gift at the centre. On hover it tips toward the pointer
+ * and a sheen slides across.
  */
 export function GiftCard({
   pattern = "fern",
   shape = "rounded",
   palette = "ocean",
   width = 96,
-  mark = "MMXX",
   tilt = true,
   label = "Gift card",
 }: GiftCardProps) {
   const cardRef = useRef<HTMLDivElement | null>(null);
-  const Pattern = PATTERNS[pattern] ?? Fern;
+  const Pattern = PATTERNS[pattern] ?? Ferns;
 
   // The tilt is written straight to CSS variables, so a pointer move never re-renders.
   const lean = (event: React.PointerEvent<HTMLDivElement>) => {
@@ -232,12 +203,9 @@ export function GiftCard({
           <g className="rk-gift__drift">
             <Pattern />
           </g>
-          {mark ? (
-            <text className="rk-gift__mark" transform={`translate(${VB_W - 34} ${VB_H / 2 - 14}) rotate(74)`}>
-              {mark}
-            </text>
-          ) : null}
         </svg>
+        {/* A soft white bloom behind the gift, as if it gave off light. */}
+        <span className="rk-gift__bloom" aria-hidden="true" />
         <span className="rk-gift__icon" aria-hidden="true">
           <Gift strokeWidth={2.5} />
           {/* The shine: the same gift at full white, seen only through a band of light that sweeps across now and then. */}

@@ -11,8 +11,9 @@
   /* One design pixel at this size: the design is drawn 320 wide, so every size below is a multiple of this. */
   --rk-gift-u: calc(var(--rk-gift-w) / 320);
   --rk-gift-ink: #ffffff;
-  --rk-gift-line: rgb(255 255 255 / 0.2);
-  --rk-gift-mark: rgb(255 255 255 / 0.4);
+  --rk-gift-line: #ffffff;
+  /* The pattern fades as one layer, so where a stem meets a leaf it doesn't double up. */
+  --rk-gift-line-opacity: 0.2;
   /*
     Ocean, as in the design: deep indigo at the top softening to periwinkle,
     a pale light on the left middle (glow b) and bright aqua along the
@@ -153,6 +154,7 @@
 }
 
 .rk-gift__drift {
+  opacity: var(--rk-gift-line-opacity);
   animation: rk-gift-pan 16s ease-in-out infinite alternate;
 }
 
@@ -173,7 +175,7 @@
   stroke-width: 7;
 }
 
-/* Fern: each frond sways a few degrees on its base. */
+/* Fern: each branch sways a few degrees on its base. */
 .rk-gift__sway {
   animation: rk-gift-sway 7s ease-in-out var(--rk-gift-delay, 0s) infinite alternate;
 }
@@ -236,23 +238,31 @@
   }
 }
 
-.rk-gift__mark {
-  fill: var(--rk-gift-mark);
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 21px;
-  letter-spacing: 0.3em;
+/* A soft white bloom behind the gift, as if it gave off light. */
+.rk-gift__bloom {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 62%;
+  aspect-ratio: 1.3;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgb(255 255 255 / 0.32), rgb(255 255 255 / 0.1) 55%, transparent);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
 }
 
-/* The gift at the centre: white, a little see-through, glowing and floating gently, with a glint passing over it. */
+/* The gift at the centre: white, a little see-through, glowing softly and floating gently, with a glint passing over it. */
 .rk-gift__icon {
   position: absolute;
   top: 50%;
   left: 50%;
   display: block;
-  width: 25%;
+  width: 30%;
   aspect-ratio: 1;
   color: #ffffff;
-  filter: blur(calc(var(--rk-gift-u) * 0.35)) drop-shadow(0 0 calc(var(--rk-gift-u) * 12) rgb(255 255 255 / 0.55));
+  /* A tight white halo round the lines and a wider, fainter one beyond it. */
+  filter: blur(calc(var(--rk-gift-u) * 0.35)) drop-shadow(0 0 calc(var(--rk-gift-u) * 4) rgb(255 255 255 / 0.75))
+    drop-shadow(0 0 calc(var(--rk-gift-u) * 16) rgb(255 255 255 / 0.45));
   transform: translate(-50%, -50%);
   animation: rk-gift-float 4.5s ease-in-out infinite alternate;
 }
@@ -266,7 +276,7 @@
 
 /* The resting gift is see-through, so the glint reads brighter than it. */
 .rk-gift__icon > svg {
-  opacity: 0.52;
+  opacity: 0.72;
 }
 
 /*
