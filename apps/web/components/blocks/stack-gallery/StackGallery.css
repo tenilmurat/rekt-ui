@@ -54,7 +54,8 @@
   cursor: pointer;
   transition:
     transform var(--rk-gallery-speed) var(--rk-gallery-ease),
-    opacity var(--rk-gallery-speed) ease;
+    opacity var(--rk-gallery-speed) ease,
+    box-shadow var(--rk-gallery-speed) var(--rk-gallery-ease);
 }
 
 /* Cards past the visible few wait, transparent, in the last place; the next one fades in right there. */
@@ -66,7 +67,16 @@
 /* Cards in the stack lift a little under the pointer. */
 .rk-gallery__card[data-front="false"]:hover {
   --lift: -12px;
-  transition-duration: 320ms, var(--rk-gallery-speed);
+  transition-duration: 320ms, var(--rk-gallery-speed), 320ms;
+}
+
+/* The front card lifts too, and its shadow grows softer and deeper, as if it rose toward you. */
+.rk-gallery__card[data-front="true"]:hover {
+  --lift: -10px;
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 0.12),
+    0 22px 44px rgb(20 18 16 / 0.18);
+  transition-duration: 320ms, var(--rk-gallery-speed), 320ms;
 }
 
 .rk-gallery__card:focus-visible {
@@ -129,6 +139,15 @@
   background: radial-gradient(closest-side, rgb(20 18 16 / 0.16), transparent);
   filter: blur(4px);
   pointer-events: none;
+  transition:
+    transform 320ms var(--rk-gallery-ease),
+    opacity 320ms var(--rk-gallery-ease);
+}
+
+/* While the front card is lifted, its floor shadow tightens and fades a little. */
+.rk-gallery__stage:has(.rk-gallery__card[data-front="true"]:hover) .rk-gallery__shadow {
+  transform: scale(0.9);
+  opacity: 0.7;
 }
 
 /* The front card's name, for screen readers only. */
@@ -150,5 +169,9 @@
 
   .rk-gallery__card[data-motion] {
     animation: none;
+  }
+
+  .rk-gallery__shadow {
+    transition: none;
   }
 }

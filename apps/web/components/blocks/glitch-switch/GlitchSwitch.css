@@ -1,0 +1,141 @@
+/*
+  Glitch switch. Every colour is a variable with a fallback, so it works as
+  is; point the --rk-glitch-* variables at your own tokens to theme it.
+  Light theme; a dark theme can be added by redefining the same variables.
+  --rk-glitch-accent is each state's colour, written by the component; the
+  fill, border, brackets and label are all mixed from it.
+*/
+.rk-glitch {
+  --rk-glitch-ink: #141210;
+  --rk-glitch-muted: #6b6763;
+  --rk-glitch-paper: #ffffff;
+  --rk-glitch-accent: #5c8fe2;
+  --rk-glitch-ring: rgb(20 18 16 / 0.6);
+  /* How much of the accent goes into the fill: none for a white button. */
+  --rk-glitch-fill-mix: 0%;
+
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  font-family: inherit;
+}
+
+.rk-glitch[data-fill="tint"] {
+  --rk-glitch-fill-mix: 9%;
+}
+
+.rk-glitch__button {
+  position: relative;
+  display: block;
+  min-width: 220px;
+  height: 56px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  /* Slices tear well past the edges. */
+  overflow: visible;
+  transition: transform 160ms ease;
+}
+
+.rk-glitch__button:active {
+  transform: scale(0.98);
+}
+
+.rk-glitch__button:focus-visible {
+  outline: 2px solid var(--rk-glitch-ring);
+  outline-offset: 6px;
+}
+
+/*
+  The face: a square button, its fill and border mixed from the accent so it
+  stays soft on white, and the four corners picked out in brackets.
+*/
+.rk-glitch__face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 28px;
+  border: 1px solid color-mix(in oklab, var(--rk-glitch-accent) 45%, var(--rk-glitch-paper));
+  border-radius: 2px;
+  background: color-mix(in oklab, var(--rk-glitch-accent) var(--rk-glitch-fill-mix), var(--rk-glitch-paper));
+  transition:
+    background-color 200ms ease,
+    border-color 200ms ease;
+}
+
+.rk-glitch__label {
+  color: color-mix(in oklab, var(--rk-glitch-accent) 72%, var(--rk-glitch-ink));
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+/* The brackets: an L in each corner, in the accent at full strength. */
+.rk-glitch__corner {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border: 0 solid var(--rk-glitch-accent);
+}
+
+.rk-glitch__corner[data-at="tl"] { top: -1px; left: -1px; border-top-width: 2px; border-left-width: 2px; }
+.rk-glitch__corner[data-at="tr"] { top: -1px; right: -1px; border-top-width: 2px; border-right-width: 2px; }
+.rk-glitch__corner[data-at="bl"] { bottom: -1px; left: -1px; border-bottom-width: 2px; border-left-width: 2px; }
+.rk-glitch__corner[data-at="br"] { bottom: -1px; right: -1px; border-bottom-width: 2px; border-right-width: 2px; }
+
+/* While it glitches the whole face sits back and the slices carry the picture. */
+.rk-glitch[data-glitching] .rk-glitch__button > .rk-glitch__face {
+  opacity: 0.35;
+}
+
+/* A slice: a full copy of the face, clipped to a band and pushed sideways. */
+.rk-glitch__slices,
+.rk-glitch__slice {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.rk-glitch__slice .rk-glitch__face {
+  transition: none;
+}
+
+/* A fringe: the same band again, in a band colour, half strength, the other way. */
+.rk-glitch__slice--fringe {
+  opacity: 0.55;
+  mix-blend-mode: multiply;
+}
+
+.rk-glitch__slice--fringe .rk-glitch__face {
+  background: color-mix(in oklab, var(--rk-glitch-accent) 22%, var(--rk-glitch-paper));
+}
+
+.rk-glitch__slice--fringe .rk-glitch__label {
+  color: var(--rk-glitch-accent);
+}
+
+.rk-glitch__hint {
+  color: var(--rk-glitch-muted);
+  font-size: 12px;
+  line-height: 1;
+  transition: color 200ms ease;
+}
+
+.rk-glitch:hover .rk-glitch__hint {
+  color: var(--rk-glitch-ink);
+}
+
+/* Reduced motion: the component skips the glitch; the face still changes colour, without easing. */
+@media (prefers-reduced-motion: reduce) {
+  .rk-glitch__face,
+  .rk-glitch__button {
+    transition: none;
+  }
+}

@@ -22,8 +22,9 @@ export function BlockCard({ block, onOpen }: { block: UiBlock; onOpen: () => voi
   return (
     <article
       ref={ref}
-      className="relative overflow-hidden rounded-[28px]"
-      style={{ height: block.cardHeight ?? DEFAULT_CARD_HEIGHT, backgroundColor: "var(--surface)" }}
+      // A block that sets data-rk-dark on itself (the rocker switch, when on) turns its whole card dark.
+      className="relative overflow-hidden rounded-[28px] bg-[var(--surface)] transition-colors duration-700 has-[[data-rk-dark]]:bg-[#0b0a0b]"
+      style={{ height: block.cardHeight ?? DEFAULT_CARD_HEIGHT }}
     >
       {/* Clicks on the component work it; clicks on the card around it open the
           dialog. Keyboard users open it with the two buttons below. */}
@@ -31,7 +32,8 @@ export function BlockCard({ block, onOpen }: { block: UiBlock; onOpen: () => voi
         onClick={(e) => {
           if (!componentRef.current?.contains(e.target as Node)) onOpen();
         }}
-        className="flex h-full w-full cursor-pointer items-center justify-center px-[24px] pb-[40px]"
+        // Room on every side: 32px above, 24px beside, and 72px below, which clears the 52px name row with 20px to spare.
+        className="flex h-full w-full cursor-pointer items-center justify-center px-[24px] pb-[72px] pt-[32px]"
       >
         <div ref={componentRef} className="cursor-auto">
           {/* Off screen, the card drops its preview so nothing runs unseen. */}
