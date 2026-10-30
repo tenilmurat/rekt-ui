@@ -1,0 +1,290 @@
+/*
+  Gift card. Every colour is a variable with a fallback, so it works as is;
+  point the --rk-gift-* variables at your own tokens to theme it. The card
+  carries its own colours, so it reads on a light page or a dark one. The
+  tilt variables (--rk-gift-rx, -ry, -shine) are written by the component.
+*/
+.rk-gift {
+  --rk-gift-w: 320px;
+  --rk-gift-ink: #ffffff;
+  --rk-gift-line: rgb(255 255 255 / 0.24);
+  --rk-gift-mark: rgb(255 255 255 / 0.4);
+  /* Ocean: deep navy at the top, a blue middle and a cyan light below, as in the design. */
+  --rk-gift-top: #1e2263;
+  --rk-gift-mid: #4357cc;
+  --rk-gift-low: #6ad6f2;
+  --rk-gift-glow-a: #b8fcff;
+  --rk-gift-glow-b: #7e72f2;
+  --rk-gift-ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  display: inline-block;
+  padding: 16px;
+  perspective: 900px;
+  /* The shadow follows the card's outline, notches and scallops included. */
+  filter: drop-shadow(0 18px 28px rgb(20 24 60 / 0.28)) drop-shadow(0 3px 6px rgb(20 24 60 / 0.16));
+}
+
+.rk-gift[data-palette="dusk"] {
+  --rk-gift-top: #2d1747;
+  --rk-gift-mid: #b4478f;
+  --rk-gift-low: #ffb27a;
+  --rk-gift-glow-a: #ffd2a1;
+  --rk-gift-glow-b: #ff6fae;
+}
+
+.rk-gift[data-palette="mint"] {
+  --rk-gift-top: #0f3433;
+  --rk-gift-mid: #1f9a86;
+  --rk-gift-low: #b6f2c9;
+  --rk-gift-glow-a: #e6ffd8;
+  --rk-gift-glow-b: #49d3b4;
+}
+
+/* The card: a bank card's proportions, a little turned like the design, tipping toward the pointer. */
+.rk-gift__card {
+  position: relative;
+  width: var(--rk-gift-w);
+  aspect-ratio: 320 / 202;
+  overflow: hidden;
+  border-radius: calc(var(--rk-gift-w) * 0.085);
+  background: linear-gradient(168deg, var(--rk-gift-top) 0%, var(--rk-gift-mid) 42%, var(--rk-gift-low) 82%);
+  /* A glass edge: a thin light rim, brighter along the top. */
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 0.26),
+    inset 0 1.5px 0 rgb(255 255 255 / 0.4),
+    inset 0 -24px 48px rgb(255 255 255 / 0.08);
+  transform: rotateZ(-5deg) rotateX(var(--rk-gift-rx, 0deg)) rotateY(var(--rk-gift-ry, 0deg));
+  transition: transform 500ms var(--rk-gift-ease);
+}
+
+/* Ticket: a notch bitten out of each side. */
+.rk-gift[data-shape="ticket"] .rk-gift__card {
+  border-radius: calc(var(--rk-gift-w) * 0.05);
+  -webkit-mask:
+    radial-gradient(circle calc(var(--rk-gift-w) * 0.045) at 0 50%, #0000 98%, #000) left / 51% 100% no-repeat,
+    radial-gradient(circle calc(var(--rk-gift-w) * 0.045) at 100% 50%, #0000 98%, #000) right / 51% 100% no-repeat;
+  mask:
+    radial-gradient(circle calc(var(--rk-gift-w) * 0.045) at 0 50%, #0000 98%, #000) left / 51% 100% no-repeat,
+    radial-gradient(circle calc(var(--rk-gift-w) * 0.045) at 100% 50%, #0000 98%, #000) right / 51% 100% no-repeat;
+}
+
+/* Stamp: scalloped top and bottom edges, like a voucher torn from a book. */
+.rk-gift[data-shape="stamp"] .rk-gift__card {
+  border-radius: calc(var(--rk-gift-w) * 0.025);
+  -webkit-mask:
+    radial-gradient(circle 5px at 50% 0, #0000 97%, #000) top / 14px 51% repeat-x,
+    radial-gradient(circle 5px at 50% 100%, #0000 97%, #000) bottom / 14px 51% repeat-x;
+  mask:
+    radial-gradient(circle 5px at 50% 0, #0000 97%, #000) top / 14px 51% repeat-x,
+    radial-gradient(circle 5px at 50% 100%, #0000 97%, #000) bottom / 14px 51% repeat-x;
+}
+
+/*
+  The glow: two soft blobs of light drifting slowly over the base gradient,
+  a bright one low down and a cooler one high up. Transforms only, so the
+  drift runs on the compositor.
+*/
+.rk-gift__glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.rk-gift__glow::before,
+.rk-gift__glow::after {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(18px);
+  content: "";
+}
+
+.rk-gift__glow::before {
+  bottom: -34%;
+  left: 2%;
+  width: 92%;
+  height: 92%;
+  background: radial-gradient(closest-side, var(--rk-gift-glow-a), transparent);
+  opacity: 1;
+  animation: rk-gift-drift-a 11s ease-in-out infinite alternate;
+}
+
+.rk-gift__glow::after {
+  top: -40%;
+  right: -10%;
+  width: 60%;
+  height: 80%;
+  background: radial-gradient(closest-side, var(--rk-gift-glow-b), transparent);
+  opacity: 0.6;
+  animation: rk-gift-drift-b 15s ease-in-out infinite alternate;
+}
+
+@keyframes rk-gift-drift-a {
+  to {
+    transform: translate(26%, -10%) scale(1.15);
+  }
+}
+
+@keyframes rk-gift-drift-b {
+  to {
+    transform: translate(-40%, 18%) scale(0.9);
+  }
+}
+
+/* The pattern: white line art over the glow, drifting a little as a whole. */
+.rk-gift__pattern {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  fill: var(--rk-gift-line);
+  /* Soft, like line art seen through frosted glass. */
+  filter: blur(0.5px);
+  pointer-events: none;
+}
+
+.rk-gift__drift {
+  animation: rk-gift-pan 16s ease-in-out infinite alternate;
+}
+
+@keyframes rk-gift-pan {
+  to {
+    transform: translate(-8px, 5px);
+  }
+}
+
+.rk-gift__stem {
+  fill: none;
+  stroke: var(--rk-gift-line);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+/* Laurel: each branch sways a few degrees on its base. */
+.rk-gift__sway {
+  animation: rk-gift-sway 7s ease-in-out var(--rk-gift-delay, 0s) infinite alternate;
+}
+
+@keyframes rk-gift-sway {
+  from {
+    transform: rotate(-3deg);
+  }
+  to {
+    transform: rotate(3deg);
+  }
+}
+
+/* Confetti: each piece bobs on its own beat. */
+.rk-gift__bob {
+  animation: rk-gift-bob 3.6s ease-in-out var(--rk-gift-delay, 0s) infinite alternate;
+}
+
+@keyframes rk-gift-bob {
+  from {
+    transform: translateY(-3px) rotate(-8deg);
+  }
+  to {
+    transform: translateY(3px) rotate(8deg);
+  }
+}
+
+/* Rings: thin circles that breathe out in turn. */
+.rk-gift__ring {
+  fill: none;
+  stroke: var(--rk-gift-line);
+  stroke-width: 1.4;
+  animation: rk-gift-breathe 4.2s ease-in-out var(--rk-gift-delay, 0s) infinite alternate;
+}
+
+@keyframes rk-gift-breathe {
+  from {
+    opacity: 0.45;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1.04);
+  }
+}
+
+/* Stars: sparkles that twinkle in turn. */
+.rk-gift__twinkle {
+  animation: rk-gift-twinkle 2.6s ease-in-out var(--rk-gift-delay, 0s) infinite alternate;
+}
+
+@keyframes rk-gift-twinkle {
+  from {
+    opacity: 0.2;
+    transform: scale(0.6);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.rk-gift__mark {
+  fill: var(--rk-gift-mark);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 15px;
+  letter-spacing: 0.32em;
+}
+
+/* The gift at the centre: frosted, glowing a little, floating gently. */
+.rk-gift__icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: block;
+  width: 24%;
+  aspect-ratio: 1;
+  color: rgb(255 255 255 / 0.9);
+  filter: drop-shadow(0 0 10px rgb(255 255 255 / 0.45));
+  transform: translate(-50%, -50%);
+  animation: rk-gift-float 4.5s ease-in-out infinite alternate;
+}
+
+.rk-gift__icon svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  fill: rgb(255 255 255 / 0.14);
+}
+
+@keyframes rk-gift-float {
+  to {
+    transform: translate(-50%, calc(-50% - 4px));
+  }
+}
+
+/* The sheen: a band of light that slides across with the pointer. */
+.rk-gift__sheen {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 35%, rgb(255 255 255 / 0.22) 48%, transparent 62%) var(--rk-gift-shine, 50%) 0 / 260% 100% no-repeat;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 300ms ease;
+}
+
+.rk-gift__card:hover .rk-gift__sheen {
+  opacity: 1;
+}
+
+/* Reduced motion: everything holds still; the card doesn't tip. */
+@media (prefers-reduced-motion: reduce) {
+  .rk-gift__glow::before,
+  .rk-gift__glow::after,
+  .rk-gift__drift,
+  .rk-gift__sway,
+  .rk-gift__bob,
+  .rk-gift__ring,
+  .rk-gift__twinkle,
+  .rk-gift__icon {
+    animation: none;
+  }
+
+  .rk-gift__card {
+    transform: rotateZ(-5deg);
+    transition: none;
+  }
+}
