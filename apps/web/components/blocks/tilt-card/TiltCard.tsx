@@ -14,7 +14,7 @@ export type TiltCardProps = {
   /** A soft light that follows the pointer across the surface. */
   glare?: boolean;
   /**
-   * "glitter" is a white card where rainbow pixels dissolve in around the
+   * "glitter" is a black card where rainbow pixels dissolve in around the
    * pointer; "holo" is a dark card with an iridescent foil that follows it;
    * "color" is soft colour fields.
    */
@@ -99,7 +99,7 @@ function drawGlitter(canvas: HTMLCanvasElement, noise: { current: Float32Array |
       const n = noise.current[r * cols + c];
       if (n > light) continue;
       const hue = Math.round((c * 7 + r * 5 + shift) % 360);
-      ctx.globalAlpha = 0.3 + 0.45 * Math.min(1, (light - n) * 4);
+      ctx.globalAlpha = 0.5 + 0.45 * Math.min(1, (light - n) * 4);
       ctx.fillStyle = `hsl(${hue} 90% ${60 + Math.round(n * 16)}%)`;
       ctx.fillRect(c * PIXEL, r * PIXEL, PIXEL - 0.5, PIXEL - 0.5);
     }
