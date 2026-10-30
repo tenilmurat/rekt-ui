@@ -165,12 +165,12 @@
 .rk-gift__stem {
   fill: none;
   stroke: var(--rk-gift-line);
-  stroke-width: 4;
+  stroke-width: 3.5;
   stroke-linecap: round;
 }
 
-.rk-gift__stem--thick {
-  stroke-width: 9;
+.rk-gift__stem--bold {
+  stroke-width: 7;
 }
 
 /* Laurel: each branch sways a few degrees on its base. */
@@ -205,7 +205,7 @@
 .rk-gift__ring {
   fill: none;
   stroke: var(--rk-gift-line);
-  stroke-width: 1.4;
+  stroke-width: 6;
   animation: rk-gift-breathe 4.2s ease-in-out var(--rk-gift-delay, 0s) infinite alternate;
 }
 
@@ -227,8 +227,8 @@
 
 @keyframes rk-gift-twinkle {
   from {
-    opacity: 0.2;
-    transform: scale(0.6);
+    opacity: 0.45;
+    transform: scale(0.75);
   }
   to {
     opacity: 1;

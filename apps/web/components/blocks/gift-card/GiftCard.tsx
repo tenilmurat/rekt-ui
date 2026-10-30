@@ -30,91 +30,91 @@ const seeded = (seed: number) => () => {
   return (seed - 1) / 2147483646;
 };
 
-/** An almond leaf, lying along +x from its stalk. */
-const leafPath = (length: number, width: number) =>
-  `M0 0Q${length / 2} ${-width} ${length} 0Q${length / 2} ${width} 0 0Z`;
+/**
+ * An olive leaf, lying along +x from its stalk: a full, rounded back that
+ * narrows to a pointed tip.
+ */
+const leafPath = (length: number) => {
+  const w = length * 0.24;
+  const l = length;
+  return `M0 0C${l * 0.18} ${-w * 1.9} ${l * 0.72} ${-w * 1.5} ${l} 0C${l * 0.72} ${w * 1.5} ${l * 0.18} ${w * 1.9} 0 0Z`;
+};
 
 /**
- * A laurel branch, drawn from its base at the origin along +x: a gently
- * curving stem with leaves in pairs that shrink toward the tip. The inner
- * group sways on its base; the outer one places the branch.
+ * A branch drawn from its base at the origin along +x: a thin stem curving
+ * gently up, with leaves set alternately left and right that get a little
+ * smaller toward the tip, and one leaf at the tip. The inner group sways on
+ * the base; the outer one places the branch.
  */
-function Branch({ x, y, angle, scale, leaves, delay, leaf = 1 }: { x: number; y: number; angle: number; scale: number; leaves: number; delay: number; leaf?: number }) {
-  // The stem: a quadratic curve from (0,0) through (55,-8) to (110,-30).
+function Branch({ x, y, angle, scale, leaves, size, delay }: { x: number; y: number; angle: number; scale: number; leaves: number; size: number; delay: number }) {
+  // The stem: a quadratic curve from (0,0) through (60,-6) to (120,-28).
   const point = (t: number) => {
     const u = 1 - t;
-    return { x: 2 * u * t * 55 + t * t * 110, y: 2 * u * t * -8 + t * t * -30 };
+    return { x: 2 * u * t * 60 + t * t * 120, y: 2 * u * t * -6 + t * t * -28 };
   };
   const tangent = (t: number) => {
-    const dx = 2 * (1 - t) * 55 + 2 * t * (110 - 55);
-    const dy = 2 * (1 - t) * -8 + 2 * t * (-30 + 8);
+    const dx = 2 * (1 - t) * 60 + 2 * t * 60;
+    const dy = 2 * (1 - t) * -6 + 2 * t * -22;
     return (Math.atan2(dy, dx) * 180) / Math.PI;
   };
   const items = Array.from({ length: leaves }, (_, i) => {
-    const t = 0.12 + (i / leaves) * 0.82;
+    const t = 0.18 + (i / Math.max(1, leaves - 1)) * 0.66;
     const p = point(t);
-    const size = 1 - i / (leaves * 1.6);
-    return [-1, 1].map((side) => ({
-      key: `${i}${side}`,
-      x: p.x,
-      y: p.y,
-      angle: tangent(t) + side * 48,
-      length: 28 * size * leaf,
-      width: 12 * size * leaf,
-    }));
-  }).flat();
+    const side = i % 2 ? 1 : -1;
+    return { key: i, x: p.x, y: p.y, angle: tangent(t) + side * 40, length: size * (1 - i * 0.08) };
+  });
   const tip = point(1);
   return (
     <g transform={`translate(${x} ${y}) rotate(${angle}) scale(${scale})`}>
       <g className="rk-gift__sway" style={{ "--rk-gift-delay": `${delay}s` } as React.CSSProperties}>
-        <path className="rk-gift__stem" d="M0 0Q55 -8 110 -30" />
+        <path className="rk-gift__stem" d="M0 0Q60 -6 120 -28" />
         {items.map((l) => (
-          <path key={l.key} d={leafPath(l.length, l.width)} transform={`translate(${l.x.toFixed(1)} ${l.y.toFixed(1)}) rotate(${l.angle.toFixed(1)})`} />
+          <path key={l.key} d={leafPath(l.length)} transform={`translate(${l.x.toFixed(1)} ${l.y.toFixed(1)}) rotate(${l.angle.toFixed(1)})`} />
         ))}
-        <path d={leafPath(24 * leaf, 10 * leaf)} transform={`translate(${tip.x} ${tip.y}) rotate(${tangent(1).toFixed(1)})`} />
+        <path d={leafPath(size * 0.9)} transform={`translate(${tip.x} ${tip.y}) rotate(${tangent(1).toFixed(1)})`} />
       </g>
     </g>
   );
 }
 
 /**
- * The laurel pattern, as in the design: a few big, soft shapes rather than
- * many small ones. A branch of broad leaves up the left, a thick crescent at
- * the top, and down the right two crossing stems with a big leaf at the top
- * edge and a sprout of two leaves at the bottom.
+ * The laurel pattern, as in the design: a few big branches rather than many
+ * small ones, so it still reads on a small card. One rises up the left, one
+ * hangs from the top, one curves down the right edge, and a sprout comes up
+ * in the bottom-right corner.
  */
 function Laurel() {
   return (
     <>
-      <Branch x={-12} y={194} angle={-44} scale={1.2} leaves={3} leaf={1.7} delay={0} />
-      <g className="rk-gift__sway" style={{ "--rk-gift-delay": "-1.4s", transformOrigin: "102px 34px" } as React.CSSProperties}>
-        <path className="rk-gift__stem rk-gift__stem--thick" d="M82 44A22 22 0 1 1 124 28" />
-      </g>
-      <g className="rk-gift__sway" style={{ "--rk-gift-delay": "-2.6s", transformOrigin: "252px 202px" } as React.CSSProperties}>
-        <path className="rk-gift__stem rk-gift__stem--thick" d="M306 30Q292 118 250 206" />
-        <path className="rk-gift__stem rk-gift__stem--thick" d="M224 108Q262 96 304 58" />
-        <path d={leafPath(64, 24)} transform="translate(300 54) rotate(-96)" />
-        <path d={leafPath(50, 20)} transform="translate(258 196) rotate(-150)" />
-        <path d={leafPath(44, 18)} transform="translate(258 196) rotate(-22)" />
-      </g>
+      <Branch x={-10} y={206} angle={-50} scale={1.05} leaves={5} size={46} delay={0} />
+      <Branch x={118} y={-26} angle={62} scale={0.62} leaves={3} size={46} delay={-1.6} />
+      <Branch x={350} y={-6} angle={118} scale={1} leaves={4} size={46} delay={-2.8} />
+      <Branch x={262} y={216} angle={-104} scale={0.62} leaves={2} size={48} delay={-0.9} />
     </>
   );
 }
 
-/** Confetti: small strips and dots scattered over the card, each bobbing on its own beat. */
+/** Confetti: a handful of big, soft pieces (strips, dots and small arcs), each bobbing on its own beat. */
 function Confetti() {
-  const rnd = seeded(11);
+  const rnd = seeded(23);
   return (
     <>
-      {Array.from({ length: 30 }, (_, i) => {
-        const x = rnd() * VB_W;
-        const y = rnd() * VB_H;
+      {Array.from({ length: 14 }, (_, i) => {
+        // Spread over a loose grid, so the pieces never bunch up or leave a hole.
+        const x = ((i % 5) + 0.2 + rnd() * 0.6) * (VB_W / 5);
+        const y = (Math.floor(i / 5) + 0.15 + rnd() * 0.7) * (VB_H / 3);
         const r = rnd() * 180;
-        const dot = rnd() < 0.35;
+        const kind = i % 3;
         return (
           <g key={i} transform={`translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${r.toFixed(0)})`}>
             <g className="rk-gift__bob" style={{ "--rk-gift-delay": `${(-rnd() * 4).toFixed(2)}s` } as React.CSSProperties}>
-              {dot ? <circle r={2 + rnd() * 1.5} /> : <rect x={-6} y={-1.6} width={12} height={3.2} rx={1.6} />}
+              {kind === 0 ? (
+                <rect x={-15} y={-5.5} width={30} height={11} rx={5.5} />
+              ) : kind === 1 ? (
+                <circle r={8} />
+              ) : (
+                <path className="rk-gift__stem rk-gift__stem--bold" d="M-14 6Q0 -14 14 6" />
+              )}
             </g>
           </g>
         );
@@ -123,36 +123,38 @@ function Confetti() {
   );
 }
 
-/** Rings: thin circles spreading from the top-right corner, breathing out in turn. */
+/** Rings: a few thick circles spreading from the top-right corner, breathing out in turn. */
 function Rings() {
   return (
-    <g transform={`translate(${VB_W - 40} 34)`}>
-      {[34, 70, 108, 148, 190, 234].map((r, i) => (
-        <circle key={r} className="rk-gift__ring" r={r} style={{ "--rk-gift-delay": `${-i * 0.6}s` } as React.CSSProperties} />
+    <g transform={`translate(${VB_W - 30} 30)`}>
+      {[46, 96, 150, 208].map((r, i) => (
+        <circle key={r} className="rk-gift__ring" r={r} style={{ "--rk-gift-delay": `${-i * 0.7}s` } as React.CSSProperties} />
       ))}
     </g>
   );
 }
 
-/** Stars: four-point sparkles of a few sizes that twinkle in turn. */
+/** Stars: a few soft four-point sparkles of different sizes that twinkle in turn. */
 function Stars() {
-  const rnd = seeded(5);
+  const spots = [
+    [48, 50, 26],
+    [96, 150, 16],
+    [34, 160, 12],
+    [246, 40, 20],
+    [216, 168, 14],
+    [154, 24, 11],
+  ];
   return (
     <>
-      {Array.from({ length: 20 }, (_, i) => {
-        const x = rnd() * VB_W;
-        const y = rnd() * VB_H;
-        const s = 3 + rnd() * 7;
-        return (
-          <g key={i} transform={`translate(${x.toFixed(1)} ${y.toFixed(1)})`}>
-            <path
-              className="rk-gift__twinkle"
-              d={`M0 ${-s}Q0 0 ${s} 0Q0 0 0 ${s}Q0 0 ${-s} 0Q0 0 0 ${-s}Z`}
-              style={{ "--rk-gift-delay": `${(-rnd() * 3).toFixed(2)}s` } as React.CSSProperties}
-            />
-          </g>
-        );
-      })}
+      {spots.map(([x, y, s], i) => (
+        <g key={i} transform={`translate(${x} ${y})`}>
+          <path
+            className="rk-gift__twinkle"
+            d={`M0 ${-s}C${s * 0.12} ${-s * 0.12} ${s * 0.12} ${-s * 0.12} ${s} 0C${s * 0.12} ${s * 0.12} ${s * 0.12} ${s * 0.12} 0 ${s}C${-s * 0.12} ${s * 0.12} ${-s * 0.12} ${s * 0.12} ${-s} 0C${-s * 0.12} ${-s * 0.12} ${-s * 0.12} ${-s * 0.12} 0 ${-s}Z`}
+            style={{ "--rk-gift-delay": `${(-i * 0.4).toFixed(2)}s` } as React.CSSProperties}
+          />
+        </g>
+      ))}
     </>
   );
 }
