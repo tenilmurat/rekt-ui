@@ -7,8 +7,8 @@ import { BlockCard, DEFAULT_CARD_HEIGHT, GhostCard } from "@/components/wall/Blo
 import { BlockDialog } from "@/components/wall/BlockDialog";
 import { FilterChips } from "@/components/wall/FilterChips";
 import { Masonry } from "@/components/wall/Masonry";
+import { GlitchWord } from "@/components/wall/GlitchWord";
 import { PageHero } from "@/components/wall/PageHero";
-import { BRAND } from "@/lib/brand";
 import { useSession } from "@/lib/session";
 import { BLOCKS, UI_CATEGORIES, getBlock } from "@/lib/ui/catalog";
 
@@ -49,7 +49,13 @@ export function UiWall() {
     <main className="pb-[96px]">
       <PageHero
         pill={BLOCKS.length ? `${BLOCKS.length} component${BLOCKS.length === 1 ? "" : "s"}` : "New components on the way"}
-        title={BRAND.tagline.replace(/!$/, "")}
+        title={
+          <>
+            The ordinary ones
+            <br />
+            are <GlitchWord words={["wracked", "rekt"]} />
+          </>
+        }
         lead="Live, tunable interface components and micro-interactions. Explore them, then take them straight into your projects."
         action={
           status === "signed-in" ? null : (

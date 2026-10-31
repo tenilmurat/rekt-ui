@@ -402,6 +402,121 @@ body {
   animation-duration: var(--magicui-theme-toggle-vt-duration, 400ms);
 }
 
+/*
+  The hero's glitching word (components/wall/GlitchWord). While data-glitch is
+  on, two copies of the word, one red and one cyan, each show only a thin band
+  that jumps up and down and sideways, over the page colour, so the word looks
+  torn; the word itself shakes a little.
+*/
+.glitch-word {
+  position: relative;
+  display: inline-block;
+}
+
+.glitch-word::before,
+.glitch-word::after {
+  position: absolute;
+  inset: 0;
+  background: var(--bg);
+  content: attr(data-text);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.glitch-word::before {
+  color: #ff2f5b;
+}
+
+.glitch-word::after {
+  color: #00c2ff;
+}
+
+.glitch-word[data-glitch="true"] {
+  animation: glitch-shake 420ms steps(1, end);
+}
+
+.glitch-word[data-glitch="true"]::before {
+  opacity: 1;
+  animation: glitch-slice-a 420ms steps(1, end);
+}
+
+.glitch-word[data-glitch="true"]::after {
+  opacity: 1;
+  animation: glitch-slice-b 420ms steps(1, end);
+}
+
+@keyframes glitch-shake {
+  0% {
+    translate: 2px 0;
+  }
+  25% {
+    translate: -2px 1px;
+  }
+  50% {
+    translate: 1px -1px;
+  }
+  75% {
+    translate: -1px 0;
+  }
+  100% {
+    translate: 0 0;
+  }
+}
+
+@keyframes glitch-slice-a {
+  0% {
+    clip-path: inset(12% 0 70% 0);
+    translate: -6px 0;
+  }
+  20% {
+    clip-path: inset(58% 0 22% 0);
+    translate: 5px 0;
+  }
+  40% {
+    clip-path: inset(30% 0 52% 0);
+    translate: -3px 0;
+  }
+  60% {
+    clip-path: inset(78% 0 6% 0);
+    translate: 7px 0;
+  }
+  80% {
+    clip-path: inset(4% 0 84% 0);
+    translate: -4px 0;
+  }
+  100% {
+    clip-path: inset(100% 0 0 0);
+    translate: 0 0;
+  }
+}
+
+@keyframes glitch-slice-b {
+  0% {
+    clip-path: inset(64% 0 18% 0);
+    translate: 5px 0;
+  }
+  20% {
+    clip-path: inset(8% 0 76% 0);
+    translate: -7px 0;
+  }
+  40% {
+    clip-path: inset(70% 0 12% 0);
+    translate: 4px 0;
+  }
+  60% {
+    clip-path: inset(22% 0 60% 0);
+    translate: -5px 0;
+  }
+  80% {
+    clip-path: inset(48% 0 34% 0);
+    translate: 3px 0;
+  }
+  100% {
+    clip-path: inset(100% 0 0 0);
+    translate: 0 0;
+  }
+}
+
 /* REKT / ASCII pulse: opacity and a touch of scale, nothing aggressive. */
 @keyframes ascii-pulse {
   0%,

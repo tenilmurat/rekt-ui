@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-/** The centred opening of a wall page: a small pill, the headline, one line, an action. */
+/** The opening of a wall page, aligned left with the wall below: a small pill, the headline, one line, an action. */
 export function PageHero({
   pill,
   title,
@@ -13,7 +13,7 @@ export function PageHero({
   action?: ReactNode;
 }) {
   return (
-    <header className="animate-fade-up flex flex-col items-center px-[20px] pb-[56px] pt-[88px] text-center">
+    <header className="animate-fade-up flex flex-col items-start px-[20px] pb-[56px] pt-[88px] text-left">
       {pill ? (
         <span
           className="mb-[20px] rounded-full border px-[12px] py-[5px] text-[12.5px]"
