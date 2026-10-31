@@ -6,7 +6,7 @@ import { useEffect, useId, useRef, useState } from "react";
 export type BubbleMenuItem = {
   /** Passed to onSelect when the bubble is pressed. */
   id: string;
-  /** Shown on the bubble (when labels are on) and always read to screen readers. */
+  /** Shown on the big bubble (when labels are on) and always read to screen readers. */
   label: string;
   icon: LucideIcon;
   /** The glass's tint, top colour then bottom colour. */
@@ -22,7 +22,7 @@ export type BubbleMenuProps = {
   items?: BubbleMenuItem[];
   /** Open when it first appears. */
   defaultOpen?: boolean;
-  /** Show the labels on the bubbles; the smallest show only their icon either way. */
+  /** Show the main action's label on the big bubble; the others show only their icon either way. */
   labels?: boolean;
   /** Let the open bubbles drift gently, each on its own beat. */
   float?: boolean;
@@ -170,7 +170,7 @@ export function BubbleMenu({
             >
               <span className="rk-bubble__glass">
                 <Icon className="rk-bubble__icon" strokeWidth={1.75} aria-hidden="true" />
-                {labels && i < 2 ? <span className="rk-bubble__label">{item.label}</span> : null}
+                {labels && i === 0 ? <span className="rk-bubble__label">{item.label}</span> : null}
               </span>
             </button>
           );

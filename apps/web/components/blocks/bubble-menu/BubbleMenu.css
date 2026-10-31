@@ -146,26 +146,19 @@
 }
 
 .rk-bubble__item[data-rank="1"] .rk-bubble__icon {
-  width: calc(var(--rk-bubble-u) * 24);
-  height: calc(var(--rk-bubble-u) * 24);
+  width: calc(var(--rk-bubble-u) * 28);
+  height: calc(var(--rk-bubble-u) * 28);
 }
 
+/* Only the big bubble carries a label. */
 .rk-bubble__label {
   position: relative;
   z-index: 1;
-  font-size: calc(var(--rk-bubble-u) * 11);
+  font-size: calc(var(--rk-bubble-u) * 15);
   font-weight: 500;
   line-height: 1;
   letter-spacing: -0.005em;
   text-shadow: 0 1px 2px rgb(0 0 0 / 0.2);
-}
-
-.rk-bubble__item[data-rank="0"] .rk-bubble__label {
-  font-size: calc(var(--rk-bubble-u) * 15);
-}
-
-.rk-bubble__item[data-rank="1"] .rk-bubble__glass {
-  gap: calc(var(--rk-bubble-u) * 4);
 }
 
 /* Open, the bubbles drift a few px up and down, each on its own beat. */
