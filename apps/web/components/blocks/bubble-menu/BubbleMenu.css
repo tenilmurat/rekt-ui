@@ -12,6 +12,8 @@
   --rk-bubble-ink: #ffffff;
   --rk-bubble-focus: #7d70d6;
   --rk-bubble-spring: cubic-bezier(0.34, 1.45, 0.55, 1);
+  /* The same spring played backwards, for closing: a small swell out, then in. */
+  --rk-bubble-spring-back: cubic-bezier(0.45, -0.45, 0.66, 0);
   /* The button's centre, in design px: the open cluster fits around it with a little room. */
   --rk-bubble-cx: 127.5;
   --rk-bubble-cy: 251;
@@ -30,7 +32,9 @@
 /*
   A bubble. It's placed where it sits when open; closed, it's pulled back
   onto the button's centre, shrunk and hidden, so opening springs it out of
-  the button. Out in turn, biggest first; back in the other way, faster.
+  the button. Closing is opening played backwards: the same spring reversed,
+  the same 45 ms steps in the other order (the bead first, the big bubble
+  last), each fading only as it lands in the button.
 */
 .rk-bubble__item {
   position: absolute;
@@ -50,9 +54,9 @@
   transform: translate(calc(var(--rk-bubble-x) * var(--rk-bubble-u) * -1), calc(var(--rk-bubble-y) * var(--rk-bubble-u) * -1))
     scale(0.3);
   transition:
-    transform 300ms cubic-bezier(0.5, 0, 0.75, 0) calc((4 - var(--rk-bubble-i)) * 25ms),
-    opacity 200ms ease calc((4 - var(--rk-bubble-i)) * 25ms + 80ms),
-    visibility 0s linear 420ms;
+    transform 560ms var(--rk-bubble-spring-back) calc((4 - var(--rk-bubble-i)) * 45ms),
+    opacity 160ms ease calc((4 - var(--rk-bubble-i)) * 45ms + 400ms),
+    visibility 0s linear 740ms;
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -161,9 +165,52 @@
   text-shadow: 0 1px 2px rgb(0 0 0 / 0.2);
 }
 
-/* Open, the bubbles drift a few px up and down, each on its own beat. */
-.rk-bubble[data-open="true"][data-float="true"] .rk-bubble__glass {
+/*
+  The bubbles drift a few px up and down, each on its own beat. It keeps
+  running while they close, so nothing jumps as they go; closed they're
+  hidden.
+*/
+.rk-bubble[data-float="true"] .rk-bubble__glass {
   animation: rk-bubble-float calc(3.2s + var(--rk-bubble-i) * 0.45s) ease-in-out calc(var(--rk-bubble-i) * -0.7s) infinite alternate;
+}
+
+/*
+  The bead: a little marble that circles its spot, slowly swells and
+  shrinks, and swirls its colours.
+*/
+.rk-bubble[data-float="true"] .rk-bubble__item--bead .rk-bubble__glass {
+  animation:
+    rk-bubble-orbit 6s linear infinite,
+    rk-bubble-swirl 3.4s ease-in-out infinite alternate;
+}
+
+@keyframes rk-bubble-orbit {
+  0% {
+    translate: calc(var(--rk-bubble-u) * 5) 0;
+  }
+  25% {
+    translate: 0 calc(var(--rk-bubble-u) * 5);
+  }
+  50% {
+    translate: calc(var(--rk-bubble-u) * -5) 0;
+  }
+  75% {
+    translate: 0 calc(var(--rk-bubble-u) * -5);
+  }
+  100% {
+    translate: calc(var(--rk-bubble-u) * 5) 0;
+  }
+}
+
+@keyframes rk-bubble-swirl {
+  from {
+    scale: 0.9;
+    filter: hue-rotate(0deg);
+  }
+  to {
+    scale: 1.15;
+    filter: hue-rotate(50deg);
+  }
 }
 
 @keyframes rk-bubble-float {
@@ -249,7 +296,8 @@
     transition: none;
   }
 
-  .rk-bubble[data-open="true"][data-float="true"] .rk-bubble__glass {
+  .rk-bubble[data-float="true"] .rk-bubble__glass,
+  .rk-bubble[data-float="true"] .rk-bubble__item--bead .rk-bubble__glass {
     animation: none;
   }
 }
