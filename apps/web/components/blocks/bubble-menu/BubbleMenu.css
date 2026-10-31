@@ -1,0 +1,262 @@
+/*
+  Bubble menu. Every colour is a variable with a fallback, so it works as is;
+  point the --rk-bubble-* variables at your own tokens to theme it. Every
+  size is a multiple of --rk-bubble-u, one design px, set from the scale prop,
+  so the whole menu scales together. Each bubble gets its size, offset, place
+  in the order and tint from the component as unitless variables.
+*/
+.rk-bubble {
+  --rk-bubble-u: 1px;
+  --rk-bubble-trigger-top: #bcb5cf;
+  --rk-bubble-trigger-low: #c3c3c5;
+  --rk-bubble-ink: #ffffff;
+  --rk-bubble-focus: #7d70d6;
+  --rk-bubble-spring: cubic-bezier(0.34, 1.45, 0.55, 1);
+  /* The button's centre, in design px: the open cluster fits around it with a little room. */
+  --rk-bubble-cx: 127.5;
+  --rk-bubble-cy: 251;
+
+  position: relative;
+  width: calc(var(--rk-bubble-u) * 262);
+  height: calc(var(--rk-bubble-u) * 305);
+  font-family: inherit;
+}
+
+.rk-bubble__menu {
+  position: absolute;
+  inset: 0;
+}
+
+/*
+  A bubble. It's placed where it sits when open; closed, it's pulled back
+  onto the button's centre, shrunk and hidden, so opening springs it out of
+  the button. Out in turn, biggest first; back in the other way, faster.
+*/
+.rk-bubble__item {
+  position: absolute;
+  top: calc((var(--rk-bubble-cy) + var(--rk-bubble-y) - var(--rk-bubble-size) / 2) * var(--rk-bubble-u));
+  left: calc((var(--rk-bubble-cx) + var(--rk-bubble-x) - var(--rk-bubble-size) / 2) * var(--rk-bubble-u));
+  width: calc(var(--rk-bubble-size) * var(--rk-bubble-u));
+  height: calc(var(--rk-bubble-size) * var(--rk-bubble-u));
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: var(--rk-bubble-ink);
+  font: inherit;
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  transform: translate(calc(var(--rk-bubble-x) * var(--rk-bubble-u) * -1), calc(var(--rk-bubble-y) * var(--rk-bubble-u) * -1))
+    scale(0.3);
+  transition:
+    transform 300ms cubic-bezier(0.5, 0, 0.75, 0) calc((4 - var(--rk-bubble-i)) * 25ms),
+    opacity 200ms ease calc((4 - var(--rk-bubble-i)) * 25ms + 80ms),
+    visibility 0s linear 420ms;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.rk-bubble[data-open="true"] .rk-bubble__item {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition:
+    transform 560ms var(--rk-bubble-spring) calc(var(--rk-bubble-i) * 45ms),
+    opacity 200ms ease calc(var(--rk-bubble-i) * 45ms),
+    visibility 0s;
+}
+
+.rk-bubble__item--bead {
+  cursor: default;
+  pointer-events: none;
+  --rk-bubble-top: #ffb59a;
+  --rk-bubble-low: #6aa8e8;
+}
+
+/*
+  The glass: the tint as a soft sphere, lit from the top left, darker toward
+  the bottom, with a light rim, a bright highlight across the top and a
+  faint reflection low down.
+*/
+.rk-bubble__glass {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--rk-bubble-u) * 6);
+  border-radius: 50%;
+  background: radial-gradient(120% 120% at 32% 16%, var(--rk-bubble-top, #a9b2e0) 0%, var(--rk-bubble-low, #4b5891) 78%);
+  box-shadow:
+    inset 0 0 0 max(1px, calc(var(--rk-bubble-u) * 1)) rgb(255 255 255 / 0.32),
+    inset 0 calc(var(--rk-bubble-u) * 3) calc(var(--rk-bubble-u) * 8) rgb(255 255 255 / 0.35),
+    inset 0 calc(var(--rk-bubble-u) * -12) calc(var(--rk-bubble-u) * 20) rgb(10 12 30 / 0.22),
+    0 calc(var(--rk-bubble-u) * 12) calc(var(--rk-bubble-u) * 28) rgb(40 36 80 / 0.18);
+  overflow: hidden;
+  transition: scale 300ms var(--rk-bubble-spring);
+}
+
+.rk-bubble__glass::before,
+.rk-bubble__glass::after {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  content: "";
+}
+
+.rk-bubble__glass::before {
+  background: radial-gradient(58% 32% at 50% 13%, rgb(255 255 255 / 0.62), rgb(255 255 255 / 0.12) 62%, transparent 74%);
+}
+
+.rk-bubble__glass::after {
+  background: radial-gradient(64% 34% at 56% 94%, rgb(255 255 255 / 0.3), transparent 70%);
+}
+
+.rk-bubble__item:hover .rk-bubble__glass {
+  scale: 1.05;
+}
+
+.rk-bubble__item:active .rk-bubble__glass {
+  scale: 0.96;
+}
+
+.rk-bubble__item:focus-visible {
+  outline: none;
+}
+
+.rk-bubble__item:focus-visible .rk-bubble__glass {
+  outline: 2px solid var(--rk-bubble-focus);
+  outline-offset: 3px;
+}
+
+/* The content: icon and label, sized by the bubble's place in the hierarchy. */
+.rk-bubble__icon {
+  position: relative;
+  z-index: 1;
+  width: calc(var(--rk-bubble-u) * 22);
+  height: calc(var(--rk-bubble-u) * 22);
+  filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.18));
+}
+
+.rk-bubble__item[data-rank="0"] .rk-bubble__icon {
+  width: calc(var(--rk-bubble-u) * 34);
+  height: calc(var(--rk-bubble-u) * 34);
+}
+
+.rk-bubble__item[data-rank="1"] .rk-bubble__icon {
+  width: calc(var(--rk-bubble-u) * 24);
+  height: calc(var(--rk-bubble-u) * 24);
+}
+
+.rk-bubble__label {
+  position: relative;
+  z-index: 1;
+  font-size: calc(var(--rk-bubble-u) * 11);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.005em;
+  text-shadow: 0 1px 2px rgb(0 0 0 / 0.2);
+}
+
+.rk-bubble__item[data-rank="0"] .rk-bubble__label {
+  font-size: calc(var(--rk-bubble-u) * 15);
+}
+
+.rk-bubble__item[data-rank="1"] .rk-bubble__glass {
+  gap: calc(var(--rk-bubble-u) * 4);
+}
+
+/* Open, the bubbles drift a few px up and down, each on its own beat. */
+.rk-bubble[data-open="true"][data-float="true"] .rk-bubble__glass {
+  animation: rk-bubble-float calc(3.2s + var(--rk-bubble-i) * 0.45s) ease-in-out calc(var(--rk-bubble-i) * -0.7s) infinite alternate;
+}
+
+@keyframes rk-bubble-float {
+  from {
+    translate: 0 calc(var(--rk-bubble-u) * 3);
+  }
+  to {
+    translate: 0 calc(var(--rk-bubble-u) * -3);
+  }
+}
+
+/* The button: the design's soft lilac disc, with a light rim and the plus that turns into a cross. */
+.rk-bubble__trigger {
+  position: absolute;
+  top: calc((var(--rk-bubble-cy) - 42) * var(--rk-bubble-u));
+  left: calc((var(--rk-bubble-cx) - 42) * var(--rk-bubble-u));
+  display: grid;
+  place-items: center;
+  width: calc(var(--rk-bubble-u) * 84);
+  height: calc(var(--rk-bubble-u) * 84);
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: linear-gradient(180deg, var(--rk-bubble-trigger-top), var(--rk-bubble-trigger-low));
+  box-shadow:
+    inset 0 0 0 max(1px, calc(var(--rk-bubble-u) * 1)) rgb(255 255 255 / 0.55),
+    inset 0 calc(var(--rk-bubble-u) * 2) calc(var(--rk-bubble-u) * 6) rgb(255 255 255 / 0.4),
+    0 calc(var(--rk-bubble-u) * 10) calc(var(--rk-bubble-u) * 24) rgb(60 50 100 / 0.18);
+  cursor: pointer;
+  transition:
+    scale 300ms var(--rk-bubble-spring),
+    filter 200ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.rk-bubble__trigger:hover {
+  filter: brightness(1.04);
+}
+
+.rk-bubble__trigger:active {
+  scale: 0.94;
+}
+
+.rk-bubble__trigger:focus-visible {
+  outline: 2px solid var(--rk-bubble-focus);
+  outline-offset: 3px;
+}
+
+.rk-bubble__plus {
+  display: block;
+  width: calc(var(--rk-bubble-u) * 42);
+  height: calc(var(--rk-bubble-u) * 42);
+  transition: rotate 420ms var(--rk-bubble-spring);
+}
+
+.rk-bubble__plus svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.rk-bubble[data-open="true"] .rk-bubble__plus {
+  rotate: 45deg;
+}
+
+/* Reduced motion: the bubbles fade in place, nothing springs, spins or drifts. */
+@media (prefers-reduced-motion: reduce) {
+  .rk-bubble__item,
+  .rk-bubble[data-open="true"] .rk-bubble__item {
+    transform: none;
+    transition:
+      opacity 150ms ease,
+      visibility 0s linear 150ms;
+  }
+
+  .rk-bubble[data-open="true"] .rk-bubble__item {
+    transition: opacity 150ms ease;
+  }
+
+  .rk-bubble__plus,
+  .rk-bubble__glass,
+  .rk-bubble__trigger {
+    transition: none;
+  }
+
+  .rk-bubble[data-open="true"][data-float="true"] .rk-bubble__glass {
+    animation: none;
+  }
+}
