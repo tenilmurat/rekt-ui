@@ -1,0 +1,56 @@
+/*
+  Keyboard. Every colour is a variable with a fallback, so it works as is;
+  point the --rk-kb-* variables at your own tokens to theme it. Two looks:
+  white (white keys, grey lines) and dark (near-black keys, soft grey lines).
+  --rk-kb-hot is the line of the key under the pointer, or being typed.
+*/
+.rk-kb {
+  --rk-kb-top: #ffffff;
+  --rk-kb-left: #f4f4f4;
+  --rk-kb-right: #e9e9e9;
+  --rk-kb-case: #ffffff;
+  --rk-kb-line: #a4a4a4;
+  --rk-kb-hot: #141210;
+
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.rk-kb[data-look="dark"] {
+  --rk-kb-top: #2c2c30;
+  --rk-kb-left: #1f1f22;
+  --rk-kb-right: #18181a;
+  --rk-kb-case: #232326;
+  --rk-kb-line: #55555c;
+  --rk-kb-hot: #f2f2f2;
+}
+
+.rk-kb path {
+  stroke: var(--rk-kb-line);
+  stroke-width: 1;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.rk-kb__top {
+  fill: var(--rk-kb-top);
+}
+.rk-kb__left {
+  fill: var(--rk-kb-left);
+}
+.rk-kb__right {
+  fill: var(--rk-kb-right);
+}
+.rk-kb__case .rk-kb__top {
+  fill: var(--rk-kb-case);
+}
+.rk-kb__plate {
+  fill: none;
+}
+
+.rk-kb__key[data-hot] path {
+  stroke: var(--rk-kb-hot);
+}
