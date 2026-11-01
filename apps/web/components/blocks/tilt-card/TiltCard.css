@@ -2,6 +2,10 @@
   Tilt card. Every colour is a variable with a fallback, so it works as is;
   point the --rk-tilt-* variables at your own tokens to theme it. The pose
   variables (--rk-tilt-rx, -ry, -gx, -gy, -glow) are written by the component.
+  It has a light and a dark theme: the dark one applies under a .dark
+  ancestor (the class next-themes and shadcn put on <html>). The card itself
+  is a printed object and looks the same in both; the dark theme changes how
+  it sits on the page: a brighter rim so its edge reads, and a deeper shadow.
 */
 .rk-tilt {
   --rk-tilt-width: 240px;
@@ -27,10 +31,28 @@
     #ffa53d 100%
   );
   --rk-tilt-back-bg: #0b0b0d;
+  /* The Color finish's base, under its colour fields. */
+  --rk-tilt-art-bg: #1b1a18;
+  /* The card's edge: a hairline inside the face and a light catching the top. */
+  --rk-tilt-rim: rgb(255 255 255 / 0.06);
+  --rk-tilt-rim-top: rgb(255 255 255 / 0);
+  /* The shadow's colour, and its strength at Shade 0 and how much Shade adds. */
+  --rk-tilt-shadow: 20 18 16;
+  --rk-tilt-shadow-base: 0.18;
+  --rk-tilt-shadow-range: 0.22;
   --rk-tilt-flip-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
 
   perspective: 900px;
   font-family: inherit;
+}
+
+/* Dark: a brighter rim and top edge so the near-black card stands off the page, and a deeper black shadow. */
+.dark .rk-tilt {
+  --rk-tilt-rim: rgb(255 255 255 / 0.11);
+  --rk-tilt-rim-top: rgb(255 255 255 / 0.1);
+  --rk-tilt-shadow: 0 0 0;
+  --rk-tilt-shadow-base: 0.4;
+  --rk-tilt-shadow-range: 0.3;
 }
 
 .rk-tilt__card {
@@ -85,15 +107,17 @@
   -webkit-backface-visibility: hidden;
   text-align: left;
   box-shadow:
-    0 0 0 1px rgb(255 255 255 / 0.06) inset,
-    var(--rk-tilt-sx) var(--rk-tilt-sy) 40px rgb(20 18 16 / calc(0.18 + var(--rk-tilt-shade) * 0.22));
+    0 0 0 1px var(--rk-tilt-rim) inset,
+    0 1px 0 var(--rk-tilt-rim-top) inset,
+    var(--rk-tilt-sx) var(--rk-tilt-sy) 40px
+      rgb(var(--rk-tilt-shadow) / calc(var(--rk-tilt-shadow-base) + var(--rk-tilt-shade) * var(--rk-tilt-shadow-range)));
 }
 
 .rk-tilt__front {
   --rk-tilt-ink: #ffffff;
   --rk-tilt-muted: rgb(255 255 255 / 0.72);
   justify-content: space-between;
-  background: #1b1a18;
+  background: var(--rk-tilt-art-bg);
   color: var(--rk-tilt-ink);
 }
 
@@ -106,7 +130,7 @@
     radial-gradient(55% 45% at 80% 30%, #7c5cff 0%, transparent 70%),
     radial-gradient(70% 55% at 55% 85%, #2fd3c3 0%, transparent 70%),
     radial-gradient(40% 35% at 30% 75%, #ffd166 0%, transparent 70%),
-    #1b1a18;
+    var(--rk-tilt-art-bg);
   filter: saturate(1.1);
 }
 

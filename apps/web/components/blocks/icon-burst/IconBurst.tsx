@@ -216,7 +216,10 @@ export function IconBurst({
     // without being heavy. Each flies to a random
     // spot in a soft disc round the icon, leaning outward from where it started.
     const reach = size / 2 + spread;
-    const ink = getComputedStyle(canvas).color;
+    const style = getComputedStyle(canvas);
+    const ink = style.color;
+    // How strong the faint grains are: 1 on light, more on dark so they don't sink into it.
+    const strength = parseFloat(style.getPropertyValue("--rk-burst-dust-strength")) || 1;
     const layers = colorful ? DUST.map((color) => ({ color, grains: [] as Grain[] })) : [{ color: ink, grains: [] as Grain[] }];
     for (const p of points.current) {
       const copies = Math.random() < EXTRA ? 2 : 1;
@@ -238,7 +241,7 @@ export function IconBurst({
           tx,
           ty,
           // Mostly light, a few strong, so the cloud has depth instead of reading as a solid mass.
-          alpha: p.alpha * (0.15 + 0.85 * Math.random() ** 1.8),
+          alpha: Math.min(1, p.alpha * (0.15 + 0.85 * Math.random() ** 1.8) * strength),
           size: 0.8 + Math.random() * 0.9,
           delay: Math.random() * 0.06,
           life: 0.7 + Math.random() * 0.3,

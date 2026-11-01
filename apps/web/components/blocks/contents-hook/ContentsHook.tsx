@@ -65,8 +65,6 @@ const SECTIONS: ContentsHookSection[] = [
   },
 ];
 
-const FALLBACK_COLOR = "#141210";
-
 const slug = (text: string) => text.toLowerCase().replace(/[^a-z0-9]+/g, "-");
 
 /** Item row height in px; the connectors are drawn to it. */
@@ -130,7 +128,8 @@ export function ContentsHook({
         {
           "--rk-chook-duration": `${Math.max(0, speed)}ms`,
           "--rk-chook-row": `${ROW}px`,
-          "--rk-chook-bar": sections[open]?.color ?? FALLBACK_COLOR,
+          // A section without a colour of its own uses the ink, from the CSS (so it follows the theme).
+          "--rk-chook-bar": sections[open]?.color,
         } as React.CSSProperties
       }
     >
@@ -149,7 +148,7 @@ export function ContentsHook({
             key={section.label}
             className="rk-chook__section"
             data-open={isOpen}
-            style={{ "--rk-chook-accent": section.color ?? FALLBACK_COLOR } as React.CSSProperties}
+            style={{ "--rk-chook-accent": section.color } as React.CSSProperties}
           >
             <button
               ref={(el) => {

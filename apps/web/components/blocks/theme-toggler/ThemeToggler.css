@@ -1,0 +1,187 @@
+/*
+  Theme toggler. Every colour is a variable with a fallback, so it works as
+  is; point the --rk-theme-* variables at your own tokens to theme it. It has a
+  light and a dark theme, dark under a .dark ancestor (the class it puts on
+  <html>).
+*/
+.rk-theme {
+  --rk-theme-ink: #141210;
+  --rk-theme-ring: rgb(20 18 16 / 0.55);
+  --rk-theme-ease: cubic-bezier(0.34, 1.3, 0.5, 1);
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--rk-theme-size, 32px);
+  height: var(--rk-theme-size, 32px);
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: var(--rk-theme-ink);
+  cursor: pointer;
+  transition:
+    opacity 160ms ease,
+    transform 160ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.dark .rk-theme {
+  --rk-theme-ink: #f3f1ed;
+  --rk-theme-ring: rgb(243 241 237 / 0.6);
+}
+
+.rk-theme:hover {
+  opacity: 0.7;
+}
+
+.rk-theme:active {
+  transform: scale(0.94);
+}
+
+.rk-theme:focus-visible {
+  outline: 2px solid var(--rk-theme-ring);
+  outline-offset: 3px;
+}
+
+.rk-theme__icon {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.rk-theme__core {
+  fill: currentColor;
+}
+
+.rk-theme__rays {
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+}
+
+/* Sun and moon at rest. Each part turns about its own middle. */
+.rk-theme__core,
+.rk-theme__rays,
+.rk-theme__bite {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.rk-theme__core {
+  transform: scale(0.5);
+}
+.rk-theme__bite {
+  transform: translate(10px, -10px);
+}
+
+.rk-theme[data-dark] .rk-theme__core {
+  transform: none;
+}
+.rk-theme[data-dark] .rk-theme__bite {
+  transform: none;
+}
+.rk-theme[data-dark] .rk-theme__rays {
+  opacity: 0;
+  transform: rotate(45deg) scale(0.5);
+}
+
+/*
+  Once clicked, the change plays as keyframes rather than transitions, so it
+  still runs when the page briefly switches transitions off to change theme
+  (as next-themes does).
+*/
+.rk-theme[data-touched] .rk-theme__core {
+  animation: rk-theme-core-sun 520ms var(--rk-theme-ease) both;
+}
+.rk-theme[data-touched] .rk-theme__bite {
+  animation: rk-theme-bite-sun 520ms var(--rk-theme-ease) both;
+}
+.rk-theme[data-touched] .rk-theme__rays {
+  animation: rk-theme-rays-sun 520ms var(--rk-theme-ease) both;
+}
+.rk-theme[data-touched][data-dark] .rk-theme__core {
+  animation-name: rk-theme-core-moon;
+}
+.rk-theme[data-touched][data-dark] .rk-theme__bite {
+  animation-name: rk-theme-bite-moon;
+}
+.rk-theme[data-touched][data-dark] .rk-theme__rays {
+  animation-name: rk-theme-rays-moon;
+}
+
+@keyframes rk-theme-core-moon {
+  from {
+    transform: scale(0.5);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes rk-theme-core-sun {
+  from {
+    transform: none;
+  }
+  to {
+    transform: scale(0.5);
+  }
+}
+@keyframes rk-theme-bite-moon {
+  from {
+    transform: translate(10px, -10px);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes rk-theme-bite-sun {
+  from {
+    transform: none;
+  }
+  to {
+    transform: translate(10px, -10px);
+  }
+}
+@keyframes rk-theme-rays-moon {
+  from {
+    opacity: 1;
+    transform: none;
+  }
+  to {
+    opacity: 0;
+    transform: rotate(45deg) scale(0.5);
+  }
+}
+@keyframes rk-theme-rays-sun {
+  from {
+    opacity: 0;
+    transform: rotate(-45deg) scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/*
+  The page-wide reveal. The old and new pages are swapped with no crossfade,
+  so the new theme shows only through the growing clip-path the component
+  animates; until that starts, the new page is held clipped to nothing.
+*/
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+[data-rk-theme-vt]::view-transition-new(root) {
+  clip-path: var(--rk-theme-vt-from);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rk-theme[data-touched] .rk-theme__core,
+  .rk-theme[data-touched] .rk-theme__bite,
+  .rk-theme[data-touched] .rk-theme__rays {
+    animation: none;
+  }
+}

@@ -1,6 +1,9 @@
 /*
   Rolling counter. Every colour is a variable with a fallback, so it works as
   is; point the --rk-counter-* variables at your own tokens to theme it.
+  Light theme, plus a dark theme under any ancestor with the class "dark"
+  (what next-themes and shadcn put on <html>); both use the same variables.
+  The fill prop picks a light or a dark card in either theme.
 */
 .rk-counter {
   --rk-counter-bg: #ffffff;
@@ -8,6 +11,7 @@
   --rk-counter-muted: #6b6763;
   --rk-counter-button: #f1f1f0;
   --rk-counter-edge: rgb(20 18 16 / 0.08);
+  --rk-counter-shadow: 0 8px 24px rgb(20 18 16 / 0.08);
   --rk-counter-ease: cubic-bezier(0.23, 1, 0.32, 1);
 
   position: relative;
@@ -21,7 +25,7 @@
   color: var(--rk-counter-ink);
   box-shadow:
     0 0 0 1px var(--rk-counter-edge),
-    0 8px 24px rgb(20 18 16 / 0.08);
+    var(--rk-counter-shadow);
   font-family: inherit;
 }
 
@@ -31,6 +35,29 @@
   --rk-counter-muted: #a8a29b;
   --rk-counter-button: #2a2826;
   --rk-counter-edge: rgb(255 255 255 / 0.07);
+}
+
+/*
+  Dark theme. The light card becomes a raised one, a step above the page,
+  with a faint top light; the dark card sinks to near black, so the two
+  fills still read as two.
+*/
+.dark .rk-counter {
+  --rk-counter-bg: #211f1d;
+  --rk-counter-ink: #f2efea;
+  --rk-counter-muted: #8f8a84;
+  --rk-counter-button: #2f2d2a;
+  --rk-counter-edge: rgb(255 255 255 / 0.08);
+  --rk-counter-shadow: inset 0 1px 0 rgb(255 255 255 / 0.04), 0 8px 24px rgb(0 0 0 / 0.32);
+}
+
+.dark .rk-counter[data-fill="dark"] {
+  --rk-counter-bg: #0c0b0a;
+  --rk-counter-ink: #f2efea;
+  --rk-counter-muted: #8a857f;
+  --rk-counter-button: #1d1b19;
+  --rk-counter-edge: rgb(255 255 255 / 0.06);
+  --rk-counter-shadow: 0 8px 24px rgb(0 0 0 / 0.4);
 }
 
 .rk-counter__label {

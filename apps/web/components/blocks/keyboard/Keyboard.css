@@ -1,7 +1,8 @@
 /*
   Keyboard. Every colour is a variable with a fallback, so it works as is;
   point the --rk-kb-* variables at your own tokens to theme it. Two looks:
-  white (white keys, grey lines) and dark (near-black keys, soft grey lines).
+  white (white keys, grey lines) and dark (near-black keys, soft grey lines),
+  each made for a light page; under a .dark ancestor the dark one's lines lift.
   --rk-kb-hot is the line of the key under the pointer, or being typed.
 */
 .rk-kb {
@@ -26,6 +27,11 @@
   --rk-kb-case: #232326;
   --rk-kb-line: #55555c;
   --rk-kb-hot: #f2f2f2;
+}
+
+/* On a dark page the dark keyboard's lines come up a little, so its edges don't sink into the page. */
+.dark .rk-kb[data-look="dark"] {
+  --rk-kb-line: #6b6b73;
 }
 
 .rk-kb path {

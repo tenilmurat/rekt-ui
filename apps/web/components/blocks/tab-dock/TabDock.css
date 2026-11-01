@@ -1,7 +1,9 @@
 /*
   Tab dock. Every colour is a variable with a fallback, so it works as is;
   point the --rk-dock-* variables at your own tokens to theme it.
-  Light theme; a dark theme can be added by redefining the same variables.
+  It has a light and a dark theme: the dark one applies under any ancestor
+  with the class "dark" (the shadcn / next-themes convention) and redefines
+  the same variables.
   Every size is multiplied by --rk-dock-scale, which the resize line changes.
 */
 .rk-dock {
@@ -12,6 +14,7 @@
   --rk-dock-edge: rgb(20 18 16 / 0.1);
   --rk-dock-line: rgb(20 18 16 / 0.14);
   --rk-dock-ring: rgb(20 18 16 / 0.6);
+  --rk-dock-shadow: rgb(20 18 16 / 0.06);
   --rk-dock-scale: 1;
   --rk-dock-speed: 420ms;
   --rk-dock-ease: cubic-bezier(0.33, 1, 0.68, 1);
@@ -30,11 +33,30 @@
   background: var(--rk-dock-bg);
   box-shadow:
     0 0 0 1px var(--rk-dock-edge),
-    0 calc(6px * var(--s)) calc(18px * var(--s)) rgb(20 18 16 / 0.06);
+    0 calc(6px * var(--s)) calc(18px * var(--s)) var(--rk-dock-shadow);
   color: var(--rk-dock-muted);
   font-family: inherit;
   user-select: none;
   -webkit-user-select: none;
+}
+
+/*
+  Dark theme: a bar a step above the ground with a hairline of light round
+  it, a deeper shadow below, and the pill a shade lighter again. The cursor
+  turns over too: light chevrons on a dark halo.
+*/
+.dark .rk-dock {
+  --rk-dock-bg: #211f1d;
+  --rk-dock-ink: #f5f3f0;
+  --rk-dock-muted: #96918b;
+  --rk-dock-pill: #34312d;
+  --rk-dock-edge: rgb(255 255 255 / 0.08);
+  --rk-dock-line: rgb(255 255 255 / 0.16);
+  --rk-dock-ring: rgb(255 255 255 / 0.6);
+  --rk-dock-shadow: rgb(0 0 0 / 0.32);
+  --rk-dock-cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m7 15 5 5 5-5M7 9l5-5 5 5' stroke='%23141210' stroke-width='5'/%3E%3Cpath d='m7 15 5 5 5-5M7 9l5-5 5 5' stroke='white' stroke-width='2'/%3E%3C/svg%3E")
+      12 12,
+    ns-resize;
 }
 
 .rk-dock[data-dragging] {
