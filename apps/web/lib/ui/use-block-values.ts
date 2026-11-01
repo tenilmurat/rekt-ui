@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 import { usePreviewState } from "@/lib/preview-state";
 import { defaultValues } from "@/lib/ui/snippets";
-import type { ControlValues, UiBlock } from "@/lib/ui/types";
+import type { ControlValue, ControlValues, UiBlock } from "@/lib/ui/types";
 
 /**
  * The props a component is rendered with: its control defaults, overridden by
@@ -20,6 +20,6 @@ export function useBlockValues(block: UiBlock) {
     values,
     startedAt,
     restart,
-    setValue: (prop: string, value: string | number | boolean) => setCustom({ [prop]: value }),
+    setValue: (prop: string, value: ControlValue) => setCustom({ [prop]: value }),
   };
 }

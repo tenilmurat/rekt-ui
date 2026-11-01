@@ -3,11 +3,11 @@
 import { RotateCcw, Shuffle as ShuffleIcon } from "lucide-react";
 import { DynamicIcon, type IconName } from "lucide-react/dynamic";
 import { useId } from "react";
-import type { ControlValues, UiControl } from "@/lib/ui/types";
+import type { ControlValue, ControlValues, UiControl } from "@/lib/ui/types";
 
 /**
- * The knobs in the component dialog: segmented choices, icon grids, switches, sliders and shuffles.
- * Each one sets one prop, which the preview and the Usage snippet both read.
+ * The knobs in the component dialog: segmented choices, icon and emoji grids, switches, sliders and shuffles.
+ * Each one sets one prop, which the preview and the Usage snippet both read; one with `when` shows only while another prop has that value.
  */
 export function Controls({
   controls,
@@ -16,11 +16,12 @@ export function Controls({
 }: {
   controls: UiControl[];
   values: ControlValues;
-  onChange: (prop: string, value: string | number | boolean) => void;
+  onChange: (prop: string, value: ControlValue) => void;
 }) {
   return (
     <div className="flex flex-col gap-[14px]">
       {controls.map((control) => {
+        if (control.when && values[control.when.prop] !== control.when.value) return null;
         const value = values[control.prop];
         if (control.type === "segmented")
           return <Segmented key={control.prop} control={control} value={String(value)} onChange={(v) => onChange(control.prop, v)} />;
@@ -28,6 +29,15 @@ export function Controls({
           return <Icons key={control.prop} control={control} value={String(value)} onChange={(v) => onChange(control.prop, v)} />;
         if (control.type === "toggle")
           return <Toggle key={control.prop} control={control} value={Boolean(value)} onChange={(v) => onChange(control.prop, v)} />;
+        if (control.type === "emojis")
+          return (
+            <Emojis
+              key={control.prop}
+              control={control}
+              value={Array.isArray(value) ? value : control.default}
+              onChange={(v) => onChange(control.prop, v)}
+            />
+          );
         if (control.type === "shuffle")
           return <Shuffle key={control.prop} control={control} value={Number(value)} onChange={(v) => onChange(control.prop, v)} />;
         return <Slider key={control.prop} control={control} value={Number(value)} onChange={(v) => onChange(control.prop, v)} />;
@@ -121,6 +131,59 @@ function Icons({
               }}
             >
               <DynamicIcon name={option.value as IconName} size={18} aria-hidden="true" />
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/** A wrapping grid of emoji, each a switch: the ones that are on are what the component uses. The last one on can't be switched off. */
+function Emojis({
+  control,
+  value,
+  onChange,
+}: {
+  control: Extract<UiControl, { type: "emojis" }>;
+  value: string[];
+  onChange: (value: string[]) => void;
+}) {
+  const labelId = useId();
+  return (
+    <div className="flex flex-col gap-[8px]">
+      <div className="flex items-center justify-between">
+        <span id={labelId} className="text-[13.5px]" style={{ color: "var(--ink-2)" }}>
+          {control.label}
+        </span>
+        <span className="text-[12.5px] tabular-nums" style={{ color: "var(--ink-3)" }}>
+          {value.length} on
+        </span>
+      </div>
+      <div role="group" aria-labelledby={labelId} className="grid grid-cols-6 gap-[6px]">
+        {control.options.map((emoji) => {
+          const on = value.includes(emoji);
+          const last = on && value.length === 1;
+          return (
+            <button
+              key={emoji}
+              type="button"
+              aria-pressed={on}
+              aria-disabled={last}
+              onClick={() => {
+                if (last) return;
+                onChange(on ? value.filter((e) => e !== emoji) : control.options.filter((e) => e === emoji || value.includes(e)));
+              }}
+              className="grid aspect-square place-items-center rounded-[12px] text-[20px] leading-none transition-[background-color,opacity,filter] active:scale-[0.96]"
+              style={{
+                backgroundColor: on ? "var(--surface-raised)" : "var(--hover-2)",
+                boxShadow: on ? "var(--shadow-raised)" : "none",
+                opacity: on ? 1 : 0.4,
+                filter: on ? "none" : "grayscale(1)",
+                cursor: last ? "not-allowed" : "pointer",
+              }}
+            >
+              {emoji}
             </button>
           );
         })}

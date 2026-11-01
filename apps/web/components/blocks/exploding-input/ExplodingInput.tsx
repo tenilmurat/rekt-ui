@@ -21,7 +21,7 @@ export type ExplodingInputProps = Omit<React.InputHTMLAttributes<HTMLInputElemen
   width?: number;
 };
 
-const DEFAULT_EMOJIS = ["🤩", "👾", "😺", "👻", "🔥", "💥", "✨", "🖤"];
+const DEFAULT_EMOJIS = ["🔥", "✨", "💥", "🤩", "👾", "👻", "😺", "🖤"];
 
 /** The letters' colours: a warm-to-cool ramp, one picked at random per letter. */
 const INKS = ["#ff5e5b", "#ff9b3d", "#ffc53d", "#1fc98f", "#19b5c8", "#5b8cff", "#a46bff"];
