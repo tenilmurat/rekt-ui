@@ -9,6 +9,7 @@ import { FilterChips } from "@/components/wall/FilterChips";
 import { Masonry } from "@/components/wall/Masonry";
 import { GlitchWord } from "@/components/wall/GlitchWord";
 import { PageHero } from "@/components/wall/PageHero";
+import { TechStack } from "@/components/wall/TechStack";
 import { useSession } from "@/lib/session";
 import { BLOCKS, UI_CATEGORIES, getBlock } from "@/lib/ui/catalog";
 
@@ -70,6 +71,7 @@ export function UiWall() {
             </button>
           )
         }
+        footer={<TechStack />}
       />
 
       <FilterChips
