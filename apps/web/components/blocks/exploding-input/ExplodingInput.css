@@ -1,0 +1,57 @@
+/*
+  Exploding input. Every colour is a variable with a fallback, so it works as
+  is; point the --rk-explode-* variables at your own tokens to theme it. The
+  bits fly in a layer the component puts on <body>, fixed over the whole page,
+  so they can leave the input's card; --rk-explode-z sets how high it sits.
+*/
+.rk-explode {
+  --rk-explode-ink: #111111;
+  --rk-explode-placeholder: #a3a3a3;
+  --rk-explode-line: #d4d4d4;
+  --rk-explode-line-focus: #111111;
+
+  box-sizing: border-box;
+  width: var(--rk-explode-width, 288px);
+  max-width: 100%;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  border-bottom: 1px solid var(--rk-explode-line);
+  border-radius: 0;
+  background: transparent;
+  color: var(--rk-explode-ink);
+  font: inherit;
+  font-size: 16px;
+  font-weight: 500;
+  outline: none;
+  transition: border-color 160ms ease;
+}
+
+.rk-explode::placeholder {
+  color: var(--rk-explode-placeholder);
+  font-weight: 500;
+}
+
+.rk-explode:focus {
+  border-bottom-color: var(--rk-explode-line-focus);
+}
+
+.rk-explode__layer {
+  position: fixed;
+  inset: 0;
+  z-index: var(--rk-explode-z, 1000);
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* A bit: placed by a transform from the top left, its centre on the caret. */
+.rk-explode__bit {
+  position: absolute;
+  top: 0;
+  left: 0;
+  font-weight: 700;
+  line-height: 1;
+  white-space: pre;
+  user-select: none;
+  will-change: transform, opacity;
+}
