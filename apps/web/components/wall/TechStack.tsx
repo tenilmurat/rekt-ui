@@ -61,9 +61,10 @@ const STACK: { name: string; logo: () => ReactNode }[] = [
 /** What Rekt UI's components are built for, as a row of monochrome logos. */
 export function TechStack() {
   return (
-    <ul aria-label="Works with" className="flex items-center gap-[24px]" style={{ color: "var(--ink-title)" }}>
+    // A very soft grey, mixed from the muted ink and the page colour, so it stays soft in both themes.
+    <ul aria-label="Works with" className="flex items-center gap-[24px]" style={{ color: "color-mix(in srgb, var(--ink-3) 35%, var(--bg))" }}>
       {STACK.map(({ name, logo: Logo }) => (
-        <li key={name} title={name} className="size-[28px] [&>svg]:size-full">
+        <li key={name} title={name} className="size-[20px] [&>svg]:size-full">
           <Logo />
           <span className="sr-only">{name}</span>
         </li>

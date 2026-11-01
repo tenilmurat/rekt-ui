@@ -26,12 +26,15 @@ export function PageHero({
         </span>
       ) : null}
       <h1
-        className="text-[32px] font-medium leading-[1.1] tracking-[-0.48px] sm:text-[40px]"
+        className="text-[40px] font-semibold leading-[1] tracking-[-0.047em] sm:text-[64px]"
         style={{ color: "var(--ink-title)", textWrap: "balance" }}
       >
         {title}
       </h1>
-      <p className="mt-[12px] max-w-[560px] text-[15px] leading-[1.55] sm:text-[16px]" style={{ color: "var(--ink-2)", textWrap: "pretty" }}>
+      <p
+        className="mt-[20px] max-w-[600px] text-[17px] leading-[1.35] tracking-[-0.03em] sm:text-[20px] sm:tracking-[-0.05em]"
+        style={{ color: "var(--ink-2)", textWrap: "pretty" }}
+      >
         {lead}
       </p>
       {action ? <div className="mt-[24px]">{action}</div> : null}

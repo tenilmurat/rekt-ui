@@ -1,6 +1,41 @@
 @import "tailwindcss";
 
 /*
+  The site's typeface is Suisse Int'l, from the brand file (Figma 57:370). It's a
+  licensed font, so its files aren't in this public repo: these faces only point
+  at a copy installed on the visitor's machine, and anyone without one gets
+  Inter, the next font in --font-sans. To serve it to everyone, add woff2 files
+  under a web licence and list them here as url() sources after the local() ones.
+*/
+@font-face {
+  font-family: "Suisse Intl Site";
+  font-weight: 400;
+  font-style: normal;
+  src: local("SuisseIntl-Regular"), local("Suisse Intl Regular");
+}
+
+@font-face {
+  font-family: "Suisse Intl Site";
+  font-weight: 500;
+  font-style: normal;
+  src: local("SuisseIntl-Medium"), local("Suisse Intl Medium");
+}
+
+@font-face {
+  font-family: "Suisse Intl Site";
+  font-weight: 600;
+  font-style: normal;
+  src: local("SuisseIntl-SemiBold"), local("Suisse Intl SemiBold");
+}
+
+@font-face {
+  font-family: "Suisse Intl Site";
+  font-weight: 700;
+  font-style: normal;
+  src: local("SuisseIntl-Bold"), local("Suisse Intl Bold");
+}
+
+/*
   Tokens come from the two Figma frames (286:605 default view, 286:3044 full view).
   Muted text is darkened from the mock's #808080 / #B8B8B8 to meet WCAG 2.2 AA
   (AGENTS.md: text >= 4.5:1). Everything else matches the design exactly.
@@ -138,7 +173,7 @@
   --shadow-raised: var(--shadow-raised);
   --shadow-overlay: var(--shadow-overlay);
 
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Suisse Intl Site", var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
 }
 
