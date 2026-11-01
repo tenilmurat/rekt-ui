@@ -12,6 +12,7 @@ import { rockerSwitchMeta } from "@/components/blocks/rocker-switch/meta";
 import { giftCardMeta } from "@/components/blocks/gift-card/meta";
 import { bubbleMenuMeta } from "@/components/blocks/bubble-menu/meta";
 import { explodingInputMeta } from "@/components/blocks/exploding-input/meta";
+import { keyboardMeta } from "@/components/blocks/keyboard/meta";
 import { tiltCardMeta } from "@/components/blocks/tilt-card/meta";
 import type { UiBlockMeta } from "@/lib/ui/types";
 
@@ -36,6 +37,7 @@ export const BLOCK_METAS: UiBlockMeta[] = [
   giftCardMeta,
   bubbleMenuMeta,
   explodingInputMeta,
+  keyboardMeta,
 ];
 
 export const getMeta = (id: string) => BLOCK_METAS.find((m) => m.id === id);
