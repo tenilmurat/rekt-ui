@@ -13,7 +13,7 @@ export function PageHero({
   action?: ReactNode;
 }) {
   return (
-    <header className="animate-fade-up flex flex-col items-start px-[20px] pb-[56px] pt-[88px] text-left">
+    <header className="animate-fade-up flex flex-col items-start px-[20px] pb-[96px] pt-[136px] text-left sm:pb-[128px] sm:pt-[184px]">
       {pill ? (
         <span
           className="mb-[20px] rounded-full border px-[12px] py-[5px] text-[12.5px]"
