@@ -1,4 +1,4 @@
-import type { ControlValues, SourceFile, UiBlock } from "@/lib/ui/types";
+import type { ControlValue, ControlValues, SourceFile, UiBlock } from "@/lib/ui/types";
 
 /** Default value of every control, as props. */
 export function defaultValues(block: UiBlock): ControlValues {
@@ -44,8 +44,8 @@ export function installCommand(block: UiBlock) {
     : "# nothing to install beyond React";
 }
 
-const prop = (name: string, value: string | number | boolean) =>
-  typeof value === "string" ? `${name}="${value}"` : `${name}={${value}}`;
+const prop = (name: string, value: ControlValue) =>
+  typeof value === "string" ? `${name}="${value}"` : `${name}={${Array.isArray(value) ? JSON.stringify(value) : value}}`;
 
 /** The import lines and the JSX, with the props the visitor tuned. */
 export function usageSnippet(block: UiBlock, values: ControlValues) {

@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 export type StackGalleryItem = {
   /** Names the card for screen readers. */
   title: string;
-  /** Any CSS background, used when there's no image. */
+  /** Any CSS background: the card itself when there's no image, or what shows under the image while it loads. */
   background?: string;
   /** An image URL; it covers the card. */
   image?: string;
@@ -27,30 +27,25 @@ export type StackGalleryProps = {
   onOpen?: (item: StackGalleryItem, index: number) => void;
 };
 
+/** Where the built-in pictures are served from: public/blocks/stack-gallery/, under the site's base path if it has one. */
+const picture = (name: string) => `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/blocks/stack-gallery/${name}.jpg`;
+
+/** Each fruit painting, with a colour close to its own that shows while it loads. */
+const FRUIT: Record<string, StackGalleryItem> = {
+  lemon: { title: "Lemon", image: picture("lemon"), background: "#2f5a26" },
+  strawberry: { title: "Strawberry", image: picture("strawberry"), background: "#dfe3ea" },
+  banana: { title: "Banana", image: picture("banana"), background: "#d99a55" },
+  watermelon: { title: "Watermelon", image: picture("watermelon"), background: "#132b5a" },
+  kiwi: { title: "Kiwi", image: picture("kiwi"), background: "#f2a5b2" },
+  raspberry: { title: "Raspberry", image: picture("raspberry"), background: "#e9e6ef" },
+  cherry: { title: "Cherry", image: picture("cherry"), background: "#4e8f2c" },
+};
+
+/** The built-in cards: the seven paintings twice over, the second round in another order so the same one never sits next to itself. */
 const ITEMS: StackGalleryItem[] = [
-  { title: "Ember", background: "radial-gradient(120% 90% at 20% 15%, #ffb36b, #ff5a1f 45%, #a8230d)" },
-  { title: "Tide", background: "linear-gradient(160deg, #08202e, #0f6b78 55%, #8fe0d6)" },
-  {
-    title: "Bloom",
-    background:
-      "radial-gradient(60% 70% at 25% 75%, #f7a8cf, transparent 70%), radial-gradient(55% 65% at 78% 28%, #a9dcff, transparent 70%), #e7d6ff",
-  },
-  { title: "Dune", background: "linear-gradient(170deg, #ffd47e, #f2a048 50%, #8f421f)" },
-  {
-    title: "Aurora",
-    background:
-      "radial-gradient(70% 55% at 30% 62%, rgb(29 233 182 / 0.75), transparent 70%), radial-gradient(60% 60% at 80% 25%, #7c4dff, transparent 70%), #080d28",
-  },
-  { title: "Frost", background: "linear-gradient(180deg, #f1f5f9, #c8d5e3 60%, #8ea2b8)" },
-  {
-    title: "Velvet",
-    background:
-      "radial-gradient(55% 60% at 72% 18%, #ffd166, transparent 70%), radial-gradient(60% 65% at 25% 92%, #7b2ff7, transparent 70%), #ff3d81",
-  },
-  { title: "Moss", background: "linear-gradient(165deg, #0f2a1d, #2f6b45 55%, #b8e0a2)" },
-  { title: "Dusk", background: "linear-gradient(160deg, #170f3b, #4a2a98 52%, #e07ac0)" },
-  { title: "Coral", background: "linear-gradient(160deg, #ffe1d6, #ff8a7a 55%, #d2405a)" },
-];
+  "lemon", "strawberry", "banana", "watermelon", "kiwi", "raspberry", "cherry",
+  "banana", "cherry", "lemon", "watermelon", "raspberry", "strawberry", "kiwi",
+].map((name) => FRUIT[name]);
 
 /** How much wheel movement makes one step, and the shortest gap between steps it can make. */
 const WHEEL_STEP = 60;
@@ -205,7 +200,7 @@ export function StackGallery({
                   "--rk-gallery-from": motion?.from,
                   // Moving cards ride above the stack, and an earlier drop stays in front of a later one.
                   zIndex: motion && motion.kind !== "enter" ? 1_000_000 - motion.id : n - d,
-                  background: item.image ? `center / cover no-repeat url("${item.image}")` : item.background,
+                  background: item.image ? `center / cover no-repeat url("${item.image}")${item.background ? `, ${item.background}` : ""}` : item.background,
                 } as React.CSSProperties
               }
               onClick={() => (d === 0 ? onOpen?.(item, index) : go(d))}

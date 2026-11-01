@@ -78,7 +78,8 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  padding: 18px;
+  /* Everything inside is sized from the card's width, so it keeps its proportions at any size. */
+  padding: calc(var(--rk-tilt-width) * 0.075);
   border-radius: var(--rk-tilt-radius);
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
@@ -89,9 +90,11 @@
 }
 
 .rk-tilt__front {
+  --rk-tilt-ink: #ffffff;
+  --rk-tilt-muted: rgb(255 255 255 / 0.72);
   justify-content: space-between;
   background: #1b1a18;
-  color: #ffffff;
+  color: var(--rk-tilt-ink);
 }
 
 /* The artwork: soft colour fields, no image needed. Swap for an <img> if you like. */
@@ -115,60 +118,53 @@
   z-index: 1;
 }
 
-.rk-tilt__label {
-  font-size: 11px;
-  letter-spacing: 0.04em;
-  opacity: 0.8;
-}
-
-.rk-tilt__title {
-  font-size: 26px;
-  font-weight: 600;
-  line-height: 1.05;
-  letter-spacing: -0.02em;
-  text-shadow: 0 1px 12px rgb(0 0 0 / 0.25);
-}
-
+/*
+  The type: a small line at each top corner, then at the bottom the name,
+  a muted handle under it and, after a gap, the role. All plain weight.
+*/
 .rk-tilt__top {
   display: flex;
   justify-content: space-between;
   gap: 12px;
 }
 
+.rk-tilt__label {
+  font-size: calc(var(--rk-tilt-width) * 0.046);
+  line-height: 1.2;
+}
+
 .rk-tilt__name {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+}
+
+.rk-tilt__title {
+  font-size: calc(var(--rk-tilt-width) * 0.08);
+  font-weight: 400;
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+}
+
+.rk-tilt__handle {
+  position: relative;
+  font-size: calc(var(--rk-tilt-width) * 0.05);
+  line-height: 1.25;
+  color: var(--rk-tilt-muted);
 }
 
 .rk-tilt__caption {
-  font-size: 12px;
-  opacity: 0.75;
+  position: relative;
+  margin-top: calc(var(--rk-tilt-width) * 0.045);
+  font-size: calc(var(--rk-tilt-width) * 0.046);
+  line-height: 1.2;
 }
 
 /* ── Holographic finish ─────────────────────────────────────────────── */
 
 .rk-tilt__front[data-finish="holo"] {
+  --rk-tilt-ink: var(--rk-tilt-holo-ink);
+  --rk-tilt-muted: var(--rk-tilt-holo-muted);
   background: var(--rk-tilt-holo-bg);
-  color: var(--rk-tilt-holo-ink);
-}
-
-.rk-tilt__front[data-finish="holo"] .rk-tilt__label,
-.rk-tilt__front[data-finish="holo"] .rk-tilt__caption {
-  color: var(--rk-tilt-holo-muted);
-  opacity: 1;
-}
-
-.rk-tilt__front[data-finish="holo"] .rk-tilt__label {
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 10px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.rk-tilt__front[data-finish="holo"] .rk-tilt__title {
-  font-size: 24px;
-  text-shadow: none;
 }
 
 .rk-tilt__dots,
@@ -240,7 +236,7 @@
 /* The Rekt mark, with its own foil cut to its shape. */
 .rk-tilt__logo {
   display: block;
-  width: 38%;
+  width: 22%;
   aspect-ratio: 23 / 20;
   pointer-events: none;
 }
@@ -266,17 +262,18 @@
 
 .rk-tilt__logo--front {
   position: absolute;
-  top: 46%;
+  z-index: 1;
+  top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
 }
 
 .rk-tilt__logo--back {
   position: relative;
-  width: 42%;
+  width: 26%;
 }
 
-/* The back: the plain dark face and the logo — no dot grid, foil or glitter. */
+/* The back: the plain face and the logo, no dot grid, foil or glitter. */
 .rk-tilt__back {
   align-items: center;
   justify-content: center;

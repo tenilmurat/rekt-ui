@@ -4,14 +4,24 @@ import type { ComponentType } from "react";
  * A knob in the component dialog. Each one maps to one prop of the component,
  * so the values a visitor tunes are exactly what the Usage snippet passes.
  */
-export type UiControl =
+export type UiControl = (
   | { type: "segmented"; prop: string; label: string; options: { value: string; label: string }[]; default: string }
   | { type: "toggle"; prop: string; label: string; default: boolean }
   /** A grid of Lucide icons; each option's value is the icon's Lucide name (kebab-case). */
   | { type: "icons"; prop: string; label: string; options: { value: string; label: string }[]; default: string }
-  | { type: "slider"; prop: string; label: string; min: number; max: number; step: number; unit?: string; default: number };
+  | { type: "slider"; prop: string; label: string; min: number; max: number; step: number; unit?: string; default: number }
+  /** A random seed: Shuffle picks a new number, Reset goes back to the default. */
+  | { type: "shuffle"; prop: string; label: string; default: number }
+  /** A grid of emoji, each switched on or off; the value is the ones that are on, in the grid's order. At least one stays on. */
+  | { type: "emojis"; prop: string; label: string; options: string[]; default: string[] }
+) & {
+  /** Show the control only while another prop has this value, such as an emoji picker only while particles is "emoji". */
+  when?: { prop: string; value: string | number | boolean };
+};
 
-export type ControlValues = Record<string, string | number | boolean>;
+export type ControlValue = string | number | boolean | string[];
+
+export type ControlValues = Record<string, ControlValue>;
 
 /**
  * One published component. Its source is real files a visitor takes home —

@@ -1,6 +1,41 @@
 @import "tailwindcss";
 
 /*
+  The site's typeface is Suisse Int'l, from the brand file (Figma 57:370). It's a
+  licensed font, so its files aren't in this public repo: these faces only point
+  at a copy installed on the visitor's machine, and anyone without one gets
+  Inter, the next font in --font-sans. To serve it to everyone, add woff2 files
+  under a web licence and list them here as url() sources after the local() ones.
+*/
+@font-face {
+  font-family: "Suisse Intl Site";
+  font-weight: 400;
+  font-style: normal;
+  src: local("SuisseIntl-Regular"), local("Suisse Intl Regular");
+}
+
+@font-face {
+  font-family: "Suisse Intl Site";
+  font-weight: 500;
+  font-style: normal;
+  src: local("SuisseIntl-Medium"), local("Suisse Intl Medium");
+}
+
+@font-face {
+  font-family: "Suisse Intl Site";
+  font-weight: 600;
+  font-style: normal;
+  src: local("SuisseIntl-SemiBold"), local("Suisse Intl SemiBold");
+}
+
+@font-face {
+  font-family: "Suisse Intl Site";
+  font-weight: 700;
+  font-style: normal;
+  src: local("SuisseIntl-Bold"), local("Suisse Intl Bold");
+}
+
+/*
   Tokens come from the two Figma frames (286:605 default view, 286:3044 full view).
   Muted text is darkened from the mock's #808080 / #B8B8B8 to meet WCAG 2.2 AA
   (AGENTS.md: text >= 4.5:1). Everything else matches the design exactly.
@@ -138,7 +173,7 @@
   --shadow-raised: var(--shadow-raised);
   --shadow-overlay: var(--shadow-overlay);
 
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Suisse Intl Site", var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
 }
 
@@ -400,6 +435,121 @@ body {
 [data-magicui-theme-vt="active"]::view-transition-new(root) {
   clip-path: var(--magicui-theme-vt-clip-from);
   animation-duration: var(--magicui-theme-toggle-vt-duration, 400ms);
+}
+
+/*
+  The hero's glitching word (components/wall/GlitchWord). While data-glitch is
+  on, two copies of the word, one red and one cyan, each show only a thin band
+  that jumps up and down and sideways, over the page colour, so the word looks
+  torn; the word itself shakes a little.
+*/
+.glitch-word {
+  position: relative;
+  display: inline-block;
+}
+
+.glitch-word::before,
+.glitch-word::after {
+  position: absolute;
+  inset: 0;
+  background: var(--bg);
+  content: attr(data-text);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.glitch-word::before {
+  color: #ff2f5b;
+}
+
+.glitch-word::after {
+  color: #00c2ff;
+}
+
+.glitch-word[data-glitch="true"] {
+  animation: glitch-shake 420ms steps(1, end);
+}
+
+.glitch-word[data-glitch="true"]::before {
+  opacity: 1;
+  animation: glitch-slice-a 420ms steps(1, end);
+}
+
+.glitch-word[data-glitch="true"]::after {
+  opacity: 1;
+  animation: glitch-slice-b 420ms steps(1, end);
+}
+
+@keyframes glitch-shake {
+  0% {
+    translate: 2px 0;
+  }
+  25% {
+    translate: -2px 1px;
+  }
+  50% {
+    translate: 1px -1px;
+  }
+  75% {
+    translate: -1px 0;
+  }
+  100% {
+    translate: 0 0;
+  }
+}
+
+@keyframes glitch-slice-a {
+  0% {
+    clip-path: inset(12% 0 70% 0);
+    translate: -6px 0;
+  }
+  20% {
+    clip-path: inset(58% 0 22% 0);
+    translate: 5px 0;
+  }
+  40% {
+    clip-path: inset(30% 0 52% 0);
+    translate: -3px 0;
+  }
+  60% {
+    clip-path: inset(78% 0 6% 0);
+    translate: 7px 0;
+  }
+  80% {
+    clip-path: inset(4% 0 84% 0);
+    translate: -4px 0;
+  }
+  100% {
+    clip-path: inset(100% 0 0 0);
+    translate: 0 0;
+  }
+}
+
+@keyframes glitch-slice-b {
+  0% {
+    clip-path: inset(64% 0 18% 0);
+    translate: 5px 0;
+  }
+  20% {
+    clip-path: inset(8% 0 76% 0);
+    translate: -7px 0;
+  }
+  40% {
+    clip-path: inset(70% 0 12% 0);
+    translate: 4px 0;
+  }
+  60% {
+    clip-path: inset(22% 0 60% 0);
+    translate: -5px 0;
+  }
+  80% {
+    clip-path: inset(48% 0 34% 0);
+    translate: 3px 0;
+  }
+  100% {
+    clip-path: inset(100% 0 0 0);
+    translate: 0 0;
+  }
 }
 
 /* REKT / ASCII pulse: opacity and a touch of scale, nothing aggressive. */

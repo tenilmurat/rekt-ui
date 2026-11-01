@@ -21,7 +21,9 @@ export type TiltCardProps = {
   index?: string;
   /** The name on the front. */
   title?: string;
-  /** The line under the name. */
+  /** The muted line under the name, such as a handle. */
+  handle?: string;
+  /** The line at the bottom, such as a role. */
   caption?: string;
 };
 
@@ -72,10 +74,11 @@ export function TiltCard({
   corner = 24,
   glare = true,
   finish = "holo",
-  label = "Holographic",
-  index = "No. 001",
-  title = "Rekt UI",
-  caption = "Tilt card edition",
+  label = "Rekt UI",
+  index = "001",
+  title = "Murat Tenil",
+  handle = "@murattenil",
+  caption = "Design Engineer",
 }: TiltCardProps) {
   const cardRef = useRef<HTMLDivElement | null>(null);
   const target = useRef<Pose>({ ...REST });
@@ -170,26 +173,22 @@ export function TiltCard({
       >
         <span className="rk-tilt__flipper" data-flipped={flipped}>
           <span className="rk-tilt__face rk-tilt__front" data-finish={finish} aria-hidden={flipped}>
-            {finish === "holo" ? (
-              <>
-                <Holo />
-                <Logo className="rk-tilt__logo--front" />
-              </>
-            ) : (
-              <span className="rk-tilt__art" />
-            )}
+            {finish === "holo" ? <Holo /> : null}
+            {finish === "color" ? <span className="rk-tilt__art" /> : null}
+            <Logo className="rk-tilt__logo--front" />
             <span className="rk-tilt__top">
               <span className="rk-tilt__label">{label}</span>
               <span className="rk-tilt__label">{index}</span>
             </span>
             <span className="rk-tilt__name">
               <span className="rk-tilt__title">{title}</span>
-              <span className="rk-tilt__caption">{caption}</span>
+              {handle ? <span className="rk-tilt__handle">{handle}</span> : null}
+              {caption ? <span className="rk-tilt__caption">{caption}</span> : null}
             </span>
             <span className="rk-tilt__shade" />
             {glare ? <span className="rk-tilt__glare" /> : null}
           </span>
-          {/* The back is plain: the dark face and the logo, no texture or foil behind it. */}
+          {/* The back is plain: the face's colour and the logo, no texture or foil behind it. */}
           <span className="rk-tilt__face rk-tilt__back" data-finish={finish} aria-hidden={!flipped}>
             <Logo className="rk-tilt__logo--back" />
             <span className="rk-tilt__shade" />

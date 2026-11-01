@@ -9,6 +9,9 @@ import { iconBurstMeta } from "@/components/blocks/icon-burst/meta";
 import { tabDockMeta } from "@/components/blocks/tab-dock/meta";
 import { glitchSwitchMeta } from "@/components/blocks/glitch-switch/meta";
 import { rockerSwitchMeta } from "@/components/blocks/rocker-switch/meta";
+import { giftCardMeta } from "@/components/blocks/gift-card/meta";
+import { bubbleMenuMeta } from "@/components/blocks/bubble-menu/meta";
+import { explodingInputMeta } from "@/components/blocks/exploding-input/meta";
 import { tiltCardMeta } from "@/components/blocks/tilt-card/meta";
 import type { UiBlockMeta } from "@/lib/ui/types";
 
@@ -30,6 +33,9 @@ export const BLOCK_METAS: UiBlockMeta[] = [
   tabDockMeta,
   glitchSwitchMeta,
   rockerSwitchMeta,
+  giftCardMeta,
+  bubbleMenuMeta,
+  explodingInputMeta,
 ];
 
 export const getMeta = (id: string) => BLOCK_METAS.find((m) => m.id === id);

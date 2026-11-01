@@ -1,0 +1,358 @@
+/*
+  Gift card. Every colour is a variable with a fallback, so it works as is;
+  point the --rk-gift-* variables at your own tokens to theme it. The card
+  carries its own colours, so it reads on a light page or a dark one. It's
+  icon-sized by default, for a button or a banner, and every size inside is
+  a multiple of --rk-gift-u, so it scales as a whole. The tilt variables
+  (--rk-gift-rx, -ry, -shine) are written by the component.
+*/
+.rk-gift {
+  --rk-gift-w: 96px;
+  /* One design pixel at this size: the design is drawn 320 wide, so every size below is a multiple of this. */
+  --rk-gift-u: calc(var(--rk-gift-w) / 320);
+  --rk-gift-ink: #ffffff;
+  --rk-gift-line: #ffffff;
+  /* The pattern fades as one layer, so where a stem meets a leaf it doesn't double up. */
+  --rk-gift-line-opacity: 0.24;
+  /*
+    Ocean, as in the design: deep indigo at the top softening to periwinkle,
+    a pale light on the left middle (glow b) and bright aqua along the
+    bottom (glow a).
+  */
+  --rk-gift-top: #262a66;
+  --rk-gift-mid: #6c7ad8;
+  --rk-gift-low: #8be6f0;
+  --rk-gift-glow-a: #a8fdf4;
+  --rk-gift-glow-b: #c3cdff;
+  --rk-gift-ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  display: inline-block;
+  padding: calc(var(--rk-gift-u) * 16);
+  perspective: calc(var(--rk-gift-u) * 900);
+  /* The shadow follows the card's outline, notches and scallops included. */
+  /* Soft: a wide, faint shadow well below and a light one close in. */
+  filter: drop-shadow(0 calc(var(--rk-gift-u) * 16) calc(var(--rk-gift-u) * 40) rgb(20 24 60 / 0.15))
+    drop-shadow(0 calc(var(--rk-gift-u) * 2) calc(var(--rk-gift-u) * 8) rgb(20 24 60 / 0.08));
+}
+
+.rk-gift[data-palette="dusk"] {
+  --rk-gift-top: #2d1747;
+  --rk-gift-mid: #b4478f;
+  --rk-gift-low: #ffb27a;
+  --rk-gift-glow-a: #ffd2a1;
+  --rk-gift-glow-b: #ff6fae;
+}
+
+.rk-gift[data-palette="mint"] {
+  --rk-gift-top: #0f3433;
+  --rk-gift-mid: #1f9a86;
+  --rk-gift-low: #b6f2c9;
+  --rk-gift-glow-a: #e6ffd8;
+  --rk-gift-glow-b: #49d3b4;
+}
+
+/* The card: a bank card's proportions, a little turned like the design, tipping toward the pointer. */
+.rk-gift__card {
+  position: relative;
+  width: var(--rk-gift-w);
+  aspect-ratio: 320 / 202;
+  overflow: hidden;
+  border-radius: calc(var(--rk-gift-w) * 0.085);
+  background: linear-gradient(176deg, var(--rk-gift-top) 0%, var(--rk-gift-mid) 42%, var(--rk-gift-low) 86%);
+  /* A glass edge: a thin light rim, brighter along the top. */
+  /* A frosted glass rim: a light line round the edge and a soft white haze just inside it. */
+  box-shadow:
+    inset 0 0 0 max(1px, calc(var(--rk-gift-u) * 1.5)) rgb(255 255 255 / 0.3),
+    inset 0 0 calc(var(--rk-gift-u) * 18) rgb(255 255 255 / 0.22),
+    inset 0 calc(var(--rk-gift-u) * -24) calc(var(--rk-gift-u) * 48) rgb(255 255 255 / 0.1);
+  transform: rotateZ(-5deg) rotateX(var(--rk-gift-rx, 0deg)) rotateY(var(--rk-gift-ry, 0deg));
+  transition: transform 500ms var(--rk-gift-ease);
+}
+
+/* Ticket: a notch bitten out of each side. */
+.rk-gift[data-shape="ticket"] .rk-gift__card {
+  border-radius: calc(var(--rk-gift-w) * 0.05);
+  -webkit-mask:
+    radial-gradient(circle calc(var(--rk-gift-w) * 0.045) at 0 50%, #0000 98%, #000) left / 51% 100% no-repeat,
+    radial-gradient(circle calc(var(--rk-gift-w) * 0.045) at 100% 50%, #0000 98%, #000) right / 51% 100% no-repeat;
+  mask:
+    radial-gradient(circle calc(var(--rk-gift-w) * 0.045) at 0 50%, #0000 98%, #000) left / 51% 100% no-repeat,
+    radial-gradient(circle calc(var(--rk-gift-w) * 0.045) at 100% 50%, #0000 98%, #000) right / 51% 100% no-repeat;
+}
+
+/* Stamp: scalloped top and bottom edges, like a voucher torn from a book. */
+.rk-gift[data-shape="stamp"] .rk-gift__card {
+  border-radius: calc(var(--rk-gift-w) * 0.025);
+  -webkit-mask:
+    radial-gradient(circle calc(var(--rk-gift-u) * 5) at 50% 0, #0000 97%, #000) top / calc(var(--rk-gift-u) * 14) 51% repeat-x,
+    radial-gradient(circle calc(var(--rk-gift-u) * 5) at 50% 100%, #0000 97%, #000) bottom / calc(var(--rk-gift-u) * 14) 51% repeat-x;
+  mask:
+    radial-gradient(circle calc(var(--rk-gift-u) * 5) at 50% 0, #0000 97%, #000) top / calc(var(--rk-gift-u) * 14) 51% repeat-x,
+    radial-gradient(circle calc(var(--rk-gift-u) * 5) at 50% 100%, #0000 97%, #000) bottom / calc(var(--rk-gift-u) * 14) 51% repeat-x;
+}
+
+/*
+  The glow: two soft blobs of light drifting slowly over the base gradient,
+  a bright one low down and a cooler one high up. Transforms only, so the
+  drift runs on the compositor.
+*/
+.rk-gift__glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.rk-gift__glow::before,
+.rk-gift__glow::after {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(calc(var(--rk-gift-u) * 18));
+  content: "";
+}
+
+.rk-gift__glow::before {
+  bottom: -40%;
+  left: -6%;
+  width: 112%;
+  height: 104%;
+  background: radial-gradient(closest-side, var(--rk-gift-glow-a), transparent);
+  opacity: 1;
+  animation: rk-gift-drift-a 11s ease-in-out infinite alternate;
+}
+
+.rk-gift__glow::after {
+  top: 22%;
+  left: -18%;
+  width: 62%;
+  height: 72%;
+  background: radial-gradient(closest-side, var(--rk-gift-glow-b), transparent);
+  opacity: 0.55;
+  animation: rk-gift-drift-b 15s ease-in-out infinite alternate;
+}
+
+@keyframes rk-gift-drift-a {
+  to {
+    transform: translate(26%, -10%) scale(1.15);
+  }
+}
+
+@keyframes rk-gift-drift-b {
+  to {
+    transform: translate(22%, -12%) scale(1.1);
+  }
+}
+
+/* The pattern: white line art over the glow, drifting a little as a whole. */
+.rk-gift__pattern {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  fill: var(--rk-gift-line);
+  /* Soft, like line art seen through frosted glass. */
+  filter: blur(calc(var(--rk-gift-u) * 1.1));
+  pointer-events: none;
+}
+
+.rk-gift__drift {
+  opacity: var(--rk-gift-line-opacity);
+  animation: rk-gift-pan 16s ease-in-out infinite alternate;
+}
+
+@keyframes rk-gift-pan {
+  to {
+    transform: translate(-8px, 5px);
+  }
+}
+
+.rk-gift__stem {
+  fill: none;
+  stroke: var(--rk-gift-line);
+  stroke-width: 3.5;
+  stroke-linecap: round;
+}
+
+.rk-gift__stem--bold {
+  stroke-width: 7;
+}
+
+/* Fern: each branch sways a few degrees on its base. */
+.rk-gift__sway {
+  animation: rk-gift-sway 7s ease-in-out var(--rk-gift-delay, 0s) infinite alternate;
+}
+
+@keyframes rk-gift-sway {
+  from {
+    transform: rotate(-3deg);
+  }
+  to {
+    transform: rotate(3deg);
+  }
+}
+
+/* Confetti: each piece bobs on its own beat. */
+.rk-gift__bob {
+  animation: rk-gift-bob 3.6s ease-in-out var(--rk-gift-delay, 0s) infinite alternate;
+}
+
+@keyframes rk-gift-bob {
+  from {
+    transform: translateY(-3px) rotate(-8deg);
+  }
+  to {
+    transform: translateY(3px) rotate(8deg);
+  }
+}
+
+/* Rings: thin circles that breathe out in turn. */
+.rk-gift__ring {
+  fill: none;
+  stroke: var(--rk-gift-line);
+  stroke-width: 6;
+  animation: rk-gift-breathe 4.2s ease-in-out var(--rk-gift-delay, 0s) infinite alternate;
+}
+
+@keyframes rk-gift-breathe {
+  from {
+    opacity: 0.45;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1.04);
+  }
+}
+
+/* Stars: sparkles that twinkle in turn. */
+.rk-gift__twinkle {
+  animation: rk-gift-twinkle 2.6s ease-in-out var(--rk-gift-delay, 0s) infinite alternate;
+}
+
+@keyframes rk-gift-twinkle {
+  from {
+    opacity: 0.45;
+    transform: scale(0.75);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* A soft white bloom behind the gift, as if it gave off light. */
+.rk-gift__bloom {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 62%;
+  aspect-ratio: 1.3;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgb(255 255 255 / 0.2), rgb(255 255 255 / 0.06) 55%, transparent);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+/*
+  The gift at the centre: a frosted glass outline. Thick, see-through white
+  strokes with nothing inside them, a brighter line down the middle of each,
+  a soft blur and a soft glow, floating gently, with a glint passing over.
+*/
+.rk-gift__icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: block;
+  width: 30%;
+  aspect-ratio: 1;
+  color: #ffffff;
+  /* A tight white halo round the lines and a wider, fainter one beyond it. */
+  filter: blur(calc(var(--rk-gift-u) * 0.5)) drop-shadow(0 0 calc(var(--rk-gift-u) * 4) rgb(255 255 255 / 0.45))
+    drop-shadow(0 0 calc(var(--rk-gift-u) * 14) rgb(255 255 255 / 0.3));
+  transform: translate(-50%, -50%);
+  animation: rk-gift-float 4.5s ease-in-out infinite alternate;
+}
+
+.rk-gift__icon svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  fill: none;
+}
+
+/* The resting gift is see-through, so the card's colours show through it and the glint reads brighter. */
+.rk-gift__icon > svg {
+  opacity: 0.66;
+}
+
+.rk-gift__core {
+  position: absolute;
+  inset: 0;
+  opacity: 0.45;
+  filter: blur(calc(var(--rk-gift-u) * 0.8));
+}
+
+/*
+  The glint: a bright copy of the gift masked to a slanted band. The mask is
+  three widths wide, so at 100% the band waits off the left edge and at 0%
+  it has gone off the right; it sweeps across, then rests.
+*/
+.rk-gift__glint {
+  position: absolute;
+  inset: 0;
+  -webkit-mask: linear-gradient(115deg, transparent 43%, #000 50%, transparent 57%) 0% 0 / 300% 100% no-repeat;
+  mask: linear-gradient(115deg, transparent 43%, #000 50%, transparent 57%) 0% 0 / 300% 100% no-repeat;
+  animation: rk-gift-glint 4.8s ease-in-out 0.6s infinite;
+}
+
+
+@keyframes rk-gift-glint {
+  0% {
+    -webkit-mask-position: 100% 0;
+    mask-position: 100% 0;
+  }
+  38%,
+  100% {
+    -webkit-mask-position: 0% 0;
+    mask-position: 0% 0;
+  }
+}
+
+@keyframes rk-gift-float {
+  to {
+    transform: translate(-50%, calc(-50% - var(--rk-gift-u) * 4));
+  }
+}
+
+/* The sheen: a band of light that slides across with the pointer. */
+.rk-gift__sheen {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 35%, rgb(255 255 255 / 0.22) 48%, transparent 62%) var(--rk-gift-shine, 50%) 0 / 260% 100% no-repeat;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 300ms ease;
+}
+
+.rk-gift__card:hover .rk-gift__sheen {
+  opacity: 1;
+}
+
+/* Reduced motion: everything holds still; the card doesn't tip. */
+@media (prefers-reduced-motion: reduce) {
+  .rk-gift__glow::before,
+  .rk-gift__glow::after,
+  .rk-gift__drift,
+  .rk-gift__sway,
+  .rk-gift__bob,
+  .rk-gift__ring,
+  .rk-gift__twinkle,
+  .rk-gift__icon,
+  .rk-gift__glint {
+    animation: none;
+  }
+
+  .rk-gift__card {
+    transform: rotateZ(-5deg);
+    transition: none;
+  }
+}
