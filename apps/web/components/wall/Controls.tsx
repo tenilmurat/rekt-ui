@@ -210,19 +210,9 @@ function Toggle({
         aria-checked={value}
         aria-labelledby={labelId}
         onClick={() => onChange(!value)}
-        className="relative h-[26px] w-[44px] rounded-full transition-colors"
-        style={{ backgroundColor: value ? "var(--ink)" : "var(--hover)" }}
+        className="switch"
       >
-        <span
-          aria-hidden="true"
-          className="absolute left-[3px] top-[3px] size-[20px] rounded-full transition-transform"
-          style={{
-            backgroundColor: value ? "var(--bg)" : "var(--surface-raised)",
-            boxShadow: "var(--shadow-knob)",
-            transform: value ? "translateX(18px)" : "none",
-            transitionTimingFunction: "var(--ease-out-strong)",
-          }}
-        />
+        <span aria-hidden="true" className="switch__knob" />
       </button>
     </Row>
   );
