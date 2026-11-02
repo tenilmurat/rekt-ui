@@ -24,7 +24,7 @@ export const PLANS: Plan[] = [
     price: "€0",
     cadence: "forever",
     summary: "Browse everything, take the free components, keep what you like.",
-    features: ["Every preview, live", "Free components with code", "Good designs of X", "Bookmarks"],
+    features: ["Every preview, live", "Free components with code", "Discover", "Bookmarks"],
   },
   {
     id: "pro",

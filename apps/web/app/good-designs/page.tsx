@@ -4,7 +4,7 @@ import { pageTitle } from "@/lib/brand";
 import { GoodDesigns } from "@/components/good-designs/GoodDesigns";
 
 export const metadata: Metadata = {
-  title: pageTitle("Good designs of X"),
+  title: pageTitle("Discover"),
   description: "Real-world interface and web design worth studying, curated by Rekt UI.",
 };
 

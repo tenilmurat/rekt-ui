@@ -10,7 +10,7 @@ import { DESIGN_XS, GOOD_DESIGNS } from "@/lib/good-designs";
 const sentence = (label: string) => label.charAt(0).toUpperCase() + label.slice(1);
 
 /**
- * The gallery. The X in the title is the filter — "Good designs of icon sets" —
+ * The gallery, Discover. A chosen filter joins the title — "Discover icon sets" —
  * and `?x=` holds it, so a filtered page can be shared.
  */
 export function GoodDesigns() {
@@ -23,14 +23,14 @@ export function GoodDesigns() {
       <PageHero
         title={
           <>
-            Good designs of <span style={{ color: current ? "var(--ink-title)" : "var(--ink-3)" }}>{current?.label ?? "X"}</span>
+            Discover{current ? <span style={{ color: "var(--ink-3)" }}> {current.label}</span> : null}
           </>
         }
-        lead="Real interfaces and details worth studying, picked one by one. Choose an X, open the live site, save the ones you want to come back to."
+        lead="Real interfaces and details worth studying, picked one by one. Pick a kind, open the live site, save the ones you want to come back to."
       />
 
       <FilterChips
-        label="Pick an X"
+        label="Kinds of design"
         chips={DESIGN_XS.map((x) => ({
           id: x.id,
           label: sentence(x.label),
