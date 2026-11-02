@@ -1,7 +1,9 @@
 /*
   Morph loader. The colours live in the component's palettes (the gradient
-  is drawn in SVG); the size is a prop. Works on any light background.
-  Reduced motion shows the first shape, still.
+  is drawn in SVG); the size is a prop. Light and dark themes look the same:
+  the bright gradient and its white sheen sit inside the shape and read on
+  a light or a dark background (under a "dark" ancestor too), so nothing
+  needs redefining. Reduced motion shows the first shape, still.
 */
 .rk-morph {
   position: relative;

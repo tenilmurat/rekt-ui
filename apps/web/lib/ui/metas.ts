@@ -13,6 +13,7 @@ import { giftCardMeta } from "@/components/blocks/gift-card/meta";
 import { bubbleMenuMeta } from "@/components/blocks/bubble-menu/meta";
 import { explodingInputMeta } from "@/components/blocks/exploding-input/meta";
 import { keyboardMeta } from "@/components/blocks/keyboard/meta";
+import { themeTogglerMeta } from "@/components/blocks/theme-toggler/meta";
 import { tiltCardMeta } from "@/components/blocks/tilt-card/meta";
 import type { UiBlockMeta } from "@/lib/ui/types";
 
@@ -38,6 +39,7 @@ export const BLOCK_METAS: UiBlockMeta[] = [
   bubbleMenuMeta,
   explodingInputMeta,
   keyboardMeta,
+  themeTogglerMeta,
 ];
 
 export const getMeta = (id: string) => BLOCK_METAS.find((m) => m.id === id);

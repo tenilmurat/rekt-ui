@@ -12,8 +12,8 @@ import { useSession } from "@/lib/session";
 /** Height of the header; the sidebar and Full View sit below it. */
 export const HEADER_HEIGHT = 56;
 
-const NAV = [
-  { href: "/good-designs", label: "Good designs of X", short: "Designs" },
+const NAV: { href: string; label: string; short?: string }[] = [
+  { href: "/good-designs", label: "Discover" },
   { href: "/pricing", label: "Pricing" },
 ];
 

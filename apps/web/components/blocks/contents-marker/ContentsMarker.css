@@ -1,7 +1,8 @@
 /*
   Contents marker. Every colour is a variable with a fallback, so it works as
   is; point the --rk-cmark-* variables at your own tokens to theme it.
-  Light theme; a dark theme can be added by redefining the same variables.
+  Light theme, plus a dark theme under any ancestor with the class "dark"
+  (what next-themes and shadcn put on <html>); both use the same variables.
 */
 .rk-cmark {
   --rk-cmark-bg: #ffffff;
@@ -20,6 +21,15 @@
   color: var(--rk-cmark-ink);
   box-shadow: 0 0 0 1px var(--rk-cmark-edge);
   font-family: inherit;
+}
+
+/* Dark: a dark card a step above the page, soft grey labels, a near-white dot. */
+.dark .rk-cmark {
+  --rk-cmark-bg: #201f1d;
+  --rk-cmark-ink: #f2efea;
+  --rk-cmark-muted: #8f8a84;
+  --rk-cmark-dot: #f2efea;
+  --rk-cmark-edge: rgb(255 255 255 / 0.07);
 }
 
 .rk-cmark__title {

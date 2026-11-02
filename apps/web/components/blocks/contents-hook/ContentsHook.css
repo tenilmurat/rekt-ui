@@ -1,7 +1,9 @@
 /*
   Contents hook. Every colour is a variable with a fallback, so it works as
   is; point the --rk-chook-* variables at your own tokens to theme it.
-  Light theme; a dark theme can be added by redefining the same variables.
+  It has a light and a dark theme: the dark one applies under any ancestor
+  with the class "dark" (the shadcn / next-themes convention) and redefines
+  the same variables.
 */
 .rk-chook {
   --rk-chook-bg: #ffffff;
@@ -12,6 +14,7 @@
   --rk-chook-bar: #141210;
   --rk-chook-accent: #141210;
   --rk-chook-edge: rgb(20 18 16 / 0.08);
+  --rk-chook-shadow: transparent;
   --rk-chook-row: 32px;
   /* Gentle by design: long, soft ease-outs rather than quick snaps. */
   --rk-chook-duration: 700ms;
@@ -28,8 +31,45 @@
   border-radius: 20px;
   background: var(--rk-chook-bg);
   color: var(--rk-chook-ink);
-  box-shadow: 0 0 0 1px var(--rk-chook-edge);
+  box-shadow:
+    0 0 0 1px var(--rk-chook-edge),
+    0 12px 32px var(--rk-chook-shadow);
   font-family: inherit;
+}
+
+/*
+  Dark theme: a panel a step above the ground, light ink, hairlines in
+  white at low opacity, and the section colours lifted a touch so the bar,
+  the hook and the chosen icon still glow against it.
+*/
+.dark .rk-chook {
+  --rk-chook-bg: #1f1d1b;
+  --rk-chook-ink: #f3f1ee;
+  --rk-chook-muted: #9a958f;
+  --rk-chook-line: rgb(255 255 255 / 0.14);
+  --rk-chook-bar: #f3f1ee;
+  --rk-chook-accent: #f3f1ee;
+  --rk-chook-edge: rgb(255 255 255 / 0.07);
+  --rk-chook-shadow: rgb(0 0 0 / 0.28);
+  /* How much white the section colours take on, so they stay bright on the dark panel. */
+  --rk-chook-lighten: 16%;
+}
+
+.dark .rk-chook__bar {
+  background: color-mix(in oklab, var(--rk-chook-bar), white var(--rk-chook-lighten));
+}
+
+.dark .rk-chook__hook {
+  stroke: color-mix(in oklab, var(--rk-chook-accent), white var(--rk-chook-lighten));
+}
+
+.dark .rk-chook__heading:focus-visible,
+.dark .rk-chook__link:focus-visible {
+  outline-color: color-mix(in oklab, var(--rk-chook-accent), white var(--rk-chook-lighten));
+}
+
+.dark .rk-chook__link[aria-current="location"] .rk-chook__icon {
+  color: color-mix(in oklab, var(--rk-chook-accent), white var(--rk-chook-lighten));
 }
 
 /* The rail down the left edge, and the bar that marks the open section. */
