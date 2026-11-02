@@ -1,7 +1,10 @@
 /*
   Gift card. Every colour is a variable with a fallback, so it works as is;
-  point the --rk-gift-* variables at your own tokens to theme it. The card
-  carries its own colours, so it reads on a light page or a dark one. It's
+  point the --rk-gift-* variables at your own tokens to theme it. It has a
+  light and a dark theme: the dark one applies under a .dark ancestor (the
+  class next-themes and shadcn put on <html>). The card carries its own
+  colours and looks the same in both; the dark theme only changes the shadow
+  it casts, so it still lifts off a dark page. It's
   icon-sized by default, for a button or a banner, and every size inside is
   a multiple of --rk-gift-u, so it scales as a whole. The tilt variables
   (--rk-gift-rx, -ry, -shine) are written by the component.
@@ -25,14 +28,27 @@
   --rk-gift-glow-a: #a8fdf4;
   --rk-gift-glow-b: #c3cdff;
   --rk-gift-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  /* The shadow under the card: a wide, faint one well below and a light one close in. */
+  --rk-gift-shadow-far: rgb(20 24 60 / 0.15);
+  --rk-gift-shadow-near: rgb(20 24 60 / 0.08);
 
   display: inline-block;
   padding: calc(var(--rk-gift-u) * 16);
   perspective: calc(var(--rk-gift-u) * 900);
   /* The shadow follows the card's outline, notches and scallops included. */
   /* Soft: a wide, faint shadow well below and a light one close in. */
-  filter: drop-shadow(0 calc(var(--rk-gift-u) * 16) calc(var(--rk-gift-u) * 40) rgb(20 24 60 / 0.15))
-    drop-shadow(0 calc(var(--rk-gift-u) * 2) calc(var(--rk-gift-u) * 8) rgb(20 24 60 / 0.08));
+  filter: drop-shadow(0 calc(var(--rk-gift-u) * 16) calc(var(--rk-gift-u) * 40) var(--rk-gift-shadow-far))
+    drop-shadow(0 calc(var(--rk-gift-u) * 2) calc(var(--rk-gift-u) * 8) var(--rk-gift-shadow-near));
+}
+
+/*
+  Dark: a navy shadow vanishes on a dark page, so the wide one becomes a
+  faint glow in the card's own mid colour, as if the card lit the surface
+  under it, and the close one a firmer black that keeps its edge.
+*/
+.dark .rk-gift {
+  --rk-gift-shadow-far: color-mix(in srgb, var(--rk-gift-mid) 30%, transparent);
+  --rk-gift-shadow-near: rgb(0 0 0 / 0.45);
 }
 
 .rk-gift[data-palette="dusk"] {

@@ -1,8 +1,8 @@
 import data from "@/data/good-designs.json";
 
 /**
- * "Good designs of X": curated real-world work, grouped by what it is a good
- * design of. Add an X here and entries in data/good-designs.json that use its
+ * Discover: curated real-world work, grouped by what it is a good design of
+ * (its X). Add an X here and entries in data/good-designs.json that use its
  * id; screenshots go in public/good-designs as 960px-wide WebP.
  */
 export type GoodDesign = {

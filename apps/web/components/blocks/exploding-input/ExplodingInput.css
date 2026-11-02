@@ -3,6 +3,12 @@
   is; point the --rk-explode-* variables at your own tokens to theme it. The
   bits fly in a layer the component puts on <body>, fixed over the whole page,
   so they can leave the input's card; --rk-explode-z sets how high it sits.
+  Light theme, plus a dark theme under any ancestor with the class "dark"
+  (what next-themes and shadcn put on <html>); both use the same variables.
+  The bits are emoji or brightly coloured letters, so they read on both; on
+  dark they get a faint light halo (--rk-explode-glow) so dark emoji like
+  the black heart don't sink into the page. The layer sits on <body>, and
+  .dark on <html> still reaches it.
 */
 .rk-explode {
   --rk-explode-ink: #111111;
@@ -25,6 +31,14 @@
   font-weight: 500;
   outline: none;
   transition: border-color 160ms ease;
+}
+
+/* Dark: light text on a soft grey underline that brightens on focus. */
+.dark .rk-explode {
+  --rk-explode-ink: #f2efea;
+  --rk-explode-placeholder: #6f6a64;
+  --rk-explode-line: #3a3835;
+  --rk-explode-line-focus: #f2efea;
 }
 
 .rk-explode::placeholder {
@@ -53,5 +67,10 @@
   line-height: 1;
   white-space: pre;
   user-select: none;
+  text-shadow: var(--rk-explode-glow, none);
   will-change: transform, opacity;
+}
+
+.dark .rk-explode__layer {
+  --rk-explode-glow: 0 0 10px rgb(255 255 255 / 0.2);
 }

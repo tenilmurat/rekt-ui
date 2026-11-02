@@ -1,15 +1,18 @@
 /*
   Icon burst. Every colour is a variable with a fallback, so it works as is;
   point the --rk-burst-* variables at your own tokens to theme it. Light
-  theme; a dark theme can be added by redefining the same variables. Plain
-  dust is drawn in the icon's own colour; the colourful dust's ramp lives in
-  the component.
+  theme, plus a dark theme under any ancestor with the class "dark" (what
+  next-themes and shadcn put on <html>); both use the same variables. Plain
+  dust is drawn in the icon's own colour, so it turns light with the icon;
+  the colourful dust's ramp lives in the component and reads on both.
 */
 .rk-burst {
   --rk-burst-ink: #141210;
   --rk-burst-muted: #6b6763;
   --rk-burst-ring: #141210;
   --rk-burst-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  /* Scales every grain's opacity; the faint ones need a lift on a dark background. */
+  --rk-burst-dust-strength: 1;
 
   display: inline-flex;
   flex-direction: column;
@@ -22,6 +25,17 @@
   color: var(--rk-burst-ink);
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
+}
+
+/*
+  Dark: a near-white icon and dust, a soft grey hint, and stronger grains,
+  since faint colour on a dark background turns muddy rather than pastel.
+*/
+.dark .rk-burst {
+  --rk-burst-ink: #f2efea;
+  --rk-burst-muted: #8f8a84;
+  --rk-burst-ring: #f2efea;
+  --rk-burst-dust-strength: 1.8;
 }
 
 /* The icon's square; the dust canvas is centred on it. */

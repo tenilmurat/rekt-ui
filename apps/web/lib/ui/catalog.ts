@@ -13,6 +13,7 @@ import { giftCard } from "@/components/blocks/gift-card";
 import { bubbleMenu } from "@/components/blocks/bubble-menu";
 import { explodingInput } from "@/components/blocks/exploding-input";
 import { keyboard } from "@/components/blocks/keyboard";
+import { themeToggler } from "@/components/blocks/theme-toggler";
 import { tiltCard } from "@/components/blocks/tilt-card";
 import type { UiBlock } from "@/lib/ui/types";
 
@@ -52,7 +53,7 @@ const PUBLISHED: UiBlock[] = [tiltCard];
  * while the live wall stays empty.
  */
 const EXAMPLES: UiBlock[] =
-  process.env.NODE_ENV === "development" ? [keyboard, explodingInput, bubbleMenu, giftCard, rockerSwitch, glitchSwitch, tabDock, iconBurst, morphLoader, stackGallery, surpriseButton, contentsMarker, contentsHook, magnifyRuler, rollingCounter] : [];
+  process.env.NODE_ENV === "development" ? [themeToggler, keyboard, explodingInput, bubbleMenu, giftCard, rockerSwitch, glitchSwitch, tabDock, iconBurst, morphLoader, stackGallery, surpriseButton, contentsMarker, contentsHook, magnifyRuler, rollingCounter] : [];
 
 export const BLOCKS: UiBlock[] = [...PUBLISHED, ...EXAMPLES];
 

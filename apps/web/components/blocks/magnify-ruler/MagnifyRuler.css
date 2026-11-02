@@ -1,7 +1,8 @@
 /*
   Magnify ruler. Every colour is a variable with a fallback, so it works as
   is; point the --rk-ruler-* variables at your own tokens to theme it.
-  Light theme; a dark theme can be added by redefining the same variables.
+  Light theme, plus a dark theme under any ancestor with the class "dark"
+  (what next-themes and shadcn put on <html>); both use the same variables.
   The component writes two values to each tick, already eased:
   --rk-ruler-g (0–1, how close the pointer is) and --rk-ruler-a (0–1, how
   orange it is, as the colour travels to a newly chosen section).
@@ -24,6 +25,19 @@
   color: var(--rk-ruler-ink);
   box-shadow: 0 0 0 1px var(--rk-ruler-edge);
   font-family: inherit;
+}
+
+/*
+  Dark: a dark panel a step above the page, with soft light ticks that
+  brighten under the pointer; the orange is lifted a touch so it still glows.
+*/
+.dark .rk-ruler {
+  --rk-ruler-bg: #201f1d;
+  --rk-ruler-ink: #f2efea;
+  --rk-ruler-tick: rgb(242 239 234 / 0.22);
+  --rk-ruler-tick-strong: rgb(242 239 234 / 0.82);
+  --rk-ruler-accent: #ff6a33;
+  --rk-ruler-edge: rgb(255 255 255 / 0.07);
 }
 
 /*

@@ -1,7 +1,8 @@
 /*
   Glitch switch. Every colour is a variable with a fallback, so it works as
   is; point the --rk-glitch-* variables at your own tokens to theme it.
-  Light theme; a dark theme can be added by redefining the same variables.
+  Light theme, plus a dark theme under any ancestor with the class "dark"
+  (what next-themes and shadcn put on <html>); both use the same variables.
   --rk-glitch-accent is each state's colour, written by the component; the
   fill, border, brackets and label are all mixed from it.
 */
@@ -11,8 +12,13 @@
   --rk-glitch-paper: #ffffff;
   --rk-glitch-accent: #5c8fe2;
   --rk-glitch-ring: rgb(20 18 16 / 0.6);
+  /* How much of the accent goes into the border. */
+  --rk-glitch-edge-mix: 45%;
   /* How much of the accent goes into the fill: none for a white button. */
   --rk-glitch-fill-mix: 0%;
+  /* The colour fringes: how much of their colour fills them, and how they mix with what's under them. */
+  --rk-glitch-fringe-mix: 22%;
+  --rk-glitch-fringe-blend: multiply;
 
   display: inline-flex;
   flex-direction: column;
@@ -23,6 +29,26 @@
 
 .rk-glitch[data-fill="tint"] {
   --rk-glitch-fill-mix: 9%;
+}
+
+/*
+  Dark: a dark button with light ink, the same coloured brackets. The border
+  takes a little more of the accent so it still reads on the dark face, the
+  tint is a touch stronger, and the fringes carry more colour and screen
+  instead of multiply, since multiply would only darken a dark button.
+*/
+.dark .rk-glitch {
+  --rk-glitch-ink: #f2efea;
+  --rk-glitch-muted: #8f8a84;
+  --rk-glitch-paper: #201f1d;
+  --rk-glitch-ring: rgb(242 239 234 / 0.6);
+  --rk-glitch-edge-mix: 52%;
+  --rk-glitch-fringe-mix: 40%;
+  --rk-glitch-fringe-blend: screen;
+}
+
+.dark .rk-glitch[data-fill="tint"] {
+  --rk-glitch-fill-mix: 14%;
 }
 
 .rk-glitch__button {
@@ -61,7 +87,7 @@
   align-items: center;
   justify-content: center;
   padding: 0 28px;
-  border: 1px solid color-mix(in oklab, var(--rk-glitch-accent) 45%, var(--rk-glitch-paper));
+  border: 1px solid color-mix(in oklab, var(--rk-glitch-accent) var(--rk-glitch-edge-mix), var(--rk-glitch-paper));
   border-radius: 2px;
   background: color-mix(in oklab, var(--rk-glitch-accent) var(--rk-glitch-fill-mix), var(--rk-glitch-paper));
   transition:
@@ -110,11 +136,11 @@
 /* A fringe: the same band again, in a band colour, half strength, the other way. */
 .rk-glitch__slice--fringe {
   opacity: 0.55;
-  mix-blend-mode: multiply;
+  mix-blend-mode: var(--rk-glitch-fringe-blend);
 }
 
 .rk-glitch__slice--fringe .rk-glitch__face {
-  background: color-mix(in oklab, var(--rk-glitch-accent) 22%, var(--rk-glitch-paper));
+  background: color-mix(in oklab, var(--rk-glitch-accent) var(--rk-glitch-fringe-mix), var(--rk-glitch-paper));
 }
 
 .rk-glitch__slice--fringe .rk-glitch__label {

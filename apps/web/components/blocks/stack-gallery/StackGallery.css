@@ -1,11 +1,18 @@
 /*
   Stack gallery. Every colour is a variable with a fallback, so it works as
   is; point the --rk-gallery-* variables at your own tokens to theme it.
-  Light theme; a dark theme can be added by redefining the same variables.
+  It has a light and a dark theme: the dark one applies under any ancestor
+  with the class "dark" (the shadcn / next-themes convention) and redefines
+  the same variables. The pictures themselves stay as they are.
   Each card's --d (0 = front) is written by the component.
 */
 .rk-gallery {
   --rk-gallery-ink: #141210;
+  /* A thin light edge round each card, its shadow, the deeper one while the front card is lifted, and the shadow on the floor. */
+  --rk-gallery-edge: rgb(255 255 255 / 0.12);
+  --rk-gallery-shadow: rgb(20 18 16 / 0.14);
+  --rk-gallery-shadow-lift: rgb(20 18 16 / 0.18);
+  --rk-gallery-floor: rgb(20 18 16 / 0.16);
   --rk-gallery-depth: 46px;
   --rk-gallery-speed: 650ms;
   --rk-gallery-ease: cubic-bezier(0.32, 0.72, 0, 1);
@@ -20,6 +27,19 @@
   padding-top: 56px;
   color: var(--rk-gallery-ink);
   font-family: inherit;
+}
+
+/*
+  Dark theme: on a dark ground a soft grey shadow disappears, so the
+  shadows go black and deeper, and each card keeps a faint light edge
+  that picks its top out from the one behind.
+*/
+.dark .rk-gallery {
+  --rk-gallery-ink: #f3f1ee;
+  --rk-gallery-edge: rgb(255 255 255 / 0.1);
+  --rk-gallery-shadow: rgb(0 0 0 / 0.45);
+  --rk-gallery-shadow-lift: rgb(0 0 0 / 0.6);
+  --rk-gallery-floor: rgb(0 0 0 / 0.55);
 }
 
 .rk-gallery__stage {
@@ -43,8 +63,8 @@
   border: 0;
   border-radius: 18px;
   box-shadow:
-    inset 0 0 0 1px rgb(255 255 255 / 0.12),
-    0 10px 28px rgb(20 18 16 / 0.14);
+    inset 0 0 0 1px var(--rk-gallery-edge),
+    0 10px 28px var(--rk-gallery-shadow);
   transform: translate3d(
     0,
     calc(var(--d) * var(--rk-gallery-rise) * -1 + var(--lift)),
@@ -74,8 +94,8 @@
 .rk-gallery__card[data-front="true"]:hover {
   --lift: -10px;
   box-shadow:
-    inset 0 0 0 1px rgb(255 255 255 / 0.12),
-    0 22px 44px rgb(20 18 16 / 0.18);
+    inset 0 0 0 1px var(--rk-gallery-edge),
+    0 22px 44px var(--rk-gallery-shadow-lift);
   transition-duration: 320ms, var(--rk-gallery-speed), 320ms;
 }
 
@@ -136,7 +156,7 @@
   width: calc(var(--rk-gallery-width) * 0.9);
   height: 26px;
   border-radius: 50%;
-  background: radial-gradient(closest-side, rgb(20 18 16 / 0.16), transparent);
+  background: radial-gradient(closest-side, var(--rk-gallery-floor), transparent);
   filter: blur(4px);
   pointer-events: none;
   transition:

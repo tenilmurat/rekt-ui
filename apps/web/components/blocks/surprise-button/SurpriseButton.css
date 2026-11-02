@@ -1,7 +1,8 @@
 /*
   Surprise button. Every colour is a variable with a fallback, so it works as
   is; point the --rk-surprise-* variables at your own tokens to theme it.
-  Light theme; a dark theme can be added by redefining the same variables.
+  Light theme, plus a dark theme under any ancestor with the class "dark"
+  (what next-themes and shadcn put on <html>); both use the same variables.
 */
 .rk-surprise {
   --rk-surprise-ink: #000000;
@@ -23,6 +24,12 @@
   text-align: left;
   cursor: pointer;
   transition: color 200ms ease;
+}
+
+/* Dark: the label rests soft grey and settles on near white; the band is the same. */
+.dark .rk-surprise {
+  --rk-surprise-ink: #f5f3f0;
+  --rk-surprise-muted: #8f8a84;
 }
 
 .rk-surprise[data-size="sm"] {

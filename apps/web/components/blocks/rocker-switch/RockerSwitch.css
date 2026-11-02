@@ -1,9 +1,12 @@
 /*
   Rocker switch. Every colour is a variable with a fallback, so it works as
   is; point the --rk-rocker-* variables at your own tokens to theme it.
-  Off, the frame is light; on, the same variables take their dark values
-  and the switch glows. The component writes --rk-rocker-accent, -tilt,
-  -base, -half (half the length) and -speed, and on each layer of the
+  It has a light and a dark theme: the dark one applies under any ancestor
+  with the class "dark" (the shadcn / next-themes convention), where off is
+  an unlit plate on a dark ground. Either way, on, the same variables take
+  their night values and the switch glows. The component writes
+  --rk-rocker-accent, -tilt, -base, -half (half the length) and -speed,
+  and on each layer of the
   wedge its height (-z, and -height as a plain number) and how high up the
   wedge it sits (-up).
 */
@@ -51,6 +54,7 @@
   --rk-rocker-rim: rgb(255 255 255 / 0.9);
   --rk-rocker-rim-edge: rgb(20 18 16 / 0.1);
   --rk-rocker-dot: #bdb9b4;
+  --rk-rocker-seam: rgb(20 18 16 / 0.14);
   --rk-rocker-dot-lit: var(--rk-rocker-accent);
   --rk-rocker-wall-lit: color-mix(in oklab, var(--rk-rocker-accent) 74%, white);
   --rk-rocker-wall: var(--rk-rocker-accent);
@@ -93,6 +97,7 @@
   --rk-rocker-rim: color-mix(in oklab, var(--rk-rocker-accent) 80%, white);
   --rk-rocker-rim-edge: transparent;
   --rk-rocker-dot: rgb(255 255 255 / 0.22);
+  --rk-rocker-seam: rgb(255 255 255 / 0.1);
   --rk-rocker-dot-lit: #ffffff;
   --rk-rocker-wall-lit: #ffffff;
   --rk-rocker-wall: #ffffff;
@@ -107,6 +112,30 @@
   --rk-rocker-outline: color-mix(in oklab, var(--rk-rocker-accent) 80%, white);
   --rk-rocker-outline-glow: var(--rk-rocker-accent);
   --rk-rocker-focus: rgb(255 255 255 / 0.7);
+}
+
+/*
+  Dark theme, off: an unlit plate on a dark ground. The pressed half is the
+  ground's colour with a faint light rim, the raised half a shade lighter,
+  the wall the accent sunk into the dark, and the shadow deep and soft. On
+  is the same night state as on a light page, so it's left alone here.
+  --rk-rocker-bg is the dark ground's colour: set it to what it sits on.
+*/
+.dark .rk-rocker:not([data-on]) {
+  --rk-rocker-bg: #171615;
+  --rk-rocker-ink: #f3f1ee;
+  --rk-rocker-muted: #7d7873;
+  --rk-rocker-face-up: #25231f;
+  --rk-rocker-rim: rgb(255 255 255 / 0.07);
+  --rk-rocker-rim-edge: rgb(0 0 0 / 0.35);
+  --rk-rocker-dot: rgb(255 255 255 / 0.18);
+  --rk-rocker-seam: rgb(0 0 0 / 0.45);
+  --rk-rocker-wall-lit: color-mix(in oklab, var(--rk-rocker-accent) 82%, white);
+  --rk-rocker-wall: color-mix(in oklab, var(--rk-rocker-accent) 82%, black);
+  --rk-rocker-wall-dark: color-mix(in oklab, var(--rk-rocker-accent) 48%, black);
+  --rk-rocker-shadow: rgb(0 0 0 / 0.7);
+  --rk-rocker-shadow-blur: 12px;
+  --rk-rocker-focus: rgb(255 255 255 / 0.6);
 }
 
 /* The ground, seen from above with the plate turned 45°, like the render. */
@@ -290,12 +319,8 @@
   bottom: 0;
   left: 0;
   width: 1px;
-  background: rgb(20 18 16 / 0.14);
+  background: var(--rk-rocker-seam);
   content: "";
-}
-
-.rk-rocker[data-on] .rk-rocker__cap--off::before {
-  background: rgb(255 255 255 / 0.1);
 }
 
 .rk-rocker__label {
